@@ -53,14 +53,14 @@ public class Splash_screen extends AppCompatActivity {
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", true);
 
         FirebaseUser user = fAuth.getCurrentUser();
-        if (user == null || !user.isEmailVerified()) {
+        if (user == null) {
             startActivity(new Intent(getApplicationContext(), Register.class));
-        }
-        if (!isLoggedIn){
+        } else if (!user.isEmailVerified()) {
+            startActivity(new Intent(getApplicationContext(), Register.class));
+        } else if (!isLoggedIn) {
             startActivity(new Intent(getApplicationContext(), Login.class));
-        }
-        else {
-                startActivity(new Intent(getApplicationContext(), Dashboard.class));
+        } else {
+            startActivity(new Intent(getApplicationContext(), Dashboard.class));
         }
         finish();
     }

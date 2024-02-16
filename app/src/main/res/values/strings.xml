@@ -26,7 +26,7 @@
     <string name="designation" type="id">Designation</string>
     <string name="dob" type="id">Dob</string>
     <string name="logo">logo</string>
-    <string name="home">Home</string>
+    <string name="about">About Us</string>
     <string name="profile">Profile</string>
     <string name="enter_email_login">Enter Email</string>
     <string name="newaccount">New account? Register Here</string>
@@ -34,4 +34,8 @@
     <string name="click_here">Click Here</string>
     <string name="profile_picture">profile picture</string>
     <string name="logout">Logout</string>
+    <string name="about_us_texts">I will write about this app here</string>
+    <string name="visit_our_website">Visit our website</string>
+    <string name="watch_us_on_youtube">Watch us on YouTube</string>
+    <string name="follow_us_on_facebook">Follow us on Facebook</string>
 </resources>

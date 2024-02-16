@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/custom_image.xml -->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/image_layer"
+        android:height="24dp"
+        android:width="24dp"
+        android:drawable="@drawable/web"
+        android:gravity="center" />
+</layer-list>
