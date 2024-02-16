@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "752653595076",
+    "project_id": "smart-monitoring-app-a2bee",
+    "storage_bucket": "smart-monitoring-app-a2bee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752653595076:android:3b9d4a452f7d1c53583491",
+        "android_client_info": {
+          "package_name": "com.example.simu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG5b3cmpZ4YDx8ol-6yxhhk-vNnS5mqiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">SMA</string>
+    <string name="sign_in">Sign In</string>
+    <string name="enter_your_email">Enter your Email</string>
+    <string name="enter_your_password" />
+    <string name="register">Register</string>
+    <string name="enter_full_name">Enter Full Name</string>
+    <string name="enter_address">Enter Address</string>
+    <string name="enter_designation">Enter Designation</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="enter_national_id_number">Enter National ID Number</string>
+    <string name="enter_date_of_birth">Enter Date of Birth</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="registerbtn">Register</string>
+    <string name="already_have_an_account_log_in">Already have an account? Log In Here</string>
+    <string name="smart_monitoring_app">Smart Monitoring App</string>
+    <string name="enter_work_station">Enter Work Station</string>
+    <string name="login">Login</string>
+    <string name="enter_department">Enter Department</string>
+    <string name="Officer">Officer</string>
+    <string name="worker">Worker</string>
+    <string name="loginbtn">Login</string>
+    <string name="enter_password_login">Enter Password</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="workstation" type="id">Workstation</string>
+    <string name="designation" type="id">Designation</string>
+    <string name="dob" type="id">Dob</string>
+    <string name="logo">logo</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="enter_email_login">Enter Email</string>
+    <string name="newaccount">New account? Register Here</string>
+    <string name="choose_profile_picture">Choose Profile Picture</string>
+    <string name="click_here">Click Here</string>
+    <string name="profile_picture">profile picture</string>
+    <string name="logout">Logout</string>
+</resources>
