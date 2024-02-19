@@ -60,6 +60,22 @@
                 android:layout_marginTop="40dp"/>
 
             <EditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:background="@drawable/textboxborder"
+                android:drawableStart="@drawable/profile"
+                android:drawablePadding="8dp"
+                android:hint="@string/enter_a_username"
+                android:textColorHint="@color/basic"
+                android:padding="8dp"
+                android:textColor="@color/basic"
+                android:autofillHints="username"
+                android:inputType="textPersonName"
+                android:layout_marginTop="20dp"/>
+
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:fontFamily="sans-serif"

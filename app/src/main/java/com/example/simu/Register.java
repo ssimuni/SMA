@@ -15,7 +15,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,6 +38,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -58,6 +61,8 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
+import java.util.regex.Pattern;
+
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -66,7 +71,7 @@ public class Register extends AppCompatActivity {
     String designation;
     public static final String TAG = "TAG";
     private final int Camera_Req_code = 100;
-    EditText mName, mAddress, mWorkStation, mEmail,mNid, mDob, mPass;
+    EditText mName, mAddress, mWorkStation, mEmail,mNid, mDob, mPass, mUsername;
     Spinner spinner;
     Button mRegister, mProfileBtn;
     TextView mLogin;
@@ -78,6 +83,7 @@ public class Register extends AppCompatActivity {
     ActivityResultLauncher<Intent> cameraLauncher;
     ActivityResultLauncher<Intent> galleryLauncher;
     private StorageReference storageReference;
+
 
 
     @Override
@@ -98,6 +104,7 @@ public class Register extends AppCompatActivity {
         mLogin = findViewById(R.id.haveanaccount);
         mProfileBtn = findViewById(R.id.profilePicBtn);
         mProfilePic = findViewById(R.id.profilepic);
+        mUsername = findViewById(id.username);
 
 
         fAuth = FirebaseAuth.getInstance();
@@ -187,6 +194,39 @@ public class Register extends AppCompatActivity {
             }
         });
 
+        CollectionReference usersCollection = FirebaseFirestore.getInstance().collection("users");
+        mUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                final String enteredUsername = editable.toString();
+                if (!TextUtils.isEmpty(enteredUsername)) {
+                    usersCollection.whereEqualTo("username", enteredUsername)
+                            .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                                // Handle query result
+                                if (e != null) {
+                                    // Handle the failure to query Firestore
+                                    Log.e("FirestoreQuery", "Error querying Firestore", e);
+                                    return;
+                                }
+
+                                // Check if there are any documents with the entered username
+                                if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                                    // Username exists, show an error message
+                                    // For example, set an error on the EditText or display a TextView
+                                    mUsername.setError("Username already taken");
+                                } else {
+                                    mUsername.setHint("username available");
+                                }
+                            });
+                }
+            }
+        });
 
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,37 +237,22 @@ public class Register extends AppCompatActivity {
                 final String email = mEmail.getText().toString().trim();
                 final String nid = mNid.getText().toString();
                 final String dob = mDob.getText().toString();
+                final String username = mUsername.getText().toString();
                 String password = mPass.getText().toString().trim();
 
 
-//                String[] designations = {"Officer", "Worker"};
-//
-//                ArrayAdapter<String> adapter = new ArrayAdapter<>(
-//                        getApplicationContext(),
-//                        android.R.layout.simple_spinner_item,
-//                        designations
-//                );
-//
-//                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//                spinner.setAdapter(adapter);
-//                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                    @Override
-//                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-//                        designation = parentView.getItemAtPosition(position).toString();
-//                    }
-//
-//                    @Override
-//                    public void onNothingSelected(AdapterView<?> parentView) {
-//                    }
-//                });
+                if (Pattern.compile("\\s").matcher(email).find()) {
+                    mEmail.setError("Email cannot contain whitespace");
+                    return;
+                }
 
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(Register.this, "Email is required", Toast.LENGTH_SHORT).show();
+                    mEmail.setError("Email is required");
                     return;
                 }
 
                 if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(Register.this, "Password is required", Toast.LENGTH_SHORT).show();
+                    mPass.setError("Password is required");
                     return;
                 }
 
@@ -236,6 +261,9 @@ public class Register extends AppCompatActivity {
                     return;
                 }
 
+                if(TextUtils.isEmpty(username)){
+                    mUsername.setError("Username required");
+                }
 
                 fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(Register.this,
                         new OnCompleteListener<AuthResult>() {
@@ -262,6 +290,7 @@ public class Register extends AppCompatActivity {
                                     user.put("nid", nid);
                                     user.put("dob", dob);
                                     user.put("designation", designation);
+                                    user.put("username", username);
 
                                     // Add the user details to Firestore
                                     documentReference.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
