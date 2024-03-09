@@ -3,6 +3,7 @@ package com.example.simu;
 public class PostModel {
     private String postId, userId, postText, postImage, postLikes, postComments;
     private long postingTime;
+    private boolean isLiked;
 
     public PostModel(String postId, String userId, String postText, String postImage, String postLikes, String postComments, long postingTime) {
         this.postId = postId;
@@ -15,6 +16,18 @@ public class PostModel {
     }
 
     public PostModel() {
+    }
+
+    public PostModel(String postId) {
+        this.postId = postId;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 
     public String getPostId() {
