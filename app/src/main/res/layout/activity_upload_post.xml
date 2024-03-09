@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Upload_post"
+    android:orientation="vertical">
+
+  <androidx.cardview.widget.CardView
+      app:contentPadding="10dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardCornerRadius="20dp"
+            android:layout_margin="10dp">
+
+          <ImageView
+              android:id="@+id/userdp"
+              android:scaleType="centerCrop"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:src="@drawable/profile"
+              />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_toEndOf="@id/dp"
+
+            android:padding="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_centerVertical="true">
+        </TextView>
+      </RelativeLayout>
+
+      <EditText
+          android:id="@+id/postText"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:minHeight="150dp"
+          android:gravity="start"
+          android:hint="Write something here..."
+          android:padding="10dp"
+          android:background="@android:color/transparent"/>
+    </LinearLayout>
+
+  </androidx.cardview.widget.CardView>
+
+
+  <androidx.cardview.widget.CardView
+      android:background="?selectableItemBackground"
+      android:id="@+id/addbtn"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:gravity="center">
+      <LinearLayout
+          android:id="@+id/addPhoto"
+          android:gravity="center"
+          android:orientation="horizontal"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_add_photo_alternate_24" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_photo"
+            android:gravity="center"/>
+      </LinearLayout>
+    </LinearLayout>
+  </androidx.cardview.widget.CardView>
+  
+  <ImageView
+      android:id="@+id/pickedimg"
+      android:layout_marginTop="10dp"
+      android:layout_width="match_parent"
+      android:layout_height="250dp"/>
+
+
+  <Button
+      android:id="@+id/postButton"
+      android:layout_marginTop="80dp"
+      android:layout_width="wrap_content"
+      android:layout_gravity="center"
+      android:fontFamily="sans-serif"
+      android:layout_height="50dp"
+      android:text="Upload"
+      android:textSize="15sp"
+      android:backgroundTint="@color/basic"
+      app:cornerRadius = "20dp"/>
+
+  </LinearLayout>

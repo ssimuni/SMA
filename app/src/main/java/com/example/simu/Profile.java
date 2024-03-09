@@ -41,7 +41,6 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
 
-        // Initialize UI components
         profileImageView = findViewById(R.id.profileImageView);
         nameTextView = findViewById(R.id.nameTextView);
         addressTextView = findViewById(R.id.addressTextView);
@@ -56,7 +55,6 @@ public class Profile extends AppCompatActivity {
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
 
-        // Retrieve user information from Firestore
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
@@ -120,7 +118,6 @@ public class Profile extends AppCompatActivity {
                         if (document != null && document.exists()) {
                             String profileImageUrl = document.getString("profileImageUrl");
 
-                            // Validate the profileImageUrl
                             if (isValidFirebaseStorageUrl(profileImageUrl)) {
                                 loadImageFromUrl(profileImageUrl);
                             }

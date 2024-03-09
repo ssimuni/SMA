@@ -11,6 +11,8 @@ public class Dashboard extends AppCompatActivity {
 
     private CardView profileCard;
     private CardView aboutCard;
+    private CardView rateCard;
+    private CardView newsFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +21,8 @@ public class Dashboard extends AppCompatActivity {
 
         profileCard = findViewById(R.id.level1).findViewById(R.id.profile);
         aboutCard = findViewById(R.id.level1).findViewById(R.id.about);
+        rateCard = findViewById(R.id.level2).findViewById(R.id.rating);
+        newsFeed = findViewById(R.id.level2).findViewById(R.id.feed);
 
         profileCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +36,18 @@ public class Dashboard extends AppCompatActivity {
             public void onClick(View v) {
                 startActivity(new Intent(Dashboard.this, About.class));
             }
+        });
+
+        rateCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Dashboard.this, Rating.class));
+            }
+        });
+
+        newsFeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { startActivity(new Intent(Dashboard.this, NewsFeed.class));}
         });
     }
 }

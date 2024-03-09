@@ -6,8 +6,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,6 +23,7 @@ import java.util.Objects;
 
 public class Splash_screen extends AppCompatActivity {
 
+    private static final String HTML_FILE = "file:///android_asset/splash_animation.html";
     private FirebaseAuth fAuth;
 
     @Override
@@ -26,7 +32,15 @@ public class Splash_screen extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         fAuth = FirebaseAuth.getInstance();
-        ImageView logoImageView = findViewById(R.id.logo);
+        //ImageView logoImageView = findViewById(R.id.logo);
+
+        WebView webView = findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.setWebViewClient(new WebViewClient());
+
+        webView.loadUrl(HTML_FILE);
+
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
@@ -35,16 +49,6 @@ public class Splash_screen extends AppCompatActivity {
             }
         }, 2000);
 
-        logoImageView.setAlpha(0f);
-        logoImageView.animate().alpha(1f).setDuration(2000).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {}
-                }, 3000);
-            }
-        });
     }
 
     private void checkUserAuthentication() {

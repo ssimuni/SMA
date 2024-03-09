@@ -39,4 +39,15 @@
     <string name="watch_us_on_youtube">Watch us on YouTube</string>
     <string name="follow_us_on_facebook">Follow us on Facebook</string>
     <string name="enter_a_username">Enter a Username</string>
+    <string name="enter_phone_number">Enter Phone Number</string>
+    <string name="news_feed">News Feed</string>
+    <string name="rate_app">Rate App</string>
+    <string name="rate_our_app">Rate Our App</string>
+    <string name="submit">Submit</string>
+    <string name="thank_you">Thank You Very Much!</string>
+    <string name="very_disappointing">Very disappointing.</string>
+    <string name="thank_you_for_your_feedback">Thank you for your feedback.</string>
+    <string name="upload_post_here">Upload Post here...</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="post">Post</string>
 </resources>

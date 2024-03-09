@@ -9,7 +9,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="300dp"
-        android:layout_height="400dp"
+        android:layout_height="470dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         app:cardCornerRadius="30dp"
@@ -18,7 +18,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="470dp"
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
             android:padding="24dp">
@@ -57,18 +57,6 @@
                 android:drawablePadding="10dp" />
 
             <TextView
-                android:id="@+id/youtube_link"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/watch_us_on_youtube"
-                android:autoLink="web"
-                android:textColorLink="@color/basic"
-                android:layout_marginTop="10dp"
-                android:textSize="18sp"
-                app:drawableStartCompat="@drawable/yt"
-                android:drawablePadding="10dp"/>
-
-            <TextView
                 android:id="@+id/facebook_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -80,6 +68,25 @@
                 android:layout_marginStart="-5dp"
                 app:drawableStartCompat="@drawable/fb"
                 android:drawablePadding="7dp"/>
+
+            <TextView
+                android:id="@+id/youtube_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/watch_us_on_youtube"
+                android:autoLink="web"
+                android:textColorLink="@color/basic"
+                android:layout_marginTop="10dp"
+                android:textSize="18sp"
+                app:drawableStartCompat="@drawable/yt"
+                android:drawablePadding="10dp"/>
+
+            <WebView
+                android:id="@+id/web_view"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="10dp"
+                />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

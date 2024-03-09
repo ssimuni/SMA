@@ -132,34 +132,18 @@
                     android:autofillHints="text"
                     app:drawableStartCompat="@drawable/designation" />
 
-<!--                <RadioGroup-->
-<!--                    android:id="@+id/radioGroup"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/officer"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="@string/Officer"-->
-<!--                        android:textColor="@color/basic"-->
-<!--                        android:layout_marginEnd="30dp" />-->
-
-<!--                    <RadioButton-->
-<!--                        android:id="@+id/worker"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="@string/worker"-->
-<!--                        android:textColor="@color/basic"/>-->
-
-<!--                </RadioGroup>-->
                 <Spinner
                     android:id="@+id/spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minHeight="50dp"
                     />
+                <Spinner
+                    android:id="@+id/officerSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="50dp"
+                    android:visibility="invisible"/>
 
             </LinearLayout>
 
@@ -206,6 +190,23 @@
                 android:drawableStart="@drawable/nid"
                 android:drawablePadding="8dp"
                 android:hint="@string/enter_national_id_number"
+                android:textColorHint="@color/basic"
+                android:padding="8dp"
+                android:textColor="@color/basic"
+                android:textColorHighlight="@color/cardview_dark_background"
+                android:inputType="none"
+                android:autofillHints="text"
+                android:layout_marginTop="20dp"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:fontFamily="sans-serif"
+                android:id="@+id/p_number"
+                android:background="@drawable/textboxborder"
+                android:drawableStart="@drawable/number"
+                android:drawablePadding="8dp"
+                android:hint="@string/enter_phone_number"
                 android:textColorHint="@color/basic"
                 android:padding="8dp"
                 android:textColor="@color/basic"

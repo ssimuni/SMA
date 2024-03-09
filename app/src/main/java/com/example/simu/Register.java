@@ -68,12 +68,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 public class Register extends AppCompatActivity {
-    String designation;
+    String designation, fdesignation;
     public static final String TAG = "TAG";
-    private final int Camera_Req_code = 100;
-    EditText mName, mAddress, mWorkStation, mEmail,mNid, mDob, mPass, mUsername;
-    Spinner spinner;
-    Button mRegister, mProfileBtn;
+    EditText mName, mAddress, mWorkStation, mEmail,mNid, mDob, mPass, mUsername, mNumber;
+    Spinner spinner, officerSpinner;
+    Button mRegister;
+    Button mProfileBtn;
     TextView mLogin;
     ImageView mProfilePic;
     FirebaseFirestore fstore;
@@ -96,6 +96,7 @@ public class Register extends AppCompatActivity {
         mAddress = findViewById(R.id.address);
         mWorkStation = findViewById(id.workstation);
         spinner = findViewById(id.spinner);
+        officerSpinner = findViewById(id.officerSpinner);
         mEmail = findViewById(R.id.email);
         mNid = findViewById(R.id.nid);
         mDob = findViewById(R.id.dob);
@@ -105,18 +106,19 @@ public class Register extends AppCompatActivity {
         mProfileBtn = findViewById(R.id.profilePicBtn);
         mProfilePic = findViewById(R.id.profilepic);
         mUsername = findViewById(id.username);
+        mNumber = findViewById(id.p_number);
 
 
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
-        String[] designations = {"Officer", "Worker"};
+        String[] spinner1 = {"Click here", "Officer", "Worker"};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 getApplicationContext(),
                 android.R.layout.simple_spinner_item,
-                designations
+                spinner1
         );
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -125,6 +127,39 @@ public class Register extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 designation = parentView.getItemAtPosition(position).toString();
+
+
+
+                if ("Officer".equals(designation)) {
+                    officerSpinner.setVisibility(View.VISIBLE);
+
+                    String[] officerLevels = {"Select Level", "Union level", "Upozela level", "District level", "Division level"};
+                    ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
+                            getApplicationContext(),
+                            android.R.layout.simple_spinner_item,
+                            officerLevels
+                    );
+
+                    subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    officerSpinner.setAdapter(subAdapter);
+
+                    officerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                            fdesignation = parentView.getItemAtPosition(position).toString();
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parentView) {
+                        }
+                    });
+                } else {
+                    officerSpinner.setVisibility(View.INVISIBLE);
+                }
+
+
+
+
             }
 
             @Override
@@ -178,12 +213,10 @@ public class Register extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                // Camera option selected
                                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                 cameraLauncher.launch(cameraIntent);
                                 break;
                             case 1:
-                                // Gallery option selected
                                 Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 galleryLauncher.launch(galleryIntent);
                                 break;
@@ -208,17 +241,13 @@ public class Register extends AppCompatActivity {
                 if (!TextUtils.isEmpty(enteredUsername)) {
                     usersCollection.whereEqualTo("username", enteredUsername)
                             .addSnapshotListener((queryDocumentSnapshots, e) -> {
-                                // Handle query result
                                 if (e != null) {
-                                    // Handle the failure to query Firestore
                                     Log.e("FirestoreQuery", "Error querying Firestore", e);
                                     return;
                                 }
 
                                 // Check if there are any documents with the entered username
                                 if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                                    // Username exists, show an error message
-                                    // For example, set an error on the EditText or display a TextView
                                     mUsername.setError("Username already taken");
                                 } else {
                                     mUsername.setHint("username available");
@@ -238,6 +267,7 @@ public class Register extends AppCompatActivity {
                 final String nid = mNid.getText().toString();
                 final String dob = mDob.getText().toString();
                 final String username = mUsername.getText().toString();
+                final String pnumber = mNumber.getText().toString();
                 String password = mPass.getText().toString().trim();
 
 
@@ -258,6 +288,11 @@ public class Register extends AppCompatActivity {
 
                 if (password.length() < 6) {
                     mPass.setError("Password should be of more than 6 character");
+                    return;
+                }
+
+                if(pnumber.length() < 11) {
+                    mNumber.setError("Enter 11 digit number");
                     return;
                 }
 
@@ -289,8 +324,9 @@ public class Register extends AppCompatActivity {
                                     user.put("email", email);
                                     user.put("nid", nid);
                                     user.put("dob", dob);
-                                    user.put("designation", designation);
+                                    user.put("designation", fdesignation);
                                     user.put("username", username);
+                                    user.put("number", pnumber);
 
                                     // Add the user details to Firestore
                                     documentReference.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {

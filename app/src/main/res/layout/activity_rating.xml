@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Rating"
+    android:background="@drawable/wave">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="350dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="20dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:padding="24dp">
+            <TextView
+                android:id="@+id/login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@string/rate_our_app"
+                android:textSize="36sp"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textColor="@color/basic" />
+
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/rating"
+                android:progressBackgroundTint="@color/ash"
+                android:progressTint="@color/basic"
+                android:layout_marginTop="50dp"
+                android:numStars="5"
+                android:stepSize="1.0"
+                >
+            </RatingBar>
+
+            <Button
+                android:id="@+id/submit"
+                android:layout_width="match_parent"
+                android:fontFamily="sans-serif"
+                android:layout_height="60dp"
+                android:text="@string/submit"
+                android:textSize="18sp"
+                android:layout_marginTop="30dp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp"/>
+
+            <TextView
+                android:id="@+id/thank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/basic"
+                android:layout_marginTop="-50dp"
+                android:textSize="26sp"
+                android:visibility="invisible"
+                android:layout_gravity="center_horizontal"
+                />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
