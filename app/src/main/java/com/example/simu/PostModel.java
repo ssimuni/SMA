@@ -1,16 +1,18 @@
 package com.example.simu;
 
 public class PostModel {
-    private String postId, userId, postText, postImage, postLikes, postComments;
+    private String postId, userId, postText, postImage, postLikes, postDislikes ,postComments;
     private long postingTime;
     private boolean isLiked;
+    private boolean isDisliked;
 
-    public PostModel(String postId, String userId, String postText, String postImage, String postLikes, String postComments, long postingTime) {
+    public PostModel(String postId, String userId, String postText, String postImage, String postLikes, String postDislikes, String postComments, long postingTime) {
         this.postId = postId;
         this.userId = userId;
         this.postText = postText;
         this.postImage = postImage;
         this.postLikes = postLikes;
+        this.postDislikes = postDislikes;
         this.postComments = postComments;
         this.postingTime = postingTime;
     }
@@ -24,6 +26,14 @@ public class PostModel {
 
     public boolean isLiked() {
         return isLiked;
+    }
+
+    public boolean isDisliked() {
+        return isDisliked;
+    }
+
+    public void setDisliked(boolean disliked) {
+        isDisliked = disliked;
     }
 
     public void setLiked(boolean liked) {
@@ -68,6 +78,14 @@ public class PostModel {
 
     public void setPostLikes(String postLikes) {
         this.postLikes = postLikes;
+    }
+
+    public String getPostDislikes() {
+        return postDislikes;
+    }
+
+    public void setPostDislikes(String postDislikes) {
+        this.postDislikes = postDislikes;
     }
 
     public String getPostComments() {

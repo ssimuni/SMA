@@ -98,7 +98,7 @@ public class Upload_post extends AppCompatActivity {
                                                     PostModel postModel = new PostModel(id,
                                                             FirebaseAuth.getInstance().getUid(),
                                                             postText.getText().toString(),
-                                                            uri.toString(),"0", "0",  System.currentTimeMillis());
+                                                            uri.toString(),"0", "0","0",  System.currentTimeMillis());
 
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Posts")
@@ -125,7 +125,7 @@ public class Upload_post extends AppCompatActivity {
                     PostModel postModel = new PostModel(id,
                             FirebaseAuth.getInstance().getUid(),
                             postText.getText().toString(),
-                            null,"0", "0", System.currentTimeMillis());
+                            null,"0", "0","0", System.currentTimeMillis());
 
                     FirebaseFirestore.getInstance()
                             .collection("Posts")

@@ -66,6 +66,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
 
         holder.postText.setText(postModel.getPostText());
         holder.likesCount.setText(String.valueOf(postModel.getPostLikes()));
+        holder.dislikesCount.setText(String.valueOf(postModel.getPostDislikes()));
         holder.postTime.setText(formatTime(postModel.getPostingTime()));
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +97,29 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                            postModel.setLiked(false);
                            holder.like.setImageResource(R.drawable.like_blackf);
                        }
+                    }
+                });
+
+        FirebaseFirestore.getInstance()
+                .collection("Dislikes")
+                .document(postModel.getPostId()+ FirebaseAuth.getInstance().getUid())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot!=null){
+                            String data=documentSnapshot.getString("postId");
+                            if(data!=null){
+                                postModel.setDisliked(true);
+                                holder.dislike.setImageResource(R.drawable.dislike_blue);
+                            }
+                            else {
+                                postModel.setDisliked(false);
+                                holder.dislike.setImageResource(R.drawable.dislike_black);
+                            }
+                        }else {
+                            postModel.setDisliked(false);
+                            holder.dislike.setImageResource(R.drawable.dislike_black);
+                        }
                     }
                 });
 
@@ -141,6 +165,51 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             }
         });
 
+        holder.dislike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int dislikes = 0; // Initialize dislikes count
+                if (postModel.getPostDislikes() != null) {
+                    dislikes = Integer.parseInt(postModel.getPostDislikes());
+                }
+                if (postModel.isDisliked()) {
+                    postModel.setDisliked(false);
+                    holder.dislike.setImageResource(R.drawable.dislike_black);
+
+                    if (dislikes > 0) {
+                        postModel.setPostDislikes(String.valueOf(dislikes - 1));
+                    }
+
+                    FirebaseFirestore.getInstance()
+                            .collection("Dislikes")
+                            .document(postModel.getPostId() + FirebaseAuth.getInstance().getUid())
+                            .delete();
+                } else {
+                    postModel.setDisliked(true);
+                    holder.dislike.setImageResource(R.drawable.dislike_blue);
+
+                    postModel.setPostDislikes(String.valueOf(dislikes + 1));
+
+                    FirebaseFirestore.getInstance()
+                            .collection("Dislikes")
+                            .document(postModel.getPostId() + FirebaseAuth.getInstance().getUid())
+                            .set(new PostModel("just check if null"));
+                }
+                FirebaseFirestore.getInstance()
+                        .collection("Posts")
+                        .document(postModel.getPostId())
+                        .update("postDislikes", postModel.getPostDislikes())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                notifyDataSetChanged();
+                            }
+                        });
+            }
+        });
+
+
+
         String uid = postModel.getUserId();
         FirebaseFirestore.getInstance()
                 .collection("users")
@@ -169,8 +238,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView userName, postText, likesCount, postTime;
-        private ImageView userProfile, postImage, like, comment;
+        private TextView userName, postText, likesCount, dislikesCount,postTime;
+        private ImageView userProfile, postImage, like, comment, dislike;
         public MyViewHolder(View itemView){
             super(itemView);
 
@@ -179,8 +248,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             userProfile = itemView.findViewById(R.id.userdp);
             postImage = itemView.findViewById(R.id.postImage);
             like = itemView.findViewById(R.id.like);
+            dislike = itemView.findViewById(R.id.dislike);
             comment = itemView.findViewById(R.id.comment);
             likesCount = itemView.findViewById(R.id.likesCount);
+            dislikesCount = itemView.findViewById(R.id.dislikesCount);
             postTime = itemView.findViewById(R.id.postTime);
         }
     }
