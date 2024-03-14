@@ -32,6 +32,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -97,7 +98,7 @@ public class Upload_post extends AppCompatActivity {
                                                     PostModel postModel = new PostModel(id,
                                                             FirebaseAuth.getInstance().getUid(),
                                                             postText.getText().toString(),
-                                                            uri.toString(),"0", "0", Calendar.getInstance().getTimeInMillis());
+                                                            uri.toString(),"0", "0",  System.currentTimeMillis());
 
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Posts")
@@ -124,7 +125,7 @@ public class Upload_post extends AppCompatActivity {
                     PostModel postModel = new PostModel(id,
                             FirebaseAuth.getInstance().getUid(),
                             postText.getText().toString(),
-                            null,"0", "0", Calendar.getInstance().getTimeInMillis());
+                            null,"0", "0", System.currentTimeMillis());
 
                     FirebaseFirestore.getInstance()
                             .collection("Posts")
@@ -203,7 +204,7 @@ public class Upload_post extends AppCompatActivity {
                             Glide.with(Upload_post.this).load(userProfileImage).into(userdp);
                         }
                         if (userName != null) {
-                            username.setText(userName);  // Assuming username is the TextView in your Upload_post activity
+                            username.setText(userName);
                         }
                     }
                 })

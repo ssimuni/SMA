@@ -1,6 +1,7 @@
 package com.example.simu;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,7 +65,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         }
 
         holder.postText.setText(postModel.getPostText());
-
+        holder.likesCount.setText(String.valueOf(postModel.getPostLikes()));
+        holder.postTime.setText(formatTime(postModel.getPostingTime()));
+        holder.comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,CommentsActivity.class);
+                intent.putExtra("id", postModel.getPostId());
+                context.startActivity(intent);
+            }
+        });
 
         FirebaseFirestore.getInstance()
                 .collection("Likes")
@@ -72,25 +86,31 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                            String data=documentSnapshot.getString("postId");
                            if(data!=null){
                                postModel.setLiked(true);
-                               holder.like.setImageResource(R.drawable.like);
+                               holder.like.setImageResource(R.drawable.likef);
                            }
                            else {
                                postModel.setLiked(false);
-                               holder.like.setImageResource(R.drawable.like_black);
+                               holder.like.setImageResource(R.drawable.like_blackf);
                            }
                        }else {
                            postModel.setLiked(false);
-                           holder.like.setImageResource(R.drawable.like_black);
+                           holder.like.setImageResource(R.drawable.like_blackf);
                        }
                     }
                 });
- //       postModel.setLiked(false);
+
         holder.like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(postModel.isLiked()){
                     postModel.setLiked(false);
-                    holder.like.setImageResource(R.drawable.like_black);
+                    holder.like.setImageResource(R.drawable.like_blackf);
+
+                    int likes = Integer.parseInt(postModel.getPostLikes());
+                    if (likes > 0) {
+                        postModel.setPostLikes(String.valueOf(likes - 1));
+                    }
+
                     FirebaseFirestore.getInstance()
                             .collection("Likes")
                             .document(postModel.getPostId()+ FirebaseAuth.getInstance().getUid())
@@ -98,12 +118,26 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 }
                 else {
                     postModel.setLiked(true);
-                    holder.like.setImageResource(R.drawable.like);
+                    holder.like.setImageResource(R.drawable.likef);
+
+                    int likes = Integer.parseInt(postModel.getPostLikes());
+                    postModel.setPostLikes(String.valueOf(likes + 1));
+
                     FirebaseFirestore.getInstance()
                             .collection("Likes")
                             .document(postModel.getPostId()+ FirebaseAuth.getInstance().getUid())
                             .set(new PostModel("just check if null"));
                 }
+                FirebaseFirestore.getInstance()
+                        .collection("Posts")
+                        .document(postModel.getPostId())
+                        .update("postLikes", postModel.getPostLikes())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                notifyDataSetChanged();
+                            }
+                        });
             }
         });
 
@@ -115,12 +149,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                UserModel userModel=documentSnapshot.toObject(UserModel.class);
-//                assert userModel != null;
-//                if(userModel.getUserProfile()!=null){
-//                    Glide.with(context).load(userModel.getUserProfile()).into(holder.userProfile);
-//                    holder.userName.setText(userModel.getUserName());
-//                }
+
                 if (documentSnapshot.exists()) {
                     String profileImageUrl = documentSnapshot.getString("profileImageUrl");
                     String username = documentSnapshot.getString("name");
@@ -140,7 +169,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView userName, postText;
+        private TextView userName, postText, likesCount, postTime;
         private ImageView userProfile, postImage, like, comment;
         public MyViewHolder(View itemView){
             super(itemView);
@@ -151,6 +180,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             postImage = itemView.findViewById(R.id.postImage);
             like = itemView.findViewById(R.id.like);
             comment = itemView.findViewById(R.id.comment);
+            likesCount = itemView.findViewById(R.id.likesCount);
+            postTime = itemView.findViewById(R.id.postTime);
         }
+    }
+
+    private String formatTime(long postingTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Dhaka"));
+        return sdf.format(new Date(postingTime));
     }
 }

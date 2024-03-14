@@ -8,8 +8,8 @@
     android:background="@drawable/wave">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="300dp"
-        android:layout_height="350dp"
+        android:layout_width="320dp"
+        android:layout_height="450dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         app:cardCornerRadius="30dp"
@@ -43,6 +43,7 @@
                 android:layout_marginTop="50dp"
                 android:numStars="5"
                 android:stepSize="1.0"
+                android:layout_gravity="center_horizontal"
                 >
             </RatingBar>
 
@@ -67,6 +68,29 @@
                 android:textSize="26sp"
                 android:visibility="invisible"
                 android:layout_gravity="center_horizontal"
+                />
+
+            <TextView
+                android:id="@+id/avgRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Average Rate: "
+                android:textColor="@color/basic"
+                android:textSize="26sp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <TextView
+                android:id="@+id/numOfPeopleRatedUs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Number of people who have rated us:"
+                android:textColor="@color/basic"
+                android:textSize="20sp"
+                android:layout_gravity="center_horizontal"
+                android:textAlignment="center"
+                android:layout_marginTop="10dp"
                 />
 
         </LinearLayout>

@@ -20,14 +20,14 @@
    <LinearLayout
        android:id="@+id/level1"
        android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:gravity="center"
+       android:layout_height="180dp"
+       android:gravity="center_horizontal"
        android:layout_marginTop="-50dp">
 
       <androidx.cardview.widget.CardView
           android:id="@+id/about"
-          android:layout_width="130dp"
-          android:layout_height="130dp"
+          android:layout_width="120dp"
+          android:layout_height="120dp"
           android:layout_rowWeight="1"
           android:layout_columnWeight="1"
           android:layout_margin="12dp"
@@ -60,8 +60,8 @@
 
       <androidx.cardview.widget.CardView
           android:id="@+id/profile"
-          android:layout_width="130dp"
-          android:layout_height="130dp"
+          android:layout_width="120dp"
+          android:layout_height="120dp"
           android:layout_rowWeight="1"
           android:layout_columnWeight="1"
           android:layout_margin="12dp"
@@ -89,7 +89,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
          </LinearLayout>
-
       </androidx.cardview.widget.CardView>
 
    </LinearLayout>
@@ -99,13 +98,14 @@
    <LinearLayout
        android:id="@+id/level2"
        android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:gravity="center">
+       android:layout_height="180dp"
+       android:gravity="center_horizontal"
+       android:layout_marginTop="-30dp">
 
       <androidx.cardview.widget.CardView
           android:id="@+id/feed"
-          android:layout_width="130dp"
-          android:layout_height="130dp"
+          android:layout_width="120dp"
+          android:layout_height="120dp"
           android:layout_rowWeight="1"
           android:layout_columnWeight="1"
           android:layout_margin="12dp"
@@ -138,8 +138,8 @@
 
       <androidx.cardview.widget.CardView
           android:id="@+id/rating"
-          android:layout_width="130dp"
-          android:layout_height="130dp"
+          android:layout_width="120dp"
+          android:layout_height="120dp"
           android:layout_rowWeight="1"
           android:layout_columnWeight="1"
           android:layout_margin="12dp"
@@ -168,6 +168,82 @@
                 android:textStyle="bold" />
          </LinearLayout>
 
+      </androidx.cardview.widget.CardView>
+
+   </LinearLayout>
+
+   <LinearLayout
+       android:id="@+id/level3"
+       android:layout_width="match_parent"
+       android:layout_height="180dp"
+       android:gravity="center_horizontal"
+       android:layout_marginTop="-30dp">
+
+      <androidx.cardview.widget.CardView
+          android:id="@+id/location"
+          android:layout_width="120dp"
+          android:layout_height="120dp"
+          android:layout_rowWeight="1"
+          android:layout_columnWeight="1"
+          android:layout_margin="12dp"
+          app:cardCornerRadius="15dp"
+          app:cardElevation="12dp">
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:gravity="center"
+             android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/location" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Google Map"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+         </LinearLayout>
+
+      </androidx.cardview.widget.CardView>
+
+      <androidx.cardview.widget.CardView
+          android:id="@+id/weather"
+          android:layout_width="120dp"
+          android:layout_height="120dp"
+          android:layout_rowWeight="1"
+          android:layout_columnWeight="1"
+          android:layout_margin="12dp"
+          app:cardCornerRadius="15dp"
+          app:cardElevation="12dp">
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:gravity="center"
+             android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/weather" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Weather"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+         </LinearLayout>
       </androidx.cardview.widget.CardView>
 
    </LinearLayout>

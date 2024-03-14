@@ -133,7 +133,7 @@ public class Register extends AppCompatActivity {
                 if ("Officer".equals(designation)) {
                     officerSpinner.setVisibility(View.VISIBLE);
 
-                    String[] officerLevels = {"Select Level", "Union level", "Upozela level", "District level", "Division level"};
+                    String[] officerLevels = {"Select Level", "Union level Officer", "Upozela level Officer", "District level Officer", "Division level Officer"};
                     ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -156,9 +156,6 @@ public class Register extends AppCompatActivity {
                 } else {
                     officerSpinner.setVisibility(View.INVISIBLE);
                 }
-
-
-
 
             }
 
