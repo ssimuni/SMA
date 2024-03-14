@@ -12,7 +12,7 @@ public class Rating extends AppCompatActivity {
 
     RatingBar mRating;
     Button mSubmit;
-    TextView mThank;
+    TextView mThank, avgRate, numOfPeopleRatedUs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +22,8 @@ public class Rating extends AppCompatActivity {
         mRating = findViewById(R.id.rating);
         mSubmit = findViewById(R.id.submit);
         mThank = findViewById(R.id.thank);
+        avgRate = findViewById(R.id.avgRate);
+        numOfPeopleRatedUs = findViewById(R.id.numOfPeopleRatedUs);
 
         mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override

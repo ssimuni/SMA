@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +59,8 @@ public class Upload_post extends AppCompatActivity {
     Bitmap selectedImageBitmap;
     ImageView userdp;
     TextView username;
+    ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class Upload_post extends AppCompatActivity {
         postText = findViewById(R.id.postText);
         userdp = findViewById(R.id.userdp);
         username = findViewById(R.id.username);
+        progressBar  = findViewById(R.id.progressBar);
 
         loadUserProfileImage();
 
@@ -77,6 +81,7 @@ public class Upload_post extends AppCompatActivity {
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
                 String id = UUID.randomUUID().toString();
                 StorageReference storageRef = FirebaseStorage.getInstance().getReference("Posts/" + id + "image.png");
 
@@ -92,7 +97,7 @@ public class Upload_post extends AppCompatActivity {
                                     storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
-
+                                                    progressBar.setVisibility(View.GONE);
                                                     finish();
                                                     Toast.makeText(Upload_post.this, "Posted", Toast.LENGTH_SHORT).show();
                                                     PostModel postModel = new PostModel(id,

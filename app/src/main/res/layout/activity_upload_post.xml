@@ -116,4 +116,13 @@
       android:backgroundTint="@color/basic"
       app:cornerRadius = "20dp"/>
 
-  </LinearLayout>
+  <ProgressBar
+      android:id="@+id/progressBar"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:layout_marginTop="10dp"
+      android:visibility="invisible" />
+
+
+</LinearLayout>
