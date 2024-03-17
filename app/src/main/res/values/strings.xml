@@ -50,4 +50,8 @@
     <string name="upload_post_here">Upload Post here...</string>
     <string name="add_photo">Add Photo</string>
     <string name="post">Post</string>
+    <string name="average_rate">Average Rate: %.1f</string>
+    <string name="num_people_rated">Number of people who have rated us: %d</string>
+    <string name="average_rat">"Average Rate: "</string>
+    <string name="number_of_people_who_have_rated_us">"Number of people who have rated us: "</string>
 </resources>
