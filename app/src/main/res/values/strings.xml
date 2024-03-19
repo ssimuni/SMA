@@ -54,4 +54,11 @@
     <string name="num_people_rated">Number of people who have rated us: %d</string>
     <string name="average_rat">"Average Rate: "</string>
     <string name="number_of_people_who_have_rated_us">"Number of people who have rated us: "</string>
+    <string name="celcius">45C</string>
+    <string name="description">Haze</string>
+    <string name="weather_text">Weather</string>
+    <string name="min_temperature">Min Temperature</string>
+    <string name="max_temperature">Max Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure">Pressure</string>
 </resources>
