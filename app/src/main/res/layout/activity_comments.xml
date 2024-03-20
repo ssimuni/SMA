@@ -13,12 +13,13 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/commentSendingLayout"/>
 
+
     <RelativeLayout
         android:id="@+id/commentSendingLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp">
+        android:layout_above="@id/nextprev"
+        android:layout_marginBottom="50dp">
 
         <EditText
             android:layout_toStartOf="@id/sendComment"
@@ -37,4 +38,44 @@
             android:text="Send"/>
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/pageLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_above="@id/nextprev"
+        android:gravity="center"
+        android:padding="10dp">
+
+    </LinearLayout>
+
+    <!-- LinearLayout for next and previous buttons -->
+    <LinearLayout
+        android:id="@+id/nextprev"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/prevButton"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="Previous"
+            android:textSize="15sp"
+            android:backgroundTint="@color/basic"
+            app:cornerRadius="20dp"/>
+
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="Next"
+            android:textSize="15sp"
+            android:backgroundTint="@color/basic"
+            app:cornerRadius="20dp"/>
+
+    </LinearLayout>
 </RelativeLayout>

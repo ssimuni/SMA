@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyViewHolder>{
 
     private Context context;
-    private List<CommentModel> postModelList;
+    List<CommentModel> postModelList;
 
     public CommentsAdapter(Context context) {
         this.context = context;
