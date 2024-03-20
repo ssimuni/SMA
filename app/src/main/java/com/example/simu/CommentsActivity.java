@@ -93,14 +93,12 @@ public class CommentsActivity extends AppCompatActivity {
                             return;
                         }
 
-                        // Calculate the total number of pages based on the number of ratings and comments
                         List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
                         int totalItems = documents.size();
-                        totalPages = (totalItems + 4) / 5; // Round up to the nearest whole number
+                        totalPages = (totalItems + 4) / 5;
 
                         commentsAdapter.clearPost();
 
-                        // Display ratings and comments for the current page
                         int startIndex = currentPage * 5;
                         int endIndex = Math.min(startIndex + 5, totalItems);
                         for (int i = startIndex; i < endIndex; i++) {
@@ -164,8 +162,6 @@ public class CommentsActivity extends AppCompatActivity {
 //                    }
 //                });
 //    }
-
-
 
 
     private void comment(String comment) {

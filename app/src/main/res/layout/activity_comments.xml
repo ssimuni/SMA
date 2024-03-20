@@ -38,18 +38,21 @@
             android:text="Send"/>
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/pageLayout"
-        android:layout_width="match_parent"
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_above="@id/nextprev"
-        android:gravity="center"
-        android:padding="10dp">
+        android:layout_above="@id/nextprev">
+        <LinearLayout
+            android:id="@+id/pageLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+        </LinearLayout>
+    </HorizontalScrollView>
 
-    </LinearLayout>
 
-    <!-- LinearLayout for next and previous buttons -->
     <LinearLayout
         android:id="@+id/nextprev"
         android:layout_width="match_parent"
