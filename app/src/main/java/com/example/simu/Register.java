@@ -243,7 +243,6 @@ public class Register extends AppCompatActivity {
                                     return;
                                 }
 
-                                // Check if there are any documents with the entered username
                                 if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                                     mUsername.setError("Username already taken");
                                 } else {
@@ -313,7 +312,6 @@ public class Register extends AppCompatActivity {
                                     userID = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
                                     DocumentReference documentReference = fstore.collection("users").document(userID);
 
-                                    // Create a map to store user details
                                     Map<String, Object> user = new HashMap<>();
                                     user.put("name", name);
                                     user.put("address", address);
@@ -325,7 +323,6 @@ public class Register extends AppCompatActivity {
                                     user.put("username", username);
                                     user.put("number", pnumber);
 
-                                    // Add the user details to Firestore
                                     documentReference.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
@@ -376,12 +373,10 @@ public class Register extends AppCompatActivity {
     private void saveImageUrlToFirestore(String imageUrl) {
         DocumentReference documentReference = fstore.collection("users").document(userID);
 
-        // Update the user document with the image URL
         documentReference.update("profileImageUrl", imageUrl)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Image URL saved to Firestore");
-                        // You can perform additional actions if needed
                     } else {
                         Log.e(TAG, "Failed to save image URL to Firestore: " + task.getException());
                     }
@@ -405,26 +400,24 @@ public class Register extends AppCompatActivity {
     public void showDatePickerDialog(View view) {
         final EditText dobEditText = findViewById(R.id.dob);
 
-        // Get the current date
+
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Create a DatePickerDialog and set the date picker callback
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this, R.style.DatePickerTheme,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
-                        // Update the EditText with the selected date
                         String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
                         dobEditText.setText(selectedDate);
                     }
                 },
                 year, month, day);
 
-        // Show the DatePickerDialog
         datePickerDialog.show();
     }
 }

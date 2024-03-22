@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ public class CommentsActivity extends AppCompatActivity {
     private String postTd;
     private CommentsAdapter commentsAdapter;
     private FirebaseFirestore firestore;
+    EditText commentEd;
 
     private int currentPage = 0;
     private int totalPages = 0;
@@ -50,6 +52,7 @@ public class CommentsActivity extends AppCompatActivity {
         binding.recycler.setAdapter(commentsAdapter);
         binding.recycler.setLayoutManager(new LinearLayoutManager(this));
         firestore = FirebaseFirestore.getInstance();
+        commentEd = findViewById(R.id.commentEd);
 
         loadComments();
 
@@ -60,6 +63,7 @@ public class CommentsActivity extends AppCompatActivity {
                 if(comment.trim().length()>0){
                     comment(comment);
                 }
+                commentEd.setText(" ");
             }
         });
 
@@ -85,6 +89,7 @@ public class CommentsActivity extends AppCompatActivity {
 
     private void loadComments() {
         firestore.collection("Comments")
+                .whereEqualTo("postId", postTd)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -107,7 +112,7 @@ public class CommentsActivity extends AppCompatActivity {
                             CommentModel commentModel = documentSnapshot.toObject(CommentModel.class);
                             commentsAdapter.addPost(commentModel);
                         }
-                       updatePageNumbers();
+                        updatePageNumbers();
                     }
                 });
     }

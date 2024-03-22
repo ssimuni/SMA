@@ -130,6 +130,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                     postModel.setLiked(false);
                     holder.like.setImageResource(R.drawable.like_blackf);
 
+                    holder.dislike.setEnabled(true);
+
                     int likes = Integer.parseInt(postModel.getPostLikes());
                     if (likes > 0) {
                         postModel.setPostLikes(String.valueOf(likes - 1));
@@ -143,6 +145,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 else {
                     postModel.setLiked(true);
                     holder.like.setImageResource(R.drawable.likef);
+
+                    holder.dislike.setEnabled(false);
 
                     int likes = Integer.parseInt(postModel.getPostLikes());
                     postModel.setPostLikes(String.valueOf(likes + 1));
@@ -168,13 +172,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         holder.dislike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int dislikes = 0; // Initialize dislikes count
+                int dislikes = 0;
                 if (postModel.getPostDislikes() != null) {
                     dislikes = Integer.parseInt(postModel.getPostDislikes());
                 }
                 if (postModel.isDisliked()) {
                     postModel.setDisliked(false);
                     holder.dislike.setImageResource(R.drawable.dislike_black);
+
+                    holder.like.setEnabled(true);
 
                     if (dislikes > 0) {
                         postModel.setPostDislikes(String.valueOf(dislikes - 1));
@@ -187,6 +193,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 } else {
                     postModel.setDisliked(true);
                     holder.dislike.setImageResource(R.drawable.dislike_blue);
+
+                    holder.like.setEnabled(false);
 
                     postModel.setPostDislikes(String.valueOf(dislikes + 1));
 

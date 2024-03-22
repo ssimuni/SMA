@@ -100,6 +100,7 @@ public class Upload_post extends AppCompatActivity {
                                                     progressBar.setVisibility(View.GONE);
                                                     finish();
                                                     Toast.makeText(Upload_post.this, "Posted", Toast.LENGTH_SHORT).show();
+                                                    startActivity(new Intent(Upload_post.this, NewsFeed.class));
                                                     PostModel postModel = new PostModel(id,
                                                             FirebaseAuth.getInstance().getUid(),
                                                             postText.getText().toString(),
@@ -126,7 +127,10 @@ public class Upload_post extends AppCompatActivity {
                                 }
                             });
                 }else {
+                    progressBar.setVisibility(View.GONE);
+                   finish();
                     Toast.makeText(Upload_post.this, "Posted", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(Upload_post.this, NewsFeed.class));
                     PostModel postModel = new PostModel(id,
                             FirebaseAuth.getInstance().getUid(),
                             postText.getText().toString(),

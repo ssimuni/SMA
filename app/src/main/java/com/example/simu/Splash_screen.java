@@ -32,7 +32,6 @@ public class Splash_screen extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         fAuth = FirebaseAuth.getInstance();
-        //ImageView logoImageView = findViewById(R.id.logo);
 
         WebView webView = findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -47,7 +46,7 @@ public class Splash_screen extends AppCompatActivity {
             public void run() {
                 checkUserAuthentication();
             }
-        }, 2000);
+        }, 3000);
 
     }
 

@@ -45,6 +45,8 @@ public class NewsFeed extends AppCompatActivity {
 
         postsAdapter = new PostsAdapter(this);
         postRecyclerView.setAdapter(postsAdapter);
+
+
         loadPosts();
         loadUserProfileImage();
 
@@ -52,7 +54,9 @@ public class NewsFeed extends AppCompatActivity {
 
         mUp_post.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { startActivity(new Intent(NewsFeed.this, Upload_post.class));}
+            public void onClick(View v) {
+                startActivity(new Intent(NewsFeed.this, Upload_post.class));
+            }
         });
     }
 
