@@ -1,7 +1,7 @@
 package com.example.simu;
 
 public class PostModel {
-    private String postId, userId, postText, postImage, postLikes, postDislikes ,postComments;
+    private String postId, userId, postText, postImage, postLikes, postDislikes ,postComments, locationName;
     private long postingTime;
     private boolean isLiked;
     private boolean isDisliked;
@@ -17,7 +17,16 @@ public class PostModel {
         this.postingTime = postingTime;
     }
 
+
     public PostModel() {
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
     public PostModel(String postId) {

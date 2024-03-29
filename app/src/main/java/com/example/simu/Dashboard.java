@@ -16,6 +16,7 @@ public class Dashboard extends AppCompatActivity {
 
     private CardView location;
     private CardView weather;
+    private CardView attendance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,7 @@ public class Dashboard extends AppCompatActivity {
         newsFeed = findViewById(R.id.level2).findViewById(R.id.feed);
         location = findViewById(R.id.level3).findViewById(R.id.location);
         weather = findViewById(R.id.level3).findViewById(R.id.weather);
+        attendance = findViewById(R.id.level4).findViewById(R.id.attendance);
 
         profileCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +65,11 @@ public class Dashboard extends AppCompatActivity {
         weather.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { startActivity(new Intent(Dashboard.this, WeatherActivity.class));}
+        });
+
+        attendance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { startActivity(new Intent(Dashboard.this, Attendance.class));}
         });
     }
 }

@@ -20,50 +20,56 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 app:cardCornerRadius="20dp"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:layout_centerVertical="true">
 
                 <ImageView
                     android:id="@+id/userdp"
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/profile"
                     />
             </androidx.cardview.widget.CardView>
 
-<!--            <TextView-->
-<!--                android:id="@+id/username"-->
-<!--                android:layout_toEndOf="@id/dp"-->
-<!--                android:text="Simu"-->
-<!--                android:padding="15dp"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:textSize="20sp"-->
-<!--                android:layout_centerVertical="true">-->
-<!--            </TextView>-->
 
             <LinearLayout
+                android:id="@+id/usernamepostingtime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_toEndOf="@id/dp"
                 android:layout_centerVertical="true">
-                            <TextView
-                                android:id="@+id/username"
-                                android:text="Simu"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textSize="18sp"
-                                android:layout_centerVertical="true">
-                            </TextView>
                 <TextView
-                    android:id="@+id/postTime"
-                    android:text="Simu"
+                    android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    >
-                </TextView>
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/postTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/locationName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="location"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toEndOf="@id/usernamepostingtime"
+                android:layout_centerVertical="true">
+
+                <ImageView
+                    android:id="@+id/locationImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/profile"/>
+
             </LinearLayout>
         </RelativeLayout>
 

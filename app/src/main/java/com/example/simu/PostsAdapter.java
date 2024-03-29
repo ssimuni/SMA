@@ -2,6 +2,7 @@ package com.example.simu;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -238,6 +239,28 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 }
             }
         });
+
+
+        // Inside onBindViewHolder method of PostsAdapter
+        String locationName = postModel.getLocationName();
+        if (locationName != null && !locationName.isEmpty()) {
+            holder.locationName.setText("Location: " + locationName);
+            holder.locationName.setVisibility(View.VISIBLE);
+
+            // Use the Google Maps Static API to fetch the static map image
+            String staticMapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + locationName +
+                    "&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7C" + locationName +
+                    "&key=AIzaSyD9gvzufn6LtMF7Nm0wRdqC4s9tpNjp4Po"; // Replace YOUR_API_KEY with your actual API key
+
+
+            Uri uri = Uri.parse(staticMapUrl);
+            holder.locationImage.setImageURI(uri);
+            holder.locationImage.setVisibility(View.VISIBLE);
+        } else {
+            holder.locationName.setVisibility(View.GONE);
+            holder.locationImage.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -246,8 +269,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView userName, postText, likesCount, dislikesCount,postTime;
-        private ImageView userProfile, postImage, like, comment, dislike;
+        private TextView userName, postText, likesCount, dislikesCount,postTime, locationName;
+        private ImageView userProfile, postImage, like, comment, dislike, locationImage;
         public MyViewHolder(View itemView){
             super(itemView);
 
@@ -261,6 +284,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             likesCount = itemView.findViewById(R.id.likesCount);
             dislikesCount = itemView.findViewById(R.id.dislikesCount);
             postTime = itemView.findViewById(R.id.postTime);
+            locationName = itemView.findViewById(R.id.locationName);
+            locationImage = itemView.findViewById(R.id.locationImage);
         }
     }
 

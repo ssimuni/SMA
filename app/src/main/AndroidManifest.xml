@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Simu"
         tools:targetApi="31">
         <activity
+            android:name=".Attendance"
+            android:exported="false" />
+        <activity
             android:name=".WeatherActivity"
             android:exported="false" />
         <activity
@@ -51,6 +54,12 @@
             android:exported="false" />
         <activity
             android:name=".MapsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ActivitiesFeed"
+            android:exported="false" />
+        <activity
+            android:name=".Upload_attendance"
             android:exported="false" />
         <activity
             android:name=".Splash_screen"

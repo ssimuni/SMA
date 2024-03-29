@@ -77,7 +77,7 @@ ActivityWeatherBinding binding;
                     main to = weatherData.getMain();
 
                     binding.celcius.setText(String.valueOf(to.getTemp())+"\u2103");
-                    binding.maxTemp.setText(String.valueOf(to.getFeels_like()));
+                    binding.maxTemp.setText(String.valueOf(to.getFeels_like())+"\u2103");
                     binding.minTemp.setText(String.valueOf(to.getTemp_min())+"\u2103");
                     binding.pressure.setText(String.valueOf(to.getPressure()));
                     binding.humidity.setText(String.valueOf(to.getHumidity()));

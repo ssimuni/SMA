@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Upload_post"
+    tools:context=".Upload_attendance"
     android:orientation="vertical">
 
   <androidx.cardview.widget.CardView
@@ -110,7 +110,7 @@
       android:layout_gravity="center"
       android:fontFamily="sans-serif"
       android:layout_height="50dp"
-      android:text="Upload"
+      android:text="Give Attendance"
       android:textSize="15sp"
       android:backgroundTint="@color/basic"
       app:cornerRadius = "20dp"/>

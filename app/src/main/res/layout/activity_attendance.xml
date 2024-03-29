@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Attendance"
+    android:background="@drawable/wave">
+    <Button
+        android:id="@+id/entry"
+        android:layout_marginTop="250dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Entry: 8:45 - 9.15"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+    <Button
+        android:id="@+id/late"
+        android:layout_marginTop="300dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Late Entry: 9:16 - 10:00"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+
+
+    <Button
+        android:id="@+id/approved_leave"
+        android:layout_marginTop="350dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Approved Leave"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/training"
+        android:layout_marginTop="400dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Station Leave for Training/Workshop"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+
+
+    <Button
+        android:id="@+id/activites_feed"
+        android:layout_marginTop="450dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Activities Feed"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/exit"
+        android:layout_marginTop="500dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Exit"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/daily_report"
+        android:layout_marginTop="550dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Daily Report"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/monthly_report"
+        android:layout_marginTop="600dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Monthly Report"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
