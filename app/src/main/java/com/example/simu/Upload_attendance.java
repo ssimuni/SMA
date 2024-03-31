@@ -122,7 +122,7 @@ public class Upload_attendance extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     finish();
                     Toast.makeText(Upload_attendance.this, "Posted", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Upload_attendance.this, NewsFeed.class));
+                    startActivity(new Intent(Upload_attendance.this, ActivitiesFeed.class));
                     PostModel postModel = new PostModel(id,
                             FirebaseAuth.getInstance().getUid(),
                             postText.getText().toString(),

@@ -1,14 +1,22 @@
 package com.example.simu;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -27,41 +35,43 @@ import java.util.TimeZone;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder>{
+public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder> {
 
     private Context context;
     private List<PostModel> postModelList;
+    private LocationManager locationManager;
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
 
     public PostsAdapter(Context context) {
         this.context = context;
         postModelList = new ArrayList<>();
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
-    public void addPost(PostModel postModel){
+    public void addPost(PostModel postModel) {
         postModelList.add(postModel);
         notifyDataSetChanged();
     }
 
-    public void clearPost(){
+    public void clearPost() {
         postModelList.clear();
         notifyDataSetChanged();
     }
 
     @Nonnull
     @Override
-    public MyViewHolder onCreateViewHolder(@Nonnull ViewGroup parent, int viewType){
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_view,parent,false);
+    public MyViewHolder onCreateViewHolder(@Nonnull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_view, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@Nonnull MyViewHolder holder, int position){
+    public void onBindViewHolder(@Nonnull MyViewHolder holder, int position) {
         PostModel postModel = postModelList.get(position);
-        if(postModel.getPostImage()!=null){
+        if (postModel.getPostImage() != null) {
             holder.postImage.setVisibility(View.VISIBLE);
             Glide.with(context).load(postModel.getPostImage()).into(holder.postImage);
-        }
-        else {
+        } else {
             holder.postImage.setVisibility(View.GONE);
         }
 
@@ -72,7 +82,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context,CommentsActivity.class);
+                Intent intent = new Intent(context, CommentsActivity.class);
                 intent.putExtra("id", postModel.getPostId());
                 context.startActivity(intent);
             }
@@ -80,44 +90,42 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
 
         FirebaseFirestore.getInstance()
                 .collection("Likes")
-                        .document(postModel.getPostId()+ FirebaseAuth.getInstance().getUid())
-                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                .document(postModel.getPostId() + FirebaseAuth.getInstance().getUid())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                       if(documentSnapshot!=null){
-                           String data=documentSnapshot.getString("postId");
-                           if(data!=null){
-                               postModel.setLiked(true);
-                               holder.like.setImageResource(R.drawable.likef);
-                           }
-                           else {
-                               postModel.setLiked(false);
-                               holder.like.setImageResource(R.drawable.like_blackf);
-                           }
-                       }else {
-                           postModel.setLiked(false);
-                           holder.like.setImageResource(R.drawable.like_blackf);
-                       }
+                        if (documentSnapshot != null) {
+                            String data = documentSnapshot.getString("postId");
+                            if (data != null) {
+                                postModel.setLiked(true);
+                                holder.like.setImageResource(R.drawable.likef);
+                            } else {
+                                postModel.setLiked(false);
+                                holder.like.setImageResource(R.drawable.like_blackf);
+                            }
+                        } else {
+                            postModel.setLiked(false);
+                            holder.like.setImageResource(R.drawable.like_blackf);
+                        }
                     }
                 });
 
         FirebaseFirestore.getInstance()
                 .collection("Dislikes")
-                .document(postModel.getPostId()+ FirebaseAuth.getInstance().getUid())
+                .document(postModel.getPostId() + FirebaseAuth.getInstance().getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot!=null){
-                            String data=documentSnapshot.getString("postId");
-                            if(data!=null){
+                        if (documentSnapshot != null) {
+                            String data = documentSnapshot.getString("postId");
+                            if (data != null) {
                                 postModel.setDisliked(true);
                                 holder.dislike.setImageResource(R.drawable.dislike_blue);
-                            }
-                            else {
+                            } else {
                                 postModel.setDisliked(false);
                                 holder.dislike.setImageResource(R.drawable.dislike_black);
                             }
-                        }else {
+                        } else {
                             postModel.setDisliked(false);
                             holder.dislike.setImageResource(R.drawable.dislike_black);
                         }
@@ -127,7 +135,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         holder.like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(postModel.isLiked()){
+                if (postModel.isLiked()) {
                     postModel.setLiked(false);
                     holder.like.setImageResource(R.drawable.like_blackf);
 
@@ -140,10 +148,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
 
                     FirebaseFirestore.getInstance()
                             .collection("Likes")
-                            .document(postModel.getPostId()+ FirebaseAuth.getInstance().getUid())
+                            .document(postModel.getPostId() + FirebaseAuth.getInstance().getUid())
                             .delete();
-                }
-                else {
+                } else {
                     postModel.setLiked(true);
                     holder.like.setImageResource(R.drawable.likef);
 
@@ -154,7 +161,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
 
                     FirebaseFirestore.getInstance()
                             .collection("Likes")
-                            .document(postModel.getPostId()+ FirebaseAuth.getInstance().getUid())
+                            .document(postModel.getPostId() + FirebaseAuth.getInstance().getUid())
                             .set(new PostModel("just check if null"));
                 }
                 FirebaseFirestore.getInstance()
@@ -218,60 +225,39 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         });
 
 
-
         String uid = postModel.getUserId();
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                if (documentSnapshot.exists()) {
-                    String profileImageUrl = documentSnapshot.getString("profileImageUrl");
-                    String username = documentSnapshot.getString("name");
+                        if (documentSnapshot.exists()) {
+                            String profileImageUrl = documentSnapshot.getString("profileImageUrl");
+                            String username = documentSnapshot.getString("name");
 
-                    if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-                        Glide.with(context).load(profileImageUrl).into(holder.userProfile);
+                            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                                Glide.with(context).load(profileImageUrl).into(holder.userProfile);
+                            }
+                            holder.userName.setText(username);
+                        }
                     }
-                    holder.userName.setText(username);
-                }
-            }
-        });
-
-
-        // Inside onBindViewHolder method of PostsAdapter
-        String locationName = postModel.getLocationName();
-        if (locationName != null && !locationName.isEmpty()) {
-            holder.locationName.setText("Location: " + locationName);
-            holder.locationName.setVisibility(View.VISIBLE);
-
-            // Use the Google Maps Static API to fetch the static map image
-            String staticMapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + locationName +
-                    "&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7C" + locationName +
-                    "&key=AIzaSyD9gvzufn6LtMF7Nm0wRdqC4s9tpNjp4Po"; // Replace YOUR_API_KEY with your actual API key
-
-
-            Uri uri = Uri.parse(staticMapUrl);
-            holder.locationImage.setImageURI(uri);
-            holder.locationImage.setVisibility(View.VISIBLE);
-        } else {
-            holder.locationName.setVisibility(View.GONE);
-            holder.locationImage.setVisibility(View.GONE);
-        }
-
+                });
+        getLocationCoordinates(holder.locationText);
     }
 
     @Override
-    public int getItemCount(){
+    public int getItemCount() {
         return postModelList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView userName, postText, likesCount, dislikesCount,postTime, locationName;
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        private TextView userName, postText, likesCount, dislikesCount, postTime, locationText;
         private ImageView userProfile, postImage, like, comment, dislike, locationImage;
-        public MyViewHolder(View itemView){
+
+        public MyViewHolder(View itemView) {
             super(itemView);
 
             userName = itemView.findViewById(R.id.username);
@@ -284,7 +270,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             likesCount = itemView.findViewById(R.id.likesCount);
             dislikesCount = itemView.findViewById(R.id.dislikesCount);
             postTime = itemView.findViewById(R.id.postTime);
-            locationName = itemView.findViewById(R.id.locationName);
+            locationText = itemView.findViewById(R.id.locationText);
             locationImage = itemView.findViewById(R.id.locationImage);
         }
     }
@@ -293,5 +279,46 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Dhaka"));
         return sdf.format(new Date(postingTime));
+    }
+
+    private void getLocationCoordinates(TextView locationText) {
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                // Set the location coordinates in the TextView
+                locationText.setText("Latitude: " + latitude + ", Longitude: " + longitude);
+                Log.d("LocationListener", "Location updated - Latitude: " + latitude + ", Longitude: " + longitude);
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.d("LocationListener", "Provider enabled: " + provider);
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d("LocationListener", "Provider disabled: " + provider);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("LocationListener", "Status changed: " + provider + " - Status: " + status);
+            }
+        };
+
+        Log.d("getLocationCoordinates", "Requesting location updates...");
+        if (locationManager != null) {
+            if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("getLocationCoordinates", "Location permissions not granted. Requesting...");
+                ActivityCompat.requestPermissions((Activity) context, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                return;
+            }
+            Log.d("getLocationCoordinates", "Location permissions already granted. Requesting location updates...");
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
+        } else {
+            Log.e("getLocationCoordinates", "Location manager is null. Unable to request location updates.");
+        }
     }
 }
