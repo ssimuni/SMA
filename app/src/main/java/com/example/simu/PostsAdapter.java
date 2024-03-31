@@ -1,5 +1,6 @@
 package com.example.simu;
-
+import android.location.Address;
+import android.location.Geocoder;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +25,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +38,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder> {
 
@@ -290,6 +295,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 // Set the location coordinates in the TextView
                 locationText.setText("Latitude: " + latitude + ", Longitude: " + longitude);
                 Log.d("LocationListener", "Location updated - Latitude: " + latitude + ", Longitude: " + longitude);
+                locationManager.removeUpdates(this);
+                getAddressFromLocation(latitude, longitude, locationText);
             }
 
             @Override
@@ -319,6 +326,22 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
         } else {
             Log.e("getLocationCoordinates", "Location manager is null. Unable to request location updates.");
+        }
+    }
+    private void getAddressFromLocation(double latitude, double longitude, TextView locationText) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                StringBuilder addressStringBuilder = new StringBuilder();
+                for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                    addressStringBuilder.append(address.getAddressLine(i)).append(", ");
+                }
+                locationText.setText(addressStringBuilder.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
