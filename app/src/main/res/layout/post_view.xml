@@ -55,22 +55,15 @@
                     android:layout_height="wrap_content"
                     android:text="location"/>
 
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_toEndOf="@id/usernamepostingtime"
-                android:layout_centerVertical="true">
-
                 <ImageView
                     android:id="@+id/locationImage"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/profile"/>
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/profile"
+                    android:layout_marginBottom="10dp"/>
 
             </LinearLayout>
+
         </RelativeLayout>
 
         <TextView
@@ -106,14 +99,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textSize="20sp"/>
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:layout_weight="1"
                     android:layout_gravity="center"
                     android:id="@+id/like"
                     android:src="@drawable/like_blackf"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
@@ -123,14 +116,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:text="0"
-                    android:textSize="20sp"/>
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:layout_weight="1"
                     android:layout_gravity="center"
                     android:id="@+id/dislike"
                     android:src="@drawable/dislike_black"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
