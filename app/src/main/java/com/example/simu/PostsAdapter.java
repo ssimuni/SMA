@@ -312,10 +312,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             public void onLocationChanged(Location location) {
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
-                // Set the location coordinates in the TextView
+                locationManager.removeUpdates(this);
                 locationText.setText("Latitude: " + latitude + ", Longitude: " + longitude);
                 Log.d("LocationListener", "Location updated - Latitude: " + latitude + ", Longitude: " + longitude);
-                locationManager.removeUpdates(this);
                 getAddressFromLocation(latitude, longitude, locationText, locationImage);
             }
 
@@ -359,8 +358,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                     addressStringBuilder.append(address.getAddressLine(i)).append(", ");
                 }
                 locationText.setText(addressStringBuilder.toString());
-                String staticMapUrl = "https://staticmap.openstreetmap.de/staticmap.php?center=" + latitude + "," + longitude +
-                        "&zoom=15&size=400x400&markers=color:red%7Clabel:A%7C" + latitude + "," + longitude;
+                String staticMapUrl = "https://www.openstreetmap.org/export/embed.html?" +
+                        "bbox=" + (longitude - 0.01) + "," + (latitude - 0.01) + "," + (longitude + 0.01) + "," + (latitude + 0.01) +
+                        "&marker=" + latitude + "," + longitude +
+                        "&layers=ND";
+
                 Glide.with(context)
                         .load(staticMapUrl)
                         .into(locationImage);

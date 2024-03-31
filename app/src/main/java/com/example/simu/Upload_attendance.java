@@ -42,7 +42,6 @@ public class Upload_attendance extends AppCompatActivity {
     ActivityUploadAttendanceBinding binding;
     private Uri pickedImgUri;
     ImageView pickedImg;
-    ActivityResultLauncher<Intent> galleryLauncher;
     ActivityResultLauncher<Intent> cameraLauncher;
     LinearLayout addPhoto;
     String userID;
@@ -147,44 +146,13 @@ public class Upload_attendance extends AppCompatActivity {
                         }
                     }
                 });
-        galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            Uri selectedImageUri = data.getData();
-                            try {
-                                selectedImageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
-                                pickedImg.setImageBitmap(selectedImageBitmap);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                });
 
 
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(Upload_attendance.this);
-                builder.setTitle("Choose Image Source");
-                builder.setItems(new CharSequence[]{"Camera", "Gallery"}, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                cameraLauncher.launch(cameraIntent);
-                                break;
-                            case 1:
-                                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                galleryLauncher.launch(galleryIntent);
-                                break;
-                        }
-                    }
-                });
-                builder.show();
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                cameraLauncher.launch(cameraIntent);
             }
         });
 
