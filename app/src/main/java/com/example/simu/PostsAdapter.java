@@ -179,6 +179,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                                 notifyDataSetChanged();
                             }
                         });
+                FirebaseFirestore.getInstance()
+                        .collection("Attendance")
+                        .document(postModel.getPostId())
+                        .update("postLikes", postModel.getPostLikes())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                notifyDataSetChanged();
+                            }
+                        });
             }
         });
 
@@ -226,6 +236,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                                 notifyDataSetChanged();
                             }
                         });
+                FirebaseFirestore.getInstance()
+                        .collection("Attendance")
+                        .document(postModel.getPostId())
+                        .update("postLikes", postModel.getPostLikes())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                notifyDataSetChanged();
+                            }
+                        });
             }
         });
 
@@ -250,7 +270,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                         }
                     }
                 });
-        getLocationCoordinates(holder.locationText);
+        getLocationCoordinates(holder.locationText, holder.locationImage);
     }
 
     @Override
@@ -286,7 +306,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         return sdf.format(new Date(postingTime));
     }
 
-    private void getLocationCoordinates(TextView locationText) {
+    private void getLocationCoordinates(TextView locationText, ImageView locationImage) {
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -296,7 +316,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 locationText.setText("Latitude: " + latitude + ", Longitude: " + longitude);
                 Log.d("LocationListener", "Location updated - Latitude: " + latitude + ", Longitude: " + longitude);
                 locationManager.removeUpdates(this);
-                getAddressFromLocation(latitude, longitude, locationText);
+                getAddressFromLocation(latitude, longitude, locationText, locationImage);
             }
 
             @Override
@@ -328,7 +348,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             Log.e("getLocationCoordinates", "Location manager is null. Unable to request location updates.");
         }
     }
-    private void getAddressFromLocation(double latitude, double longitude, TextView locationText) {
+    private void getAddressFromLocation(double latitude, double longitude, TextView locationText, ImageView locationImage) {
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
@@ -339,6 +359,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                     addressStringBuilder.append(address.getAddressLine(i)).append(", ");
                 }
                 locationText.setText(addressStringBuilder.toString());
+                String staticMapUrl = "https://staticmap.openstreetmap.de/staticmap.php?center=" + latitude + "," + longitude +
+                        "&zoom=15&size=400x400&markers=color:red%7Clabel:A%7C" + latitude + "," + longitude;
+                Glide.with(context)
+                        .load(staticMapUrl)
+                        .into(locationImage);
             }
         } catch (IOException e) {
             e.printStackTrace();
