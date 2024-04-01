@@ -59,8 +59,7 @@
                     android:id="@+id/locationImage"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_marginBottom="10dp"
-                    android:src="@drawable/profile" />
+                    android:layout_marginBottom="10dp" />
 
             </LinearLayout>
 
@@ -107,6 +106,7 @@
                     android:id="@+id/like"
                     android:src="@drawable/like_blackf"
                     android:padding="5dp"
+                    android:paddingStart="-10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
@@ -114,7 +114,7 @@
                     android:id="@+id/dislikesCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="40dp"
+                    android:layout_marginStart="50dp"
                     android:text="0"
                     android:textSize="17sp"/>
 
@@ -124,6 +124,7 @@
                     android:id="@+id/dislike"
                     android:src="@drawable/dislike_black"
                     android:padding="5dp"
+                    android:paddingStart="-10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
