@@ -314,7 +314,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 double longitude = location.getLongitude();
                 locationManager.removeUpdates(this);
                 locationText.setText("Latitude: " + latitude + ", Longitude: " + longitude);
-                Log.d("LocationListener", "Location updated - Latitude: " + latitude + ", Longitude: " + longitude);
                 getAddressFromLocation(latitude, longitude, locationText, locationImage);
             }
 
@@ -334,14 +333,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             }
         };
 
-        Log.d("getLocationCoordinates", "Requesting location updates...");
         if (locationManager != null) {
             if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Log.d("getLocationCoordinates", "Location permissions not granted. Requesting...");
                 ActivityCompat.requestPermissions((Activity) context, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
                 return;
             }
-            Log.d("getLocationCoordinates", "Location permissions already granted. Requesting location updates...");
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
         } else {
             Log.e("getLocationCoordinates", "Location manager is null. Unable to request location updates.");

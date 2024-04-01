@@ -59,4 +59,6 @@ dependencies {
     implementation ("com.android.volley:volley:1.2.1")
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
     implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("commons-net:commons-net:3.8.0") // for NTPClient
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1") // for using ThreeTenABP library
 }
