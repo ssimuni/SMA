@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -41,6 +43,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -59,6 +62,7 @@ public class Upload_post extends AppCompatActivity {
     ProgressBar progressBar;
     private double latitude;
     private double longitude;
+    private String address;
     private LocationManager locationManager;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
 
@@ -107,7 +111,7 @@ public class Upload_post extends AppCompatActivity {
                                                     PostModel postModel = new PostModel(id,
                                                             FirebaseAuth.getInstance().getUid(),
                                                             postText.getText().toString(),
-                                                            uri.toString(),"0", "0","0",  System.currentTimeMillis(), latitude, longitude);
+                                                            uri.toString(),"0", "0","0",  System.currentTimeMillis(), latitude, longitude, address);
 
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Posts")
@@ -137,7 +141,7 @@ public class Upload_post extends AppCompatActivity {
                     PostModel postModel = new PostModel(id,
                             FirebaseAuth.getInstance().getUid(),
                             postText.getText().toString(),
-                            null,"0", "0","0", System.currentTimeMillis(), latitude, longitude);
+                            null,"0", "0","0", System.currentTimeMillis(), latitude, longitude, address);
 
                     FirebaseFirestore.getInstance()
                             .collection("Posts")
@@ -212,7 +216,7 @@ public class Upload_post extends AppCompatActivity {
                         "0", "0", "0",
                         System.currentTimeMillis(),
                         latitude,
-                        longitude);
+                        longitude, address);
 
                 // Save the PostModel object to Firestore
                 FirebaseFirestore.getInstance()
@@ -230,6 +234,7 @@ public class Upload_post extends AppCompatActivity {
 
                             }
                         });
+                getAddressFromLocation(latitude, longitude, id);
             }
 
             @Override
@@ -257,5 +262,53 @@ public class Upload_post extends AppCompatActivity {
         } else {
             Log.e("getLocationCoordinates", "Location manager is null. Unable to request location updates.");
         }
+    }
+
+    private void getAddressFromLocation(double latitude, double longitude, String id) {
+        Geocoder geocoder = new Geocoder(this);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String addressLine = address.getAddressLine(0);
+                String completeAddress = addressLine != null ? addressLine : "";
+                savePostToFirestore(id, completeAddress);
+            } else {
+                Log.e("getAddressFromLocation", "No address found for the given coordinates.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("getAddressFromLocation", "Error getting address from location: " + e.getMessage());
+        }
+    }
+
+    private void savePostToFirestore(String id, String address) {
+        PostModel postModel = new PostModel(id,
+                FirebaseAuth.getInstance().getUid(),
+                postText.getText().toString(),
+                null,
+                "0", "0", "0",
+                System.currentTimeMillis(),
+                latitude,
+                longitude,
+                address);
+
+        // Save the PostModel object to Firestore
+        FirebaseFirestore.getInstance()
+                .collection("Posts")
+                .document(id)
+                .set(postModel)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 }
