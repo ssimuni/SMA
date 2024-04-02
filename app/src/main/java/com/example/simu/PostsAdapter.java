@@ -44,13 +44,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
 
     private Context context;
     private List<PostModel> postModelList;
-    private LocationManager locationManager;
-    private static final int REQUEST_LOCATION_PERMISSION = 1;
 
     public PostsAdapter(Context context) {
         this.context = context;
         postModelList = new ArrayList<>();
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
     public void addPost(PostModel postModel) {
@@ -84,6 +81,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         holder.likesCount.setText(String.valueOf(postModel.getPostLikes()));
         holder.dislikesCount.setText(String.valueOf(postModel.getPostDislikes()));
         holder.postTime.setText(formatTime(postModel.getPostingTime()));
+        holder.locationText.setText(String.valueOf(postModel.getAddress()));
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -270,7 +268,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                         }
                     }
                 });
-        getLocationCoordinates(holder.locationText);
     }
 
     @Override
@@ -303,59 +300,5 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Dhaka"));
         return sdf.format(new Date(postingTime));
-    }
-
-    private void getLocationCoordinates(TextView locationText) {
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-                locationManager.removeUpdates(this);
-                locationText.setText("Latitude: " + latitude + ", Longitude: " + longitude);
-                getAddressFromLocation(latitude, longitude, locationText);
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                Log.d("LocationListener", "Provider enabled: " + provider);
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                Log.d("LocationListener", "Provider disabled: " + provider);
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                Log.d("LocationListener", "Status changed: " + provider + " - Status: " + status);
-            }
-        };
-
-        if (locationManager != null) {
-            if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions((Activity) context, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
-        } else {
-            Log.e("getLocationCoordinates", "Location manager is null. Unable to request location updates.");
-        }
-    }
-    private void getAddressFromLocation(double latitude, double longitude, TextView locationText) {
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                StringBuilder addressStringBuilder = new StringBuilder();
-                for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                    addressStringBuilder.append(address.getAddressLine(i)).append(", ");
-                }
-                locationText.setText(addressStringBuilder.toString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
