@@ -55,12 +55,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <ImageView
-                    android:id="@+id/locationImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginBottom="10dp" />
-
             </LinearLayout>
 
         </RelativeLayout>

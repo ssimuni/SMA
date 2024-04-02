@@ -89,6 +89,7 @@ public class CommentsActivity extends AppCompatActivity {
 
     private void loadComments() {
         firestore.collection("Comments")
+                .orderBy("commentTime", Query.Direction.DESCENDING)
                 .whereEqualTo("postId", postTd)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
@@ -171,7 +172,7 @@ public class CommentsActivity extends AppCompatActivity {
 
     private void comment(String comment) {
         String id = UUID.randomUUID().toString();
-        CommentModel commentModel = new CommentModel(id, postTd, FirebaseAuth.getInstance().getUid(), comment);
+        CommentModel commentModel = new CommentModel(id, postTd, FirebaseAuth.getInstance().getUid(), comment,  System.currentTimeMillis());
         FirebaseFirestore.getInstance()
                 .collection("Comments")
                 .document(id)

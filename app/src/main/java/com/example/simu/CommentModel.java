@@ -5,15 +5,25 @@ public class CommentModel {
     private String postId;
     private String userId;
     private String comment;
+    private long commentTime;
 
-    public CommentModel(String commentId, String postId, String userId, String comment) {
+    public CommentModel(String commentId, String postId, String userId, String comment, long commentTime) {
         this.commentId = commentId;
         this.postId = postId;
         this.userId = userId;
         this.comment = comment;
+        this.commentTime = commentTime;
     }
 
     public CommentModel() {
+    }
+
+    public long getCommentTime() {
+        return commentTime;
+    }
+
+    public void setCommentTime(long commentTime) {
+        this.commentTime = commentTime;
     }
 
     public String getCommentId() {

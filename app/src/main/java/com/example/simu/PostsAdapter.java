@@ -270,7 +270,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                         }
                     }
                 });
-        getLocationCoordinates(holder.locationText, holder.locationImage);
+        getLocationCoordinates(holder.locationText);
     }
 
     @Override
@@ -280,7 +280,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView userName, postText, likesCount, dislikesCount, postTime, locationText;
-        private ImageView userProfile, postImage, like, comment, dislike, locationImage;
+        private ImageView userProfile, postImage, like, comment, dislike;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -296,7 +296,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             dislikesCount = itemView.findViewById(R.id.dislikesCount);
             postTime = itemView.findViewById(R.id.postTime);
             locationText = itemView.findViewById(R.id.locationText);
-            locationImage = itemView.findViewById(R.id.locationImage);
         }
     }
 
@@ -306,7 +305,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         return sdf.format(new Date(postingTime));
     }
 
-    private void getLocationCoordinates(TextView locationText, ImageView locationImage) {
+    private void getLocationCoordinates(TextView locationText) {
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -314,7 +313,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 double longitude = location.getLongitude();
                 locationManager.removeUpdates(this);
                 locationText.setText("Latitude: " + latitude + ", Longitude: " + longitude);
-                getAddressFromLocation(latitude, longitude, locationText, locationImage);
+                getAddressFromLocation(latitude, longitude, locationText);
             }
 
             @Override
@@ -343,7 +342,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             Log.e("getLocationCoordinates", "Location manager is null. Unable to request location updates.");
         }
     }
-    private void getAddressFromLocation(double latitude, double longitude, TextView locationText, ImageView locationImage) {
+    private void getAddressFromLocation(double latitude, double longitude, TextView locationText) {
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
@@ -354,14 +353,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                     addressStringBuilder.append(address.getAddressLine(i)).append(", ");
                 }
                 locationText.setText(addressStringBuilder.toString());
-                String staticMapUrl = "https://www.openstreetmap.org/export/embed.html?" +
-                        "bbox=" + (longitude - 0.01) + "," + (latitude - 0.01) + "," + (longitude + 0.01) + "," + (latitude + 0.01) +
-                        "&marker=" + latitude + "," + longitude +
-                        "&layers=ND";
-
-                Glide.with(context)
-                        .load(staticMapUrl)
-                        .into(locationImage);
             }
         } catch (IOException e) {
             e.printStackTrace();
