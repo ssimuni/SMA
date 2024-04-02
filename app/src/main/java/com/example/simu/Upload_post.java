@@ -1,23 +1,17 @@
 package com.example.simu;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,13 +21,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.bumptech.glide.Glide;
+import com.example.simu.databinding.ActivityUploadAttendanceBinding;
 import com.example.simu.databinding.ActivityUploadPostBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -41,8 +41,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Calendar;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -59,7 +57,10 @@ public class Upload_post extends AppCompatActivity {
     ImageView userdp;
     TextView username;
     ProgressBar progressBar;
-
+    private double latitude;
+    private double longitude;
+    private LocationManager locationManager;
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +78,14 @@ public class Upload_post extends AppCompatActivity {
         loadUserProfileImage();
 
         binding = ActivityUploadPostBinding.inflate(getLayoutInflater());
+
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
                 String id = UUID.randomUUID().toString();
+                getLocationCoordinates(id);
                 StorageReference storageRef = FirebaseStorage.getInstance().getReference("Posts/" + id + "image.png");
 
                 if(selectedImageBitmap!=null){
@@ -98,12 +102,12 @@ public class Upload_post extends AppCompatActivity {
                                                 public void onSuccess(Uri uri) {
                                                     progressBar.setVisibility(View.GONE);
                                                     finish();
-                                                    Toast.makeText(Upload_post.this, "Posted", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(Upload_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
                                                     startActivity(new Intent(Upload_post.this, NewsFeed.class));
                                                     PostModel postModel = new PostModel(id,
                                                             FirebaseAuth.getInstance().getUid(),
                                                             postText.getText().toString(),
-                                                            uri.toString(),"0", "0","0",  System.currentTimeMillis());
+                                                            uri.toString(),"0", "0","0",  System.currentTimeMillis(), latitude, longitude);
 
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Posts")
@@ -127,13 +131,13 @@ public class Upload_post extends AppCompatActivity {
                             });
                 }else {
                     progressBar.setVisibility(View.GONE);
-                   finish();
-                    Toast.makeText(Upload_post.this, "Posted", Toast.LENGTH_SHORT).show();
+                    finish();
+                    Toast.makeText(Upload_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(Upload_post.this, NewsFeed.class));
                     PostModel postModel = new PostModel(id,
                             FirebaseAuth.getInstance().getUid(),
                             postText.getText().toString(),
-                            null,"0", "0","0", System.currentTimeMillis());
+                            null,"0", "0","0", System.currentTimeMillis(), latitude, longitude);
 
                     FirebaseFirestore.getInstance()
                             .collection("Posts")
@@ -191,5 +195,67 @@ public class Upload_post extends AppCompatActivity {
                         Toast.makeText(Upload_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    private void getLocationCoordinates(String id) {
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+
+                locationManager.removeUpdates(this);
+
+                PostModel postModel = new PostModel(id,
+                        FirebaseAuth.getInstance().getUid(),
+                        postText.getText().toString(),
+                        null,
+                        "0", "0", "0",
+                        System.currentTimeMillis(),
+                        latitude,
+                        longitude);
+
+                // Save the PostModel object to Firestore
+                FirebaseFirestore.getInstance()
+                        .collection("Posts")
+                        .document(id)
+                        .set(postModel)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.d("LocationListener", "Provider enabled: " + provider);
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d("LocationListener", "Provider disabled: " + provider);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("LocationListener", "Status changed: " + provider + " - Status: " + status);
+            }
+        };
+
+        if (locationManager != null) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                return;
+            }
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
+        } else {
+            Log.e("getLocationCoordinates", "Location manager is null. Unable to request location updates.");
+        }
     }
 }
