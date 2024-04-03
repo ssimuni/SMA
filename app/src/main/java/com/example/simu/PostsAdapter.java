@@ -81,7 +81,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         holder.likesCount.setText(String.valueOf(postModel.getPostLikes()));
         holder.dislikesCount.setText(String.valueOf(postModel.getPostDislikes()));
         holder.postTime.setText(formatTime(postModel.getPostingTime()));
-        holder.locationText.setText(String.valueOf(postModel.getAddress()));
+        holder.locationText.setText(postModel.getAddress());
+
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
