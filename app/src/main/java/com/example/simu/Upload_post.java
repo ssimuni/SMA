@@ -136,7 +136,8 @@ public class Upload_post extends AppCompatActivity {
                                     Toast.makeText(Upload_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
-                }else {
+                }
+                else if(!postText.getText().toString().isEmpty()){
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(Upload_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Upload_post.this, NewsFeed.class);
@@ -152,6 +153,12 @@ public class Upload_post extends AppCompatActivity {
                             .collection("Posts")
                             .document(id)
                             .set(postModel);
+                }
+                else {
+                    progressBar.setVisibility(View.GONE);
+                    postButton.setEnabled(false);
+                    Toast.makeText(Upload_post.this, "Please write something or upload image!!!", Toast.LENGTH_SHORT).show();
+                    postButton.setEnabled(true);
                 }
             }
         });
@@ -274,8 +281,8 @@ public class Upload_post extends AppCompatActivity {
                                             Toast.makeText(Upload_post.this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
-                        } else {
-                            // If no image is selected, create PostModel without image URL
+                        }
+                        else if(!postText.getText().toString().isEmpty()) {
                             PostModel postModel = new PostModel(id,
                                     FirebaseAuth.getInstance().getUid(),
                                     postText.getText().toString(),
@@ -286,7 +293,6 @@ public class Upload_post extends AppCompatActivity {
                                     longitude,
                                     completeAddress);
 
-                            // Save PostModel to Firestore
                             FirebaseFirestore.getInstance()
                                     .collection("Posts")
                                     .document(id)
