@@ -105,9 +105,11 @@ public class Upload_attendance extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
                                                     progressBar.setVisibility(View.GONE);
-                                                    finish();
                                                     Toast.makeText(Upload_attendance.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                                                    startActivity(new Intent(Upload_attendance.this, ActivitiesFeed.class));
+                                                    Intent intent = new Intent(Upload_attendance.this, ActivitiesFeed.class);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+                                                    finish();
                                                     PostModel postModel = new PostModel(id,
                                                             FirebaseAuth.getInstance().getUid(),
                                                             postText.getText().toString(),
@@ -133,11 +135,14 @@ public class Upload_attendance extends AppCompatActivity {
                                     Toast.makeText(Upload_attendance.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
-                }else {
+                }
+                else if(!postText.getText().toString().isEmpty()){
                     progressBar.setVisibility(View.GONE);
-                    finish();
                     Toast.makeText(Upload_attendance.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Upload_attendance.this, ActivitiesFeed.class));
+                    Intent intent = new Intent(Upload_attendance.this, ActivitiesFeed.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
                     PostModel postModel = new PostModel(id,
                             FirebaseAuth.getInstance().getUid(),
                             postText.getText().toString(),
@@ -147,6 +152,12 @@ public class Upload_attendance extends AppCompatActivity {
                             .collection("Attendance")
                             .document(id)
                             .set(postModel);
+                }
+                else {
+                    progressBar.setVisibility(View.GONE);
+                    postButton.setEnabled(false);
+                    Toast.makeText(Upload_attendance.this, "Please write something or upload image!!!", Toast.LENGTH_SHORT).show();
+                    postButton.setEnabled(true);
                 }
             }
         });
@@ -204,37 +215,104 @@ public class Upload_attendance extends AppCompatActivity {
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
 
                 locationManager.removeUpdates(this);
 
-                PostModel postModel = new PostModel(id,
-                        FirebaseAuth.getInstance().getUid(),
-                        postText.getText().toString(),
-                        null,
-                        "0", "0", "0",
-                        System.currentTimeMillis(),
-                        latitude,
-                        longitude, address);
+                Geocoder geocoder = new Geocoder(getApplicationContext());
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                    if (addresses != null && !addresses.isEmpty()) {
+                        Address address = addresses.get(0);
+                        String addressLine = address.getAddressLine(0);
+                        String completeAddress = addressLine != null ? addressLine : "";
+                        StorageReference storageRef = FirebaseStorage.getInstance().getReference("Attendance/" + id + "image.png");
 
-                // Save the PostModel object to Firestore
-                FirebaseFirestore.getInstance()
-                        .collection("Attendance")
-                        .document(id)
-                        .set(postModel)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
+                        if (selectedImageBitmap!=null) {
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] data = baos.toByteArray();
 
-                            }
-                        });
-                getAddressFromLocation(latitude, longitude, id);
+                            storageRef.putBytes(data)
+                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    PostModel postModel = new PostModel(id,
+                                                            FirebaseAuth.getInstance().getUid(),
+                                                            postText.getText().toString(),
+                                                            uri.toString(),
+                                                            "0", "0", "0",
+                                                            System.currentTimeMillis(),
+                                                            latitude,
+                                                            longitude,
+                                                            completeAddress);
+
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("Attendance")
+                                                            .document(id)
+                                                            .set(postModel)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    // Handle success if needed
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    // Handle failure if needed
+                                                                }
+                                                            });
+                                                }
+                                            });
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(Upload_attendance.this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+                        else if(!postText.getText().toString().isEmpty()) {
+                            PostModel postModel = new PostModel(id,
+                                    FirebaseAuth.getInstance().getUid(),
+                                    postText.getText().toString(),
+                                    null,
+                                    "0", "0", "0",
+                                    System.currentTimeMillis(),
+                                    latitude,
+                                    longitude,
+                                    completeAddress);
+
+                            FirebaseFirestore.getInstance()
+                                    .collection("Attendance")
+                                    .document(id)
+                                    .set(postModel)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // Handle success if needed
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Handle failure if needed
+                                        }
+                                    });
+                        }
+                    } else {
+                        Log.e("getLocationCoordinates", "No address found for the given coordinates.");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e("getLocationCoordinates", "Error getting address from location: " + e.getMessage());
+                }
             }
 
             @Override
@@ -262,53 +340,5 @@ public class Upload_attendance extends AppCompatActivity {
         } else {
             Log.e("getLocationCoordinates", "Location manager is null. Unable to request location updates.");
         }
-    }
-
-    private void getAddressFromLocation(double latitude, double longitude, String id) {
-        Geocoder geocoder = new Geocoder(this);
-        try {
-            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                String addressLine = address.getAddressLine(0);
-                String completeAddress = addressLine != null ? addressLine : "";
-                savePostToFirestore(id, completeAddress);
-            } else {
-                Log.e("getAddressFromLocation", "No address found for the given coordinates.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("getAddressFromLocation", "Error getting address from location: " + e.getMessage());
-        }
-    }
-
-    private void savePostToFirestore(String id, String address) {
-        PostModel postModel = new PostModel(id,
-                FirebaseAuth.getInstance().getUid(),
-                postText.getText().toString(),
-                null,
-                "0", "0", "0",
-                System.currentTimeMillis(),
-                latitude,
-                longitude,
-                address);
-
-        // Save the PostModel object to Firestore
-        FirebaseFirestore.getInstance()
-                .collection("Attendance")
-                .document(id)
-                .set(postModel)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-                });
     }
 }
