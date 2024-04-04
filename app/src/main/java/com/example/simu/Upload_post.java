@@ -72,6 +72,9 @@ public class Upload_post extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_post);
 
+        Intent intent = getIntent();
+        String attendanceType = intent.getStringExtra("attendanceType");
+
         pickedImg = findViewById(R.id.pickedimg);
         addPhoto = findViewById(R.id.addPhoto);
         postButton = findViewById(R.id.postButton);
@@ -114,7 +117,7 @@ public class Upload_post extends AppCompatActivity {
                                                     PostModel postModel = new PostModel(id,
                                                             FirebaseAuth.getInstance().getUid(),
                                                             postText.getText().toString(),
-                                                            uri.toString(),"0", "0","0",  System.currentTimeMillis(), latitude, longitude, address);
+                                                            uri.toString(),"0", "0","0",  System.currentTimeMillis(), latitude, longitude, address, attendanceType);
 
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Posts")
@@ -147,7 +150,7 @@ public class Upload_post extends AppCompatActivity {
                     PostModel postModel = new PostModel(id,
                             FirebaseAuth.getInstance().getUid(),
                             postText.getText().toString(),
-                            null,"0", "0","0", System.currentTimeMillis(), latitude, longitude, address);
+                            null,"0", "0","0", System.currentTimeMillis(), latitude, longitude, address, attendanceType);
 
                     FirebaseFirestore.getInstance()
                             .collection("Posts")
@@ -213,6 +216,8 @@ public class Upload_post extends AppCompatActivity {
                 });
     }
     private void getLocationCoordinates(String id) {
+        Intent intent = getIntent();
+        String attendanceType = intent.getStringExtra("attendanceType");
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -252,7 +257,7 @@ public class Upload_post extends AppCompatActivity {
                                                             System.currentTimeMillis(),
                                                             latitude,
                                                             longitude,
-                                                            completeAddress);
+                                                            completeAddress, attendanceType);
 
                                                     // Save PostModel to Firestore
                                                     FirebaseFirestore.getInstance()
@@ -291,7 +296,7 @@ public class Upload_post extends AppCompatActivity {
                                     System.currentTimeMillis(),
                                     latitude,
                                     longitude,
-                                    completeAddress);
+                                    completeAddress, attendanceType);
 
                             FirebaseFirestore.getInstance()
                                     .collection("Posts")

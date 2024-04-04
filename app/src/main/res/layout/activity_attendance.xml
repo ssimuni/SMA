@@ -8,7 +8,7 @@
     android:background="@drawable/wave">
     <Button
         android:id="@+id/entry"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="230dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -19,7 +19,7 @@
         android:layout_centerHorizontal="true" />
     <Button
         android:id="@+id/late"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="280dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -32,7 +32,7 @@
 
     <Button
         android:id="@+id/approved_leave"
-        android:layout_marginTop="350dp"
+        android:layout_marginTop="330dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -44,7 +44,7 @@
 
     <Button
         android:id="@+id/training"
-        android:layout_marginTop="400dp"
+        android:layout_marginTop="380dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -57,7 +57,7 @@
 
     <Button
         android:id="@+id/activites_feed"
-        android:layout_marginTop="450dp"
+        android:layout_marginTop="430dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -68,12 +68,24 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/exit"
-        android:layout_marginTop="500dp"
+        android:id="@+id/exit1"
+        android:layout_marginTop="480dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
-        android:text="Exit"
+        android:text="Exit: 3:00 - 3:30"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/exit2"
+        android:layout_marginTop="530dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Exit: 5:00 - Anytime"
         android:textSize="15sp"
         android:backgroundTint="@color/basic"
         app:cornerRadius = "20dp"
@@ -81,7 +93,7 @@
 
     <Button
         android:id="@+id/daily_report"
-        android:layout_marginTop="550dp"
+        android:layout_marginTop="580dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -93,7 +105,7 @@
 
     <Button
         android:id="@+id/monthly_report"
-        android:layout_marginTop="600dp"
+        android:layout_marginTop="630dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
