@@ -16,7 +16,7 @@ import java.util.Calendar;
 
 public class Attendance extends AppCompatActivity {
 
-    Button activites_feed, intime, late, approved_leave, training, exit1, exit2;
+    Button activites_feed, intime, late, approved_leave, training, exit1, exit2, dailyReport, monthlyReport;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +29,8 @@ public class Attendance extends AppCompatActivity {
         training = findViewById(R.id.training);
         exit1 = findViewById(R.id.exit1);
         exit2 = findViewById(R.id.exit2);
+        dailyReport = findViewById(R.id.daily_report);
+        monthlyReport = findViewById(R.id.monthly_report);
 
         activites_feed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,14 +70,21 @@ public class Attendance extends AppCompatActivity {
         approved_leave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityWithAttendanceType("approved_leave");
+                startActivityWithAttendanceType("Is in approved leave");
             }
         });
 
         training.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityWithAttendanceType("training");
+                startActivityWithAttendanceType("Is on training or workshop");
+            }
+        });
+
+        dailyReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Attendance.this, DailyReport.class));
             }
         });
     }
@@ -99,7 +108,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 intime.setEnabled(true);
-                                startActivityWithAttendanceType("intime");
+                                startActivityWithAttendanceType("Intime");
                             }
                         });
                     } else {
@@ -139,7 +148,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 late.setEnabled(true);
-                                startActivityWithAttendanceType("late");
+                                startActivityWithAttendanceType("Late");
                             }
                         });
                     } else {
@@ -179,7 +188,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exit1.setEnabled(true);
-                                startActivityWithAttendanceType("exit1");
+                                startActivityWithAttendanceType("Exited within 3pm to 3:30pm");
                             }
                         });
                     } else {
@@ -187,7 +196,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exit1.setEnabled(false);
-                                Toast.makeText(Attendance.this, "Time is over!!!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Attendance.this, "Click within 3pm to 3:30pm", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -219,7 +228,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exit2.setEnabled(true);
-                                startActivityWithAttendanceType("exit2");
+                                startActivityWithAttendanceType("Exited after 5pm");
                             }
                         });
                     } else {

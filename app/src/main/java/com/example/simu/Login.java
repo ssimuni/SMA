@@ -162,16 +162,11 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            if(Objects.requireNonNull(fAuth.getCurrentUser()).isEmailVerified()){
                                 saveLoginState(true);
 
                                 Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(getApplicationContext(), Dashboard.class));
                                 finish();
-                            }
-                            else {
-                                Toast.makeText(Login.this, "Please verify email first.", Toast.LENGTH_SHORT).show();
-                            }
 
                         } else {
                             if (task.getException() instanceof com.google.firebase.auth.FirebaseAuthInvalidCredentialsException) {
@@ -186,7 +181,6 @@ public class Login extends AppCompatActivity {
             }
         });
     }
-    // Method to save user's login state in SharedPreferences
     private void saveLoginState(boolean isLoggedIn) {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

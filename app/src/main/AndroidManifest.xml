@@ -2,9 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:allowBackup="true"
@@ -16,6 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Simu"
         tools:targetApi="31">
+        <activity
+            android:name=".ML"
+            android:exported="false" />
+        <activity
+            android:name=".DailyReport"
+            android:exported="false" />
         <activity
             android:name=".Attendance"
             android:exported="false" />
@@ -36,9 +46,6 @@
             android:exported="false" />
         <activity
             android:name=".About"
-            android:exported="false" />
-        <activity
-            android:name=".verification"
             android:exported="false" />
         <activity
             android:name=".Register"
@@ -74,9 +81,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD9gvzufn6LtMF7Nm0wRdqC4s9tpNjp4Po" />
-
-        <meta-data android:name="location"
-            android:value="AIzaSyCKvrBKVE016Daod18p5Rn-kI4umaReD5w"/>
+        <meta-data
+            android:name="location"
+            android:value="AIzaSyCKvrBKVE016Daod18p5Rn-kI4umaReD5w" />
     </application>
 
 </manifest>

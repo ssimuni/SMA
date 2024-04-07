@@ -289,38 +289,39 @@
 
       </androidx.cardview.widget.CardView>
 
-<!--      <androidx.cardview.widget.CardView-->
-<!--          android:id="@+id/weather"-->
-<!--          android:layout_width="120dp"-->
-<!--          android:layout_height="120dp"-->
-<!--          android:layout_rowWeight="1"-->
-<!--          android:layout_columnWeight="1"-->
-<!--          android:layout_margin="12dp"-->
-<!--          app:cardCornerRadius="15dp"-->
-<!--          app:cardElevation="12dp">-->
+      <androidx.cardview.widget.CardView
+          android:id="@+id/ml"
+          android:layout_width="100dp"
+          android:layout_height="100dp"
+          android:layout_rowWeight="1"
+          android:layout_columnWeight="1"
+          android:layout_margin="12dp"
+          app:cardCornerRadius="15dp"
+          app:cardElevation="12dp">
 
-<!--         <LinearLayout-->
-<!--             android:layout_width="match_parent"-->
-<!--             android:layout_height="match_parent"-->
-<!--             android:gravity="center"-->
-<!--             android:orientation="vertical">-->
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:gravity="center"
+             android:orientation="vertical">
 
-<!--            <ImageView-->
-<!--                android:layout_width="60dp"-->
-<!--                android:layout_height="60dp"-->
-<!--                android:layout_gravity="center_horizontal"-->
-<!--                android:src="@drawable/weather" />-->
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/mask" />
 
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center_horizontal"-->
-<!--                android:text="Weather"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="18sp"-->
-<!--                android:textStyle="bold" />-->
-<!--         </LinearLayout>-->
-<!--      </androidx.cardview.widget.CardView>-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="With or Without mask"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+         </LinearLayout>
+      </androidx.cardview.widget.CardView>
 
    </LinearLayout>
 </LinearLayout>

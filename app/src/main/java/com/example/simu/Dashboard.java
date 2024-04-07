@@ -13,7 +13,7 @@ public class Dashboard extends AppCompatActivity {
     private CardView aboutCard;
     private CardView rateCard;
     private CardView newsFeed;
-
+    private CardView ml;
     private CardView location;
     private CardView weather;
     private CardView attendance;
@@ -30,6 +30,7 @@ public class Dashboard extends AppCompatActivity {
         location = findViewById(R.id.level3).findViewById(R.id.location);
         weather = findViewById(R.id.level3).findViewById(R.id.weather);
         attendance = findViewById(R.id.level4).findViewById(R.id.attendance);
+        ml = findViewById(R.id.level4).findViewById(R.id.ml);
 
         profileCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +71,10 @@ public class Dashboard extends AppCompatActivity {
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { startActivity(new Intent(Dashboard.this, Attendance.class));}
+        });
+        ml.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { startActivity(new Intent(Dashboard.this, ML.class));}
         });
     }
 }

@@ -307,7 +307,7 @@ public class Register extends AppCompatActivity {
 
 
                                     Toast.makeText(getApplicationContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(getApplicationContext(), verification.class));
+                                    startActivity(new Intent(getApplicationContext(), Login.class));
 
                                     userID = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
                                     DocumentReference documentReference = fstore.collection("users").document(userID);

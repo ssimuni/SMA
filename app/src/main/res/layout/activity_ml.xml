@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ML"
+    android:background="@drawable/wave">
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="With or Without Mask!!!"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:layout_marginTop="30dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/imageView"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"/>
+
+    <Button
+        android:id="@+id/selectBtn"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif"
+        android:layout_height="48dp"
+        android:text="Select Image"
+        android:textSize="15sp"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"/>
+
+    <Button
+        android:id="@+id/captureBtn"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/selectBtn"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif"
+        android:layout_height="48dp"
+        android:text="Capture"
+        android:textSize="15sp"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"/>
+
+    <Button
+        android:id="@+id/predictBtn"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/captureBtn"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif"
+        android:layout_height="48dp"
+        android:text="Predict"
+        android:textSize="15sp"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"/>
+
+    <TextView
+        android:id="@+id/result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Result: "
+        android:layout_below="@id/predictBtn"
+        android:textColor="@color/basic"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold" />
+</RelativeLayout>
