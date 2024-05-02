@@ -16,7 +16,7 @@ import java.util.Calendar;
 
 public class Attendance extends AppCompatActivity {
 
-    Button activites_feed, intime, late, approved_leave, training, exit1, exit2, dailyReport, monthlyReport;
+    Button activites_feed, intime, late, approved_leave, training, urgent, exit1, exit2, dailyReport, monthlyReport;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +27,7 @@ public class Attendance extends AppCompatActivity {
         late = findViewById(R.id.late);
         approved_leave = findViewById(R.id.approved_leave);
         training = findViewById(R.id.training);
+        urgent = findViewById(R.id.urgent);
         exit1 = findViewById(R.id.exit1);
         exit2 = findViewById(R.id.exit2);
         dailyReport = findViewById(R.id.daily_report);
@@ -71,6 +72,13 @@ public class Attendance extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivityWithAttendanceType("Is in approved leave");
+            }
+        });
+
+        urgent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityWithAttendanceType("Is in urgent leave");
             }
         });
 

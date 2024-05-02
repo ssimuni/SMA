@@ -129,8 +129,32 @@ public class Register extends AppCompatActivity {
                 designation = parentView.getItemAtPosition(position).toString();
 
 
+                if ("Worker".equals(designation)) {
+                    officerSpinner.setVisibility(View.VISIBLE);
 
-                if ("Officer".equals(designation)) {
+                    String[] officerLevels = {"Select Level", "Union level Worker", "Upozela level Worker", "District level Worker", "Division level Worker"};
+                    ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
+                            getApplicationContext(),
+                            android.R.layout.simple_spinner_item,
+                            officerLevels
+                    );
+
+                    subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    officerSpinner.setAdapter(subAdapter);
+
+                    officerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                            fdesignation = parentView.getItemAtPosition(position).toString();
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parentView) {
+                        }
+                    });
+                }
+
+                else if ("Officer".equals(designation)) {
                     officerSpinner.setVisibility(View.VISIBLE);
 
                     String[] officerLevels = {"Select Level", "Union level Officer", "Upozela level Officer", "District level Officer", "Division level Officer"};
@@ -153,10 +177,11 @@ public class Register extends AppCompatActivity {
                         public void onNothingSelected(AdapterView<?> parentView) {
                         }
                     });
-                } else {
-                    officerSpinner.setVisibility(View.INVISIBLE);
                 }
 
+                else {
+                    officerSpinner.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override

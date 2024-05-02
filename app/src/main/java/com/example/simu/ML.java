@@ -10,22 +10,24 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Objects;
 
 import android.Manifest;
+import android.widget.Toast;
 
 import com.example.simu.ml.ModelUnquant;
 
 import org.tensorflow.lite.DataType;
-import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 public class ML extends AppCompatActivity {
@@ -41,6 +43,19 @@ public class ML extends AppCompatActivity {
 
         getPermission();
 
+        String[] labels = new String[1001];
+        int cnt = 0;
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(getAssets().open("labels.txt")));
+            String line = bufferedReader.readLine();
+            while (line!=null){
+                labels[cnt] = line;
+                cnt++;
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         selectBtn = findViewById(R.id.selectBtn);
         predictBtn = findViewById(R.id.predictBtn);
         captureBtn = findViewById(R.id.captureBtn);
@@ -65,29 +80,64 @@ public class ML extends AppCompatActivity {
             }
         });
 
+//        predictBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                try {
+//                    ModelUnquant model = ModelUnquant.newInstance(ML.this);
+//
+//                    TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
+//
+//                    bitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, false);
+//                    inputFeature0.loadBuffer(TensorImage.fromBitmap(bitmap).getBuffer());
+//
+//                    ModelUnquant.Outputs outputs = model.process(inputFeature0);
+//                    TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+//
+//                    result.setText(getMax(outputFeature0.getFloatArray())+"");
+//                    model.close();
+//                } catch (IOException e) {
+//                    // TODO Handle the exception
+//                }
+//
+//            }
+//        });
+
         predictBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    ModelUnquant model = ModelUnquant.newInstance(ML.this);
+                if (bitmap != null) {
+                    try {
+                        ModelUnquant model = ModelUnquant.newInstance(ML.this);
 
-                    TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
+                        // Creating a resized bitmap with 3 channels (RGB)
+                        bitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, true);
+                        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 
-                    bitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, false);
-                    inputFeature0.loadBuffer(TensorImage.fromBitmap(bitmap).getBuffer());
+                        // Convert the bitmap to a tensor image
+                        TensorImage tensorImage = new TensorImage(DataType.FLOAT32);
+                        tensorImage.load(bitmap);
 
-                    ModelUnquant.Outputs outputs = model.process(inputFeature0);
-                    TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+                        // Creating the input tensor buffer
+                        TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
+                        inputFeature0.loadBuffer(tensorImage.getBuffer());
 
-                    result.setText(getMax(outputFeature0.getFloatArray())+"");
-                    model.close();
-                } catch (IOException e) {
-                    // TODO Handle the exception
+                        // Runs model inference and gets result
+                        ModelUnquant.Outputs outputs = model.process(inputFeature0);
+                        TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+                       result.setText(labels[getMax(outputFeature0.getFloatArray())]);
+
+                        // Releases model resources if no longer used
+                        model.close();
+                    } catch (IOException e) {
+                        // TODO Handle the exception
+                    }
+                } else {
+                    Toast.makeText(ML.this, "Please select or capture an image first", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
-    }
+}
 
     int getMax(float[] arr){
         int max =0;

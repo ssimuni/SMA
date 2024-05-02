@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +41,7 @@ public class Rating extends AppCompatActivity {
     RatingBar mRating;
     Button mSubmit;
     TextView mThank, avgRate, numOfPeopleRatedUs;
+    EditText feedback;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private String userId;
@@ -55,6 +57,7 @@ public class Rating extends AppCompatActivity {
         mThank = findViewById(R.id.thank);
         avgRate = findViewById(R.id.avgRate);
         numOfPeopleRatedUs = findViewById(R.id.numOfPeopleRatedUs);
+        feedback = findViewById(R.id.feedback);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -70,7 +73,7 @@ public class Rating extends AppCompatActivity {
             public void onClick(View v) {
                 float rating = mRating.getRating();
                 String userId = mAuth.getCurrentUser().getUid();
-
+                String feedbackText = feedback.getText().toString();
 
                 db.collection("ratings")
                         .whereEqualTo("userId", userId)
@@ -84,7 +87,7 @@ public class Rating extends AppCompatActivity {
                                         incrementNumOfPeopleRatedUs();
                                     }
                                     // Add or update the rating
-                                    addOrUpdateRating(userId, rating);
+                                    addOrUpdateRating(userId, rating, feedbackText);
                                 }
                             }
                         });
@@ -101,6 +104,7 @@ public class Rating extends AppCompatActivity {
                         });
                     mThank.setVisibility(View.VISIBLE);
                     mSubmit.setVisibility(View.INVISIBLE);
+                    feedback.setText("");
 
                     if (rating == 5) {
                         mThank.setText(R.string.thank_you);
@@ -120,11 +124,12 @@ public class Rating extends AppCompatActivity {
     }
 
 
-    private void addOrUpdateRating(String userId, float rating) {
+    private void addOrUpdateRating(String userId, float rating, String feedbackText) {
         // Add or update the rating
         Map<String, Object> ratingData = new HashMap<>();
         ratingData.put("userId", userId);
         ratingData.put("rating", rating);
+        ratingData.put("feedbackText", feedbackText);
 
         db.collection("ratings").document(userId)
                 .set(ratingData, SetOptions.merge())

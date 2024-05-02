@@ -8,7 +8,7 @@
     android:background="@drawable/wave">
     <Button
         android:id="@+id/entry"
-        android:layout_marginTop="230dp"
+        android:layout_marginTop="220dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -19,7 +19,7 @@
         android:layout_centerHorizontal="true" />
     <Button
         android:id="@+id/late"
-        android:layout_marginTop="280dp"
+        android:layout_marginTop="270dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -32,7 +32,7 @@
 
     <Button
         android:id="@+id/approved_leave"
-        android:layout_marginTop="330dp"
+        android:layout_marginTop="320dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -44,7 +44,7 @@
 
     <Button
         android:id="@+id/training"
-        android:layout_marginTop="380dp"
+        android:layout_marginTop="370dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -54,14 +54,26 @@
         app:cornerRadius = "20dp"
         android:layout_centerHorizontal="true" />
 
-
     <Button
-        android:id="@+id/activites_feed"
-        android:layout_marginTop="430dp"
+        android:id="@+id/urgent"
+        android:layout_marginTop="420dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
-        android:text="Activities Feed"
+        android:text="Urgent Leave"
+        android:textSize="15sp"
+        android:backgroundTint="@color/basic"
+        app:cornerRadius = "20dp"
+        android:layout_centerHorizontal="true" />
+
+
+    <Button
+        android:id="@+id/activites_feed"
+        android:layout_marginTop="470dp"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="50dp"
+        android:text="Attendance Feed"
         android:textSize="15sp"
         android:backgroundTint="@color/basic"
         app:cornerRadius = "20dp"
@@ -69,7 +81,7 @@
 
     <Button
         android:id="@+id/exit1"
-        android:layout_marginTop="480dp"
+        android:layout_marginTop="520dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -81,7 +93,7 @@
 
     <Button
         android:id="@+id/exit2"
-        android:layout_marginTop="530dp"
+        android:layout_marginTop="570dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -93,7 +105,7 @@
 
     <Button
         android:id="@+id/daily_report"
-        android:layout_marginTop="580dp"
+        android:layout_marginTop="620dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
@@ -105,7 +117,7 @@
 
     <Button
         android:id="@+id/monthly_report"
-        android:layout_marginTop="630dp"
+        android:layout_marginTop="670dp"
         android:layout_width="wrap_content"
         android:fontFamily="sans-serif"
         android:layout_height="50dp"
