@@ -1,13 +1,11 @@
 package com.example.simu;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +14,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -32,22 +28,22 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-public class DailyReport extends AppCompatActivity {
+public class MonthlyReport extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
-    private List<User> userList;
+    private List<UserAttendance> userAttendanceList;
     private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_daily_report);
+        setContentView(R.layout.activity_monthly_report);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        userList = new ArrayList<>();
-        userAdapter = new UserAdapter(userList);
+        userAttendanceList = new ArrayList<>();
+        userAdapter = new UserAdapter(userAttendanceList);
         recyclerView.setAdapter(userAdapter);
 
         db = FirebaseFirestore.getInstance();
@@ -81,8 +77,8 @@ public class DailyReport extends AppCompatActivity {
 
     private void loadAttendanceFromFirestore(final Map<String, User> userMap) {
         db.collection("Attendance")
-                .whereGreaterThanOrEqualTo("postingTime", getStartOfDay())
-                .whereLessThanOrEqualTo("postingTime", getEndOfDay())
+                .whereGreaterThanOrEqualTo("postingTime", getStartOfMonth())
+                .whereLessThanOrEqualTo("postingTime", getEndOfMonth())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -95,10 +91,9 @@ public class DailyReport extends AppCompatActivity {
 
                                 User user = userMap.get(userId);
                                 if (user != null) {
-                                    user.addAttendance(new Attendance(attendanceType, postingTime));
+                                    userAttendanceList.add(new UserAttendance(user, new Attendance(attendanceType, postingTime)));
                                 }
                             }
-                            userList.addAll(userMap.values());
                             userAdapter.notifyDataSetChanged();
                         } else {
                             // Handle error
@@ -107,9 +102,10 @@ public class DailyReport extends AppCompatActivity {
                 });
     }
 
-    private long getStartOfDay() {
+    private long getStartOfMonth() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getDefault());
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -117,9 +113,10 @@ public class DailyReport extends AppCompatActivity {
         return calendar.getTimeInMillis();
     }
 
-    private long getEndOfDay() {
+    private long getEndOfMonth() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getDefault());
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
@@ -129,64 +126,67 @@ public class DailyReport extends AppCompatActivity {
 
     private static class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
-        private List<User> userList;
+        private List<UserAttendance> userAttendanceList;
 
-        public UserAdapter(List<User> userList) {
-            this.userList = userList;
+        public UserAdapter(List<UserAttendance> userAttendanceList) {
+            this.userAttendanceList = userAttendanceList;
         }
 
         @NonNull
         @Override
         public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.daily_report_table, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.monthly_report_table, parent, false);
             return new UserViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-            User user = userList.get(position);
+            UserAttendance userAttendance = userAttendanceList.get(position);
+            User user = userAttendance.getUser();
+            Attendance attendance = userAttendance.getAttendance();
+
             holder.textViewName.setText(user.getName());
             holder.textViewDesignation.setText(user.getDesignation());
             holder.textViewWorkstation.setText(user.getWorkstation());
+            holder.date.setText(formatDate(attendance.getPostingTime()));
 
-            for (Attendance attendance : user.getAttendanceList()) {
-                String formattedTime = formatTime(attendance.getPostingTime());
-                switch (attendance.getAttendanceType()) {
-                    case "Intime":
-                        holder.intime.setText(formattedTime);
-                        break;
-                    case "Late":
-                        holder.late.setText(formattedTime);
-                        break;
-                    case "Exit":
-                        holder.exit.setText(formattedTime);
-                        break;
-                    case "Approved leave":
-                        holder.approved_leave.setText(formattedTime);
-                        break;
-                    case "Urgent leave":
-                        holder.urgent.setText(formattedTime);
-                        break;
-                    case "Training":
-                        holder.training.setText(formattedTime);
-                        break;
-                }
+            String formattedTime = formatTime(attendance.getPostingTime());
+            switch (attendance.getAttendanceType()) {
+                case "Intime":
+                    holder.intime.setText(formattedTime);
+                    break;
+                case "Late":
+                    holder.late.setText(formattedTime);
+                    break;
+                case "Exit":
+                    holder.exit.setText(formattedTime);
+                    break;
+                case "Approved leave":
+                    holder.approved_leave.setText(formattedTime);
+                    break;
+                case "Urgent leave":
+                    holder.urgent.setText(formattedTime);
+                    break;
+                case "Training":
+                    holder.training.setText(formattedTime);
+                    break;
             }
         }
 
         @Override
         public int getItemCount() {
-            return userList.size();
+            return userAttendanceList.size();
         }
 
         public static class UserViewHolder extends RecyclerView.ViewHolder {
-            TextView textViewName, textViewDesignation, textViewWorkstation, intime, late, exit, approved_leave, training, urgent;
+            TextView textViewName, textViewDesignation, textViewWorkstation, date, intime, late, exit, approved_leave, training, urgent;
 
             public UserViewHolder(@NonNull View itemView) {
                 super(itemView);
                 textViewName = itemView.findViewById(R.id.textViewName);
                 textViewDesignation = itemView.findViewById(R.id.textViewDesignation);
                 textViewWorkstation = itemView.findViewById(R.id.textViewWorkstation);
+                date = itemView.findViewById(R.id.date);
                 intime = itemView.findViewById(R.id.intime);
                 late = itemView.findViewById(R.id.late);
                 exit = itemView.findViewById(R.id.exit);
@@ -202,14 +202,12 @@ public class DailyReport extends AppCompatActivity {
         private String name;
         private String designation;
         private String workstation;
-        private List<Attendance> attendanceList;
 
         public User(String userId, String name, String designation, String workstation) {
             this.userId = userId;
             this.name = name;
             this.designation = designation;
             this.workstation = workstation;
-            this.attendanceList = new ArrayList<>();
         }
 
         public String getUserId() {
@@ -226,14 +224,6 @@ public class DailyReport extends AppCompatActivity {
 
         public String getWorkstation() {
             return workstation;
-        }
-
-        public List<Attendance> getAttendanceList() {
-            return attendanceList;
-        }
-
-        public void addAttendance(Attendance attendance) {
-            attendanceList.add(attendance);
         }
     }
 
@@ -253,6 +243,30 @@ public class DailyReport extends AppCompatActivity {
         public long getPostingTime() {
             return postingTime;
         }
+    }
+
+    private static class UserAttendance {
+        private User user;
+        private Attendance attendance;
+
+        public UserAttendance(User user, Attendance attendance) {
+            this.user = user;
+            this.attendance = attendance;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public Attendance getAttendance() {
+            return attendance;
+        }
+    }
+
+    private static String formatDate(long timeInMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date date = new Date(timeInMillis);
+        return sdf.format(date);
     }
 
     private static String formatTime(long timeInMillis) {

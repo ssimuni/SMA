@@ -33,6 +33,7 @@ public class Attendance extends AppCompatActivity {
         dailyReport = findViewById(R.id.daily_report);
         monthlyReport = findViewById(R.id.monthly_report);
 
+
         activites_feed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,21 +72,21 @@ public class Attendance extends AppCompatActivity {
         approved_leave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityWithAttendanceType("Is in approved leave");
+                startActivityWithAttendanceType("Approved leave");
             }
         });
 
         urgent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityWithAttendanceType("Is in urgent leave");
+                startActivityWithAttendanceType("Urgent leave");
             }
         });
 
         training.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityWithAttendanceType("Is on training or workshop");
+                startActivityWithAttendanceType("Training");
             }
         });
 
@@ -93,6 +94,13 @@ public class Attendance extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Attendance.this, DailyReport.class));
+            }
+        });
+
+        monthlyReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Attendance.this, MonthlyReport.class));
             }
         });
     }
@@ -196,7 +204,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exit1.setEnabled(true);
-                                startActivityWithAttendanceType("Exited within 3pm to 3:30pm");
+                                startActivityWithAttendanceType("Exit");
                             }
                         });
                     } else {
@@ -236,7 +244,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exit2.setEnabled(true);
-                                startActivityWithAttendanceType("Exited after 5pm");
+                                startActivityWithAttendanceType("Exit");
                             }
                         });
                     } else {

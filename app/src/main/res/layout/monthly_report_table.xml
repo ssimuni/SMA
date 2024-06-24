@@ -8,6 +8,13 @@
     >
 
     <TextView
+        android:id="@+id/date"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
         android:id="@+id/textViewName"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
