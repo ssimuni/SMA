@@ -68,10 +68,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 public class Register extends AppCompatActivity {
-    String designation, fdesignation;
+    String designation, fdesignation, fdepartment;
     public static final String TAG = "TAG";
-    EditText mName, mAddress, mWorkStation, mEmail,mNid, mDob, mPass, mUsername, mNumber;
-    Spinner spinner, officerSpinner;
+    EditText mName, mAddress, mWorkStation, mEmail, mNid, mDob, mPass, mUsername, mNumber;
+    Spinner spinner, officerSpinner, departmentSpinner;
     Button mRegister;
     Button mProfileBtn;
     TextView mLogin;
@@ -97,6 +97,7 @@ public class Register extends AppCompatActivity {
         mWorkStation = findViewById(id.workstation);
         spinner = findViewById(id.spinner);
         officerSpinner = findViewById(id.officerSpinner);
+        departmentSpinner = findViewById(id.department);
         mEmail = findViewById(R.id.email);
         mNid = findViewById(R.id.nid);
         mDob = findViewById(R.id.dob);
@@ -113,6 +114,10 @@ public class Register extends AppCompatActivity {
         fstore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
+
+
+
+        //designation spinner
         String[] spinner1 = {"Click here", "Officer", "Worker"};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -188,6 +193,33 @@ public class Register extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parentView) {
             }
         });
+
+
+
+        //department spinner
+        String[] department = {"Select Department", "CSE", "EEE", "Economics"};
+        ArrayAdapter<String> deptAdapter = new ArrayAdapter<>(
+                getApplicationContext(),
+                android.R.layout.simple_spinner_item,
+                department
+        );
+
+        deptAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        departmentSpinner.setAdapter(deptAdapter);
+
+        departmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                fdepartment = parentView.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+
+
 
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -345,8 +377,11 @@ public class Register extends AppCompatActivity {
                                     user.put("nid", nid);
                                     user.put("dob", dob);
                                     user.put("designation", fdesignation);
+                                    user.put("department", fdepartment);
                                     user.put("username", username);
                                     user.put("number", pnumber);
+                                    user.put("isAdmin", "No");
+                                    user.put("isApproved", "No");
 
                                     documentReference.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override

@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,12 +30,24 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
+import android.os.Environment;
+import android.widget.Button;
+import android.widget.Toast;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+
 public class MonthlyReport extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<UserAttendance> userAttendanceList;
     private FirebaseFirestore db;
+    private Button buttonDownload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +59,80 @@ public class MonthlyReport extends AppCompatActivity {
         userAttendanceList = new ArrayList<>();
         userAdapter = new UserAdapter(userAttendanceList);
         recyclerView.setAdapter(userAdapter);
+        buttonDownload = findViewById(R.id.download_button);
 
         db = FirebaseFirestore.getInstance();
         loadUsersAndAttendanceFromFirestore();
+
+        buttonDownload = findViewById(R.id.download_button);
+        buttonDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createPdf();
+            }
+        });
     }
+
+    private void createPdf() {
+        PdfDocument document = new PdfDocument();
+        Paint paint = new Paint();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+        PdfDocument.Page page = document.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+
+        int y = 25;
+        int margin = 10;
+
+        paint.setTextSize(15f);
+        paint.setFakeBoldText(true);
+        canvas.drawText("Monthly Attendance Report", margin, y, paint);
+        y += paint.descent() - paint.ascent();
+
+        paint.setTextSize(10f);
+        paint.setFakeBoldText(false);
+        for (UserAttendance userAttendance : userAttendanceList) {
+            User user = userAttendance.getUser();
+            Attendance attendance = userAttendance.getAttendance();
+
+            canvas.drawText("Name: " + user.getName(), margin, y, paint);
+            y += paint.descent() - paint.ascent();
+
+            canvas.drawText("Designation: " + user.getDesignation(), margin, y, paint);
+            y += paint.descent() - paint.ascent();
+
+            canvas.drawText("Workstation: " + user.getWorkstation(), margin, y, paint);
+            y += paint.descent() - paint.ascent();
+
+            String formattedDate = formatDate(attendance.getPostingTime());
+            String formattedTime = formatTime(attendance.getPostingTime());
+            canvas.drawText("Date: " + formattedDate, margin, y, paint);
+            y += paint.descent() - paint.ascent();
+            canvas.drawText("Time: " + formattedTime, margin, y, paint);
+            y += paint.descent() - paint.ascent();
+            canvas.drawText("Type: " + attendance.getAttendanceType(), margin, y, paint);
+            y += 20;
+        }
+
+        document.finishPage(page);
+
+        File pdfDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "MonthlyReports");
+        if (!pdfDir.exists()) {
+            pdfDir.mkdirs();
+        }
+
+        String fileName = "MonthlyReport_" + System.currentTimeMillis() + ".pdf";
+        File file = new File(pdfDir, fileName);
+
+        try {
+            document.writeTo(new FileOutputStream(file));
+            Toast.makeText(this, "PDF saved to " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            document.close();
+        }
+    }
+
 
     private void loadUsersAndAttendanceFromFirestore() {
         db.collection("users")

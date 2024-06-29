@@ -147,22 +147,36 @@
 
             </LinearLayout>
 
-            <EditText
+            <LinearLayout
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:fontFamily="sans-serif"
-                android:id="@+id/department"
-                android:background="@drawable/textboxborder"
-                android:drawableStart="@drawable/department"
-                android:drawablePadding="8dp"
-                android:hint="@string/enter_department"
-                android:textColorHint="@color/basic"
-                android:padding="8dp"
-                android:textColor="@color/basic"
-                android:textColorHighlight="@color/cardview_dark_background"
-                android:inputType="text"
-                android:autofillHints="text"
-                android:layout_marginTop="20dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/textboxborder">
+
+                <TextView
+                    android:gravity=""
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:fontFamily="sans-serif"
+                    android:textSize="18sp"
+                    android:drawablePadding="8dp"
+                    android:hint="@string/enter_department"
+                    android:textColorHint="@color/basic"
+                    android:padding="8dp"
+                    android:textColor="@color/basic"
+                    android:textColorHighlight="@color/cardview_dark_background"
+                    android:autofillHints="text"
+                    app:drawableStartCompat="@drawable/designation" />
+
+                <Spinner
+                    android:id="@+id/department"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="50dp"
+                    />
+
+            </LinearLayout>
 
             <EditText
                 android:layout_width="match_parent"

@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".MonthlyReport">
 
+
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,7 +15,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="10dp">
 
             <!-- Header Row -->
             <LinearLayout
@@ -115,5 +117,14 @@
                 />
         </LinearLayout>
     </HorizontalScrollView>
+
+    <Button
+        android:id="@+id/download_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download Report"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp" />
 
 </RelativeLayout>

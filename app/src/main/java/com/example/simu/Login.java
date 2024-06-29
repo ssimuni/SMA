@@ -113,6 +113,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
@@ -162,12 +164,33 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                                saveLoginState(true);
-
-                                Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), Dashboard.class));
-                                finish();
-
+                            final String userId = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
+                            FirebaseFirestore.getInstance().collection("users")
+                                    .document(userId)
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                DocumentSnapshot document = task.getResult();
+                                                if (document.exists()) {
+                                                    String isApproved = document.getString("isApproved");
+                                                    if (isApproved != null && isApproved.equals("Yes")) {
+                                                        saveLoginState(true);
+                                                        Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                                                        startActivity(new Intent(getApplicationContext(), Dashboard.class));
+                                                        finish();
+                                                    } else {
+                                                        Toast.makeText(getApplicationContext(), "Wait for admin approval", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                } else {
+                                                    Toast.makeText(getApplicationContext(), "User document does not exist", Toast.LENGTH_SHORT).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
                         } else {
                             if (task.getException() instanceof com.google.firebase.auth.FirebaseAuthInvalidCredentialsException) {
                                 Toast.makeText(Login.this, "Incorrect email or password", Toast.LENGTH_SHORT).show();

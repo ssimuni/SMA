@@ -48,7 +48,7 @@ public class ML extends AppCompatActivity {
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(getAssets().open("labels.txt")));
             String line = bufferedReader.readLine();
-            while (line!=null){
+            while (line != null) {
                 labels[cnt] = line;
                 cnt++;
                 line = bufferedReader.readLine();
@@ -56,6 +56,7 @@ public class ML extends AppCompatActivity {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         selectBtn = findViewById(R.id.selectBtn);
         predictBtn = findViewById(R.id.predictBtn);
         captureBtn = findViewById(R.id.captureBtn);
@@ -80,29 +81,6 @@ public class ML extends AppCompatActivity {
             }
         });
 
-//        predictBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    ModelUnquant model = ModelUnquant.newInstance(ML.this);
-//
-//                    TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
-//
-//                    bitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, false);
-//                    inputFeature0.loadBuffer(TensorImage.fromBitmap(bitmap).getBuffer());
-//
-//                    ModelUnquant.Outputs outputs = model.process(inputFeature0);
-//                    TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
-//
-//                    result.setText(getMax(outputFeature0.getFloatArray())+"");
-//                    model.close();
-//                } catch (IOException e) {
-//                    // TODO Handle the exception
-//                }
-//
-//            }
-//        });
-
         predictBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,29 +103,37 @@ public class ML extends AppCompatActivity {
                         // Runs model inference and gets result
                         ModelUnquant.Outputs outputs = model.process(inputFeature0);
                         TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
-                       result.setText(labels[getMax(outputFeature0.getFloatArray())]);
+                        float[] confidences = outputFeature0.getFloatArray();
+
+                        // Find the index with the maximum confidence
+                        int maxIndex = getMax(confidences);
+
+                        // Update the UI with the result
+                        result.setText(labels[maxIndex]);
 
                         // Releases model resources if no longer used
                         model.close();
                     } catch (IOException e) {
-                        // TODO Handle the exception
+                        Toast.makeText(ML.this, "Error during model inference: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(ML.this, "Please select or capture an image first", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-}
-
-    int getMax(float[] arr){
-        int max =0;
-        for(int i=0; i<arr.length; i++){
-            if(arr[i] > arr[max])
-                max = i;
-        }
-        return max;
     }
-    void getPermission(){
+
+    int getMax(float[] arr) {
+        int maxIndex = 0;
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] > arr[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    void getPermission() {
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(ML.this, new String[]{Manifest.permission.CAMERA}, 11);
         }
@@ -155,11 +141,9 @@ public class ML extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode==11){
-            if(grantResults.length>0){
-                if(grantResults[0]!=PackageManager.PERMISSION_GRANTED){
-                    this.getPermission();
-                }
+        if (requestCode == 11) {
+            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                this.getPermission();
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -167,8 +151,8 @@ public class ML extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode==10){
-            if(data!=null){
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 10 && data != null) {
                 Uri uri = data.getData();
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
@@ -176,11 +160,10 @@ public class ML extends AppCompatActivity {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+            } else if (requestCode == 12 && data != null) {
+                bitmap = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
+                imageView.setImageBitmap(bitmap);
             }
-        }
-        else if(requestCode==12){
-            bitmap = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
-            imageView.setImageBitmap(bitmap);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
