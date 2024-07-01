@@ -2,33 +2,102 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/textViewName"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Name"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/textViewDesignation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Designation"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name: "
+            android:textColor="@color/basic"
+            android:textStyle="bold"
+            />
 
-    <TextView
-        android:id="@+id/textViewDepartment"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Department"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Designation: "
+            android:textColor="@color/basic"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/textViewDesignation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Designation"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Department: "
+            android:textColor="@color/basic"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/textViewDepartment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Department"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Workstation: "
+            android:textColor="@color/basic"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/textViewWorkstation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Workstation"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/buttonApprove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Approve" />
+        android:text="Approve"
+        android:backgroundTint="@color/basic" />
 
 </LinearLayout>

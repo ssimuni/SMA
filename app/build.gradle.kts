@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id("com.apollographql.apollo") version "2.5.9"
     id("com.google.gms.google-services")
 }
 
@@ -16,6 +16,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments(
+                    mapOf(
+                        "apollo.schema.file" to "$projectDir/src/main/graphql/com/example/simu/schema.json"
+                    )
+                )
+            }
+        }
     }
 
     buildTypes {
@@ -24,13 +34,13 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+
+
     buildFeatures{
         viewBinding = true
         mlModelBinding = true
@@ -62,6 +72,23 @@ dependencies {
     implementation ("com.android.volley:volley:1.2.1")
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
     implementation ("com.google.code.gson:gson:2.10.1")
-    implementation ("commons-net:commons-net:3.8.0") // for NTPClient
-    implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1") // for using ThreeTenABP library
+    implementation ("commons-net:commons-net:3.8.0")
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.3.1")
+
+    implementation ("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation ("io.reactivex.rxjava2:rxjava:2.2.6")
+
+    implementation ("com.apollographql.apollo:apollo-rx2-support:2.5.9")
+    implementation ("com.apollographql.apollo:apollo-runtime:2.5.9")
+}
+
+apollo {
+    service("countries") {
+        sourceFolder.set("com/example/simu")
+        rootPackageName.set("com.example.simu")
+        schemaFile.set(file("src/main/graphql/com/example/simu/schema.graphqls"))
+        introspection {
+            endpointUrl.set("https://countries.trevorblades.com/graphql")
+        }
+    }
 }

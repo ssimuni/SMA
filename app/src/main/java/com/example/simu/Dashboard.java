@@ -114,5 +114,10 @@ public class Dashboard extends AppCompatActivity {
                 });
             }
         });
+
+        country.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { startActivity(new Intent(Dashboard.this, CountryActivity.class));}
+        });
     }
 }

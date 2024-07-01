@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
-            android:padding="24dp">
+            android:padding="20dp">
             <TextView
                 android:id="@+id/login"
                 android:layout_width="match_parent"

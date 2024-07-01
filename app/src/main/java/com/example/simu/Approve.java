@@ -58,7 +58,8 @@ public class Approve extends AppCompatActivity {
                                 String name = document.getString("name");
                                 String designation = document.getString("designation");
                                 String department = document.getString("department");
-                                userList.add(new User(userId, name, designation, department));
+                                String workstation = document.getString("workstation");
+                                userList.add(new User(userId, name, designation, department, workstation));
                             }
                             userAdapter.notifyDataSetChanged();
                         } else {
@@ -89,7 +90,7 @@ public class Approve extends AppCompatActivity {
             holder.textViewName.setText(user.getName());
             holder.textViewDesignation.setText(user.getDesignation());
             holder.textViewDepartment.setText(user.getDepartment());
-
+            holder.textViewWorkstation.setText(user.getWorkstation());
 
             holder.buttonApprove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -105,7 +106,7 @@ public class Approve extends AppCompatActivity {
         }
 
         public static class UserViewHolder extends RecyclerView.ViewHolder {
-            TextView textViewName, textViewDesignation, textViewDepartment;
+            TextView textViewName, textViewDesignation, textViewDepartment, textViewWorkstation;
             Button buttonApprove;
 
             public UserViewHolder(@NonNull View itemView) {
@@ -113,6 +114,7 @@ public class Approve extends AppCompatActivity {
                 textViewName = itemView.findViewById(R.id.textViewName);
                 textViewDesignation = itemView.findViewById(R.id.textViewDesignation);
                 textViewDepartment = itemView.findViewById(R.id.textViewDepartment);
+                textViewWorkstation = itemView.findViewById(R.id.textViewWorkstation);
                 buttonApprove = itemView.findViewById(R.id.buttonApprove);
             }
 
@@ -141,12 +143,14 @@ public class Approve extends AppCompatActivity {
         private String name;
         private String designation;
         private String department;
+        private String workstation;
 
-        public User(String userId, String name, String designation, String department) {
+        public User(String userId, String name, String designation, String department, String workstation) {
             this.userId = userId;
             this.name = name;
             this.designation = designation;
             this.department = department;
+            this.workstation = workstation;
         }
 
         public String getUserId() {
@@ -163,6 +167,10 @@ public class Approve extends AppCompatActivity {
 
         public String getDepartment() {
             return department;
+        }
+
+        public String getWorkstation() {
+            return workstation;
         }
     }
 }
