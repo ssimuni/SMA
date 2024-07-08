@@ -66,6 +66,8 @@ public class Upload_post extends AppCompatActivity {
     private String address;
     private LocationManager locationManager;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
+    private String workstation;
+    private String designation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,21 +110,42 @@ public class Upload_post extends AppCompatActivity {
                                     storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
-                                                    progressBar.setVisibility(View.GONE);
-                                                    Toast.makeText(Upload_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                                                    Intent intent = new Intent(Upload_post.this, NewsFeed.class);
-                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                    startActivity(intent);
-                                                    finish();
-                                                    PostModel postModel = new PostModel(id,
-                                                            FirebaseAuth.getInstance().getUid(),
-                                                            postText.getText().toString(),
-                                                            uri.toString(),"0", "0","0",  System.currentTimeMillis(), latitude, longitude, address, attendanceType);
+                                                    FirebaseFirestore.getInstance().collection("users").document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).get()
+                                                            .addOnSuccessListener(documentSnapshot -> {
+                                                                if (documentSnapshot.exists()) {
+                                                                    workstation = documentSnapshot.getString("workstation");
+                                                                    designation = documentSnapshot.getString("designation");
 
-                                                    FirebaseFirestore.getInstance()
-                                                            .collection("Posts")
-                                                            .document(id)
-                                                            .set(postModel);
+                                                                    PostModel postModel = new PostModel(id,
+                                                                            FirebaseAuth.getInstance().getUid(),
+                                                                            postText.getText().toString(),
+                                                                            uri.toString(), "0", "0", "0",
+                                                                            System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation);
+
+                                                                    FirebaseFirestore.getInstance()
+                                                                            .collection("Attendance")
+                                                                            .document(id)
+                                                                            .set(postModel)
+                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void aVoid) {
+                                                                                    progressBar.setVisibility(View.GONE);
+                                                                                    Toast.makeText(Upload_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                                                                                    Intent intent = new Intent(Upload_post.this, NewsFeed.class);
+                                                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                                    startActivity(intent);
+                                                                                    finish();
+                                                                                }
+                                                                            })
+                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    progressBar.setVisibility(View.GONE);
+                                                                                    Toast.makeText(Upload_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                                }
+                                                                            });
+                                                                }
+                                                            });
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -141,21 +164,42 @@ public class Upload_post extends AppCompatActivity {
                             });
                 }
                 else if(!postText.getText().toString().isEmpty()){
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(Upload_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Upload_post.this, NewsFeed.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
-                    PostModel postModel = new PostModel(id,
-                            FirebaseAuth.getInstance().getUid(),
-                            postText.getText().toString(),
-                            null,"0", "0","0", System.currentTimeMillis(), latitude, longitude, address, attendanceType);
+                    FirebaseFirestore.getInstance().collection("users").document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists()) {
+                                    workstation = documentSnapshot.getString("workstation");
+                                    designation = documentSnapshot.getString("designation");
 
-                    FirebaseFirestore.getInstance()
-                            .collection("Posts")
-                            .document(id)
-                            .set(postModel);
+                                    PostModel postModel = new PostModel(id,
+                                            FirebaseAuth.getInstance().getUid(),
+                                            postText.getText().toString(),
+                                            null, "0", "0", "0",
+                                            System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation);
+
+                                    FirebaseFirestore.getInstance()
+                                            .collection("Attendance")
+                                            .document(id)
+                                            .set(postModel)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    progressBar.setVisibility(View.GONE);
+                                                    Toast.makeText(Upload_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(Upload_post.this, NewsFeed.class);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    progressBar.setVisibility(View.GONE);
+                                                    Toast.makeText(Upload_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            });
                 }
                 else {
                     progressBar.setVisibility(View.GONE);
@@ -257,7 +301,7 @@ public class Upload_post extends AppCompatActivity {
                                                             System.currentTimeMillis(),
                                                             latitude,
                                                             longitude,
-                                                            completeAddress, attendanceType);
+                                                            completeAddress, attendanceType, workstation, designation);
 
                                                     // Save PostModel to Firestore
                                                     FirebaseFirestore.getInstance()
@@ -296,7 +340,7 @@ public class Upload_post extends AppCompatActivity {
                                     System.currentTimeMillis(),
                                     latitude,
                                     longitude,
-                                    completeAddress, attendanceType);
+                                    completeAddress, attendanceType, workstation, designation);
 
                             FirebaseFirestore.getInstance()
                                     .collection("Posts")

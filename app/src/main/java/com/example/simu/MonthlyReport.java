@@ -10,7 +10,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,6 +52,11 @@ public class MonthlyReport extends AppCompatActivity {
     private FirebaseFirestore db;
     private Button buttonDownload;
 
+    private Spinner spinnerWorkstation;
+    private Spinner spinnerDesignation;
+    private List<String> workstationList;
+    private List<String> designationList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +69,11 @@ public class MonthlyReport extends AppCompatActivity {
         recyclerView.setAdapter(userAdapter);
         buttonDownload = findViewById(R.id.download_button);
 
+        spinnerWorkstation = findViewById(R.id.spinnerWorkstation);
+        spinnerDesignation = findViewById(R.id.spinnerDesignation);
+        workstationList = new ArrayList<>();
+        designationList = new ArrayList<>();
+
         db = FirebaseFirestore.getInstance();
         loadUsersAndAttendanceFromFirestore();
 
@@ -69,6 +82,29 @@ public class MonthlyReport extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createPdf();
+            }
+        });
+
+
+        spinnerWorkstation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterData();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        spinnerDesignation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterData();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }
@@ -150,8 +186,16 @@ public class MonthlyReport extends AppCompatActivity {
 
                                 User user = new User(userId, name, designation, workstation);
                                 userMap.put(userId, user);
+
+                                if (!workstationList.contains(workstation)) {
+                                    workstationList.add(workstation);
+                                }
+                                if (!designationList.contains(designation)) {
+                                    designationList.add(designation);
+                                }
                             }
                             loadAttendanceFromFirestore(userMap);
+                            setSpinnerAdapters();
                         } else {
                             // Handle error
                         }
@@ -179,6 +223,7 @@ public class MonthlyReport extends AppCompatActivity {
                                 }
                             }
                             userAdapter.notifyDataSetChanged();
+                            filterData();
                         } else {
                             // Handle error
                         }
@@ -208,6 +253,34 @@ public class MonthlyReport extends AppCompatActivity {
         return calendar.getTimeInMillis();
     }
 
+    private void filterData() {
+        String selectedWorkstation = spinnerWorkstation.getSelectedItem().toString();
+        String selectedDesignation = spinnerDesignation.getSelectedItem().toString();
+
+        List<UserAttendance> filteredList = new ArrayList<>();
+        for (UserAttendance userAttendance : userAttendanceList) {
+            boolean matchWorkstation = selectedWorkstation.equals("All") || userAttendance.getUser().getWorkstation().equals(selectedWorkstation);
+            boolean matchDesignation = selectedDesignation.equals("All") || userAttendance.getUser().getDesignation().equals(selectedDesignation);
+
+            if (matchWorkstation && matchDesignation) {
+                filteredList.add(userAttendance);
+            }
+        }
+        userAdapter.updateList(filteredList);
+    }
+
+    private void setSpinnerAdapters() {
+        workstationList.add(0, "All");
+        designationList.add(0, "All");
+
+        ArrayAdapter<String> workstationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workstationList);
+        workstationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerWorkstation.setAdapter(workstationAdapter);
+
+        ArrayAdapter<String> designationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, designationList);
+        designationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDesignation.setAdapter(designationAdapter);
+    }
     private static class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
         private List<UserAttendance> userAttendanceList;
@@ -260,6 +333,11 @@ public class MonthlyReport extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return userAttendanceList.size();
+        }
+
+        public void updateList(List<UserAttendance> newList) {
+            userAttendanceList = newList;
+            notifyDataSetChanged();
         }
 
         public static class UserViewHolder extends RecyclerView.ViewHolder {

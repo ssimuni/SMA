@@ -1,12 +1,12 @@
 package com.example.simu;
 
 public class PostModel {
-    private String postId, userId, postText, postImage, postLikes, postDislikes ,postComments, address, attendanceType;
+    private String postId, userId, postText, postImage, postLikes, postDislikes ,postComments, address, attendanceType, workstation, designation;
     private long postingTime;
     private boolean isLiked;
     private boolean isDisliked;
     private double latitude, longitude;
-    public PostModel(String postId, String userId, String postText, String postImage, String postLikes, String postDislikes, String postComments, long postingTime, double latitude, double longitude, String address, String attendanceType) {
+    public PostModel(String postId, String userId, String postText, String postImage, String postLikes, String postDislikes, String postComments, long postingTime, double latitude, double longitude, String address, String attendanceType, String workstation, String designation) {
         this.postId = postId;
         this.userId = userId;
         this.postText = postText;
@@ -19,6 +19,8 @@ public class PostModel {
         this.longitude = longitude;
         this.address = address;
         this.attendanceType = attendanceType;
+        this.workstation = workstation;
+        this.designation = designation;
     }
 
     public PostModel() {
@@ -138,5 +140,21 @@ public class PostModel {
 
     public void setPostingTime(long postingTime) {
         this.postingTime = postingTime;
+    }
+
+    public String getWorkstation() {
+        return workstation;
+    }
+
+    public void setWorkstation(String workstation) {
+        this.workstation = workstation;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
     }
 }
