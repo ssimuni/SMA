@@ -4,20 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.simu.databinding.ActivityCommentsBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,11 +30,12 @@ public class CommentsActivity extends AppCompatActivity {
     private String postTd;
     private CommentsAdapter commentsAdapter;
     private FirebaseFirestore firestore;
-    EditText commentEd;
+    private EditText commentEd;
 
     private int currentPage = 0;
     private int totalPages = 0;
 
+    private TextClassificationViewModel textClassificationViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +50,17 @@ public class CommentsActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
         commentEd = findViewById(R.id.commentEd);
 
+        textClassificationViewModel = new TextClassificationViewModel(this);
         loadComments();
 
         binding.sendComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String comment = binding.commentEd.getText().toString();
-                if(comment.trim().length()>0){
-                    comment(comment);
+                String comment = binding.commentEd.getText().toString().trim();
+                if (!comment.isEmpty()) {
+                    classifyAndSaveComment(comment);
                 }
-                commentEd.setText(" ");
+                commentEd.setText("");
             }
         });
 
@@ -95,7 +92,7 @@ public class CommentsActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Toast.makeText(CommentsActivity.this, "Failed to load ratings and comments: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CommentsActivity.this, "Failed to load comments: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -109,7 +106,6 @@ public class CommentsActivity extends AppCompatActivity {
                         int endIndex = Math.min(startIndex + 5, totalItems);
                         for (int i = startIndex; i < endIndex; i++) {
                             DocumentSnapshot documentSnapshot = documents.get(i);
-
                             CommentModel commentModel = documentSnapshot.toObject(CommentModel.class);
                             commentsAdapter.addPost(commentModel);
                         }
@@ -118,6 +114,26 @@ public class CommentsActivity extends AppCompatActivity {
                 });
     }
 
+    private void classifyAndSaveComment(String comment) {
+        List<Float> results = textClassificationViewModel.classify(comment);
+        float negativeScore = results.isEmpty() ? 0 : results.get(0);
+        float positiveScore = results.size() > 1 ? results.get(1) : 0;
+
+        String sentiment = positiveScore > negativeScore ? "positive" : "negative";
+
+        String id = UUID.randomUUID().toString();
+        CommentModel commentModel = new CommentModel(id, postTd, FirebaseAuth.getInstance().getUid(), comment, System.currentTimeMillis(), sentiment, positiveScore, negativeScore);
+        FirebaseFirestore.getInstance()
+                .collection("Comments")
+                .document(id)
+                .set(commentModel)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Comment will be added through snapshot listener
+                    }
+                });
+    }
 
     private void updatePageNumbers() {
         LinearLayout pageLayout = findViewById(R.id.pageLayout);
@@ -147,36 +163,5 @@ public class CommentsActivity extends AppCompatActivity {
             button.setLayoutParams(layoutParams);
             pageLayout.addView(button);
         }
-    }
-
-
-//    private void loadComments(){
-//        FirebaseFirestore
-//                .getInstance()
-//                .collection("Comments")
-//                .whereEqualTo("postId", postTd)
-//                .get()
-//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                        commentsAdapter.clearPost();
-//                        List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments();
-//                        for(DocumentSnapshot ds:dsList){
-//                            CommentModel commentModel = ds.toObject(CommentModel.class);
-//                            commentsAdapter.addPost(commentModel);
-//                        }
-//                    }
-//                });
-//    }
-
-
-    private void comment(String comment) {
-        String id = UUID.randomUUID().toString();
-        CommentModel commentModel = new CommentModel(id, postTd, FirebaseAuth.getInstance().getUid(), comment,  System.currentTimeMillis());
-        FirebaseFirestore.getInstance()
-                .collection("Comments")
-                .document(id)
-                .set(commentModel);
-        commentsAdapter.addPost(commentModel);
     }
 }

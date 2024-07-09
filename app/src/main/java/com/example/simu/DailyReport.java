@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,6 +42,11 @@ public class DailyReport extends AppCompatActivity {
     private List<User> userList;
     private FirebaseFirestore db;
 
+    private Spinner spinnerWorkstation;
+    private Spinner spinnerDesignation;
+    private List<String> workstationList;
+    private List<String> designationList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +60,33 @@ public class DailyReport extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         loadUsersAndAttendanceFromFirestore();
+
+        spinnerWorkstation = findViewById(R.id.spinnerWorkstation);
+        spinnerDesignation = findViewById(R.id.spinnerDesignation);
+        workstationList = new ArrayList<>();
+        designationList = new ArrayList<>();
+
+        spinnerWorkstation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterData();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        spinnerDesignation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterData();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     private void loadUsersAndAttendanceFromFirestore() {
@@ -70,8 +105,16 @@ public class DailyReport extends AppCompatActivity {
 
                                 User user = new User(userId, name, designation, workstation);
                                 userMap.put(userId, user);
+
+                                if (!workstationList.contains(workstation)) {
+                                    workstationList.add(workstation);
+                                }
+                                if (!designationList.contains(designation)) {
+                                    designationList.add(designation);
+                                }
                             }
                             loadAttendanceFromFirestore(userMap);
+                            setSpinnerAdapters();
                         } else {
                             // Handle error
                         }
@@ -100,6 +143,7 @@ public class DailyReport extends AppCompatActivity {
                             }
                             userList.addAll(userMap.values());
                             userAdapter.notifyDataSetChanged();
+                            filterData();
                         } else {
                             // Handle error
                         }
@@ -127,6 +171,35 @@ public class DailyReport extends AppCompatActivity {
         return calendar.getTimeInMillis();
     }
 
+    private void filterData() {
+        String selectedWorkstation = spinnerWorkstation.getSelectedItem().toString();
+        String selectedDesignation = spinnerDesignation.getSelectedItem().toString();
+
+        List<User> filteredList = new ArrayList<>();
+        for (User user : userList) {
+            boolean matchWorkstation = selectedWorkstation.equals("All") || user.getWorkstation().equals(selectedWorkstation);
+            boolean matchDesignation = selectedDesignation.equals("All") || user.getDesignation().equals(selectedDesignation);
+
+            if (matchWorkstation && matchDesignation) {
+                filteredList.add(user);
+            }
+        }
+        userAdapter.updateList(filteredList);
+    }
+
+    private void setSpinnerAdapters() {
+        workstationList.add(0, "All");
+        designationList.add(0, "All");
+
+        ArrayAdapter<String> workstationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workstationList);
+        workstationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerWorkstation.setAdapter(workstationAdapter);
+
+        ArrayAdapter<String> designationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, designationList);
+        designationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDesignation.setAdapter(designationAdapter);
+    }
+
     private static class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
         private List<User> userList;
@@ -148,6 +221,13 @@ public class DailyReport extends AppCompatActivity {
             holder.textViewName.setText(user.getName());
             holder.textViewDesignation.setText(user.getDesignation());
             holder.textViewWorkstation.setText(user.getWorkstation());
+
+            holder.intime.setText("");
+            holder.late.setText("");
+            holder.exit.setText("");
+            holder.approved_leave.setText("");
+            holder.training.setText("");
+            holder.urgent.setText("");
 
             for (Attendance attendance : user.getAttendanceList()) {
                 String formattedTime = formatTime(attendance.getPostingTime());
@@ -177,6 +257,11 @@ public class DailyReport extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return userList.size();
+        }
+
+        public void updateList(List<User> newList) {
+            userList = newList;
+            notifyDataSetChanged();
         }
 
         public static class UserViewHolder extends RecyclerView.ViewHolder {

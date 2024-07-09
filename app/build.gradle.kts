@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.apollographql.apollo") version "2.5.9"
+    id ("de.undercouch.download") version "5.6.0"
     id("com.google.gms.google-services")
 }
 
@@ -48,6 +49,25 @@ android {
     }
 }
 
+//<---NLP-->
+tasks.register<de.undercouch.gradle.tasks.download.Download>("downloadTestWorkVecTextClassifierModel") {
+    src("https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/text_classification/android/text_classification_v2.tflite")
+    dest(file("src/main/assets/wordvec.tflite"))
+    overwrite(false)
+}
+
+tasks.register<de.undercouch.gradle.tasks.download.Download>("downloadTestMobileBERTTextClassifierModel") {
+    src("https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/text_classification/android/mobilebert.tflite")
+    dest(file("src/main/assets/mobilebert.tflite"))
+    overwrite(false)
+}
+
+tasks.named("preBuild") {
+    dependsOn("downloadTestMobileBERTTextClassifierModel")
+    dependsOn("downloadTestWorkVecTextClassifierModel")
+}
+
+
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -58,8 +78,8 @@ dependencies {
     implementation ("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("org.tensorflow:tensorflow-lite-support:0.1.0")
-    implementation("org.tensorflow:tensorflow-lite-metadata:0.1.0")
+//    implementation("org.tensorflow:tensorflow-lite-support:0.1.0")
+//    implementation("org.tensorflow:tensorflow-lite-metadata:0.1.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -80,6 +100,11 @@ dependencies {
 
     implementation ("com.apollographql.apollo:apollo-rx2-support:2.5.9")
     implementation ("com.apollographql.apollo:apollo-runtime:2.5.9")
+
+    implementation ("org.tensorflow:tensorflow-lite-task-text:0.4.0")
+    implementation ("org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.0")
+    implementation ("org.tensorflow:tensorflow-lite-gpu:2.9.0")
+
 }
 
 apollo {

@@ -197,7 +197,7 @@ public class Register extends AppCompatActivity {
 
 
         //department spinner
-        String[] department = {"Select Department", "CSE", "EEE", "Economics"};
+        String[] department = {"Select Department", "Ministry of Chittagong Hill Tracts Affairs", "Ministry of Commerce", "Ministry of Cultural Affairs", "Ministry of Defence", "Ministry of Disaster Management and Relief", "Ministry of Education", "Ministry of Environment, Forest and Climate Change", "Ministry of Expatriates' Welfare and Overseas Employment", "Ministry of Fisheries and Livestock", "Ministry of Food", "Ministry of Foreign Affairs", "Ministry of Health and Family Welfare", "Ministry of Home Affairs", "Ministry of Housing and Public Works", "Ministry of Industries", "Ministry of Information and Broadcasting", "Ministry of Labour and Employment", "Ministry of Land", "Ministry of Law, Justice and Parliamentary Affairs", "Ministry of Liberation War Affairs", "Ministry of Local Government, Rural Development and Co-operatives", "Ministry of Planning", "Ministry of Posts, Telecommunications and Information Technology", "Ministry of Power, Energy and Mineral Resources", "Ministry of Primary and Mass Education", "Ministry of Public Administration", "Ministry of Railways", "Ministry of Religious Affairs", "Ministry of Road Transport and Bridges", "Ministry of Science and Technology", "Ministry of Shipping", "Ministry of Social Welfare", "Ministry of Textiles and Jute", "Ministry of Water Resources", "Ministry of Women and Children Affairs", "Ministry of Youth and Sports"};
         ArrayAdapter<String> deptAdapter = new ArrayAdapter<>(
                 getApplicationContext(),
                 android.R.layout.simple_spinner_item,

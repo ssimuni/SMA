@@ -34,9 +34,6 @@
             android:name=".MonthlyReport"
             android:exported="false" />
         <activity
-            android:name=".ML"
-            android:exported="false" />
-        <activity
             android:name=".DailyReport"
             android:exported="false" />
         <activity

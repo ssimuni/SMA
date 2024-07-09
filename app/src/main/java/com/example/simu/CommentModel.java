@@ -6,13 +6,19 @@ public class CommentModel {
     private String userId;
     private String comment;
     private long commentTime;
+    private String sentiment;
+    private float positiveScore;
+    private float negativeScore;
 
-    public CommentModel(String commentId, String postId, String userId, String comment, long commentTime) {
+    public CommentModel(String commentId, String postId, String userId, String comment, long commentTime, String sentiment, float positiveScore, float negativeScore) {
         this.commentId = commentId;
         this.postId = postId;
         this.userId = userId;
         this.comment = comment;
         this.commentTime = commentTime;
+        this.sentiment = sentiment;
+        this.positiveScore = positiveScore;
+        this.negativeScore = negativeScore;
     }
 
     public CommentModel() {
@@ -56,5 +62,29 @@ public class CommentModel {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getSentiment() {
+        return sentiment;
+    }
+
+    public void setSentiment(String sentiment) {
+        this.sentiment = sentiment;
+    }
+
+    public float getPositiveScore() {
+        return positiveScore;
+    }
+
+    public void setPositiveScore(float positiveScore) {
+        this.positiveScore = positiveScore;
+    }
+
+    public float getNegativeScore() {
+        return negativeScore;
+    }
+
+    public void setNegativeScore(float negativeScore) {
+        this.negativeScore = negativeScore;
     }
 }
