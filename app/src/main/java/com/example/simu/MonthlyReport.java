@@ -5,16 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
+import android.os.Environment;
+import android.widget.Button;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,6 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,22 +40,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.pdf.PdfDocument;
-import android.os.Environment;
-import android.widget.Button;
-import android.widget.Toast;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-
 public class MonthlyReport extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
-    private List<UserAttendance> userAttendanceList;
+    private List<UserAttendanceGrouped> userAttendanceGroupedList;
     private FirebaseFirestore db;
     private Button buttonDownload;
 
@@ -64,8 +60,8 @@ public class MonthlyReport extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        userAttendanceList = new ArrayList<>();
-        userAdapter = new UserAdapter(userAttendanceList);
+        userAttendanceGroupedList = new ArrayList<>();
+        userAdapter = new UserAdapter(userAttendanceGroupedList);
         recyclerView.setAdapter(userAdapter);
         buttonDownload = findViewById(R.id.download_button);
 
@@ -84,7 +80,6 @@ public class MonthlyReport extends AppCompatActivity {
                 createPdf();
             }
         });
-
 
         spinnerWorkstation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -122,31 +117,35 @@ public class MonthlyReport extends AppCompatActivity {
         paint.setTextSize(15f);
         paint.setFakeBoldText(true);
         canvas.drawText("Monthly Attendance Report", margin, y, paint);
-        y += paint.descent() - paint.ascent();
+        y += paint.descent() - paint.ascent()+10;
 
         paint.setTextSize(10f);
         paint.setFakeBoldText(false);
-        for (UserAttendance userAttendance : userAttendanceList) {
-            User user = userAttendance.getUser();
-            Attendance attendance = userAttendance.getAttendance();
+        for (UserAttendanceGrouped userAttendanceGrouped : userAttendanceGroupedList) {
+            paint.setFakeBoldText(true);
 
-            canvas.drawText("Name: " + user.getName(), margin, y, paint);
-            y += paint.descent() - paint.ascent();
+            canvas.drawText("Date: " + userAttendanceGrouped.getDate(), margin, y, paint);
+            y += paint.descent() - paint.ascent()+10;
 
-            canvas.drawText("Designation: " + user.getDesignation(), margin, y, paint);
-            y += paint.descent() - paint.ascent();
+            for (UserAttendance userAttendance : userAttendanceGrouped.getUserAttendances()) {
+                User user = userAttendance.getUser();
+                Attendance attendance = userAttendance.getAttendance();
 
-            canvas.drawText("Workstation: " + user.getWorkstation(), margin, y, paint);
-            y += paint.descent() - paint.ascent();
+                canvas.drawText("Name: " + user.getName(), margin, y, paint);
+                y += paint.descent() - paint.ascent();
 
-            String formattedDate = formatDate(attendance.getPostingTime());
-            String formattedTime = formatTime(attendance.getPostingTime());
-            canvas.drawText("Date: " + formattedDate, margin, y, paint);
-            y += paint.descent() - paint.ascent();
-            canvas.drawText("Time: " + formattedTime, margin, y, paint);
-            y += paint.descent() - paint.ascent();
-            canvas.drawText("Type: " + attendance.getAttendanceType(), margin, y, paint);
-            y += 20;
+                canvas.drawText("Designation: " + user.getDesignation(), margin, y, paint);
+                y += paint.descent() - paint.ascent();
+
+                canvas.drawText("Workstation: " + user.getWorkstation(), margin, y, paint);
+                y += paint.descent() - paint.ascent();
+
+                String formattedTime = formatTime(attendance.getPostingTime());
+                canvas.drawText("Time: " + formattedTime, margin, y, paint);
+                y += paint.descent() - paint.ascent();
+                canvas.drawText("Type: " + attendance.getAttendanceType(), margin, y, paint);
+                y += 20;
+            }
         }
 
         document.finishPage(page);
@@ -168,7 +167,6 @@ public class MonthlyReport extends AppCompatActivity {
             document.close();
         }
     }
-
 
     private void loadUsersAndAttendanceFromFirestore() {
         db.collection("users")
@@ -212,6 +210,8 @@ public class MonthlyReport extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            Map<String, List<UserAttendance>> groupedAttendance = new HashMap<>();
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String userId = document.getString("userId");
                                 String attendanceType = document.getString("attendanceType");
@@ -219,8 +219,15 @@ public class MonthlyReport extends AppCompatActivity {
 
                                 User user = userMap.get(userId);
                                 if (user != null) {
-                                    userAttendanceList.add(new UserAttendance(user, new Attendance(attendanceType, postingTime)));
+                                    String date = sdf.format(new Date(postingTime));
+                                    if (!groupedAttendance.containsKey(date)) {
+                                        groupedAttendance.put(date, new ArrayList<UserAttendance>());
+                                    }
+                                    groupedAttendance.get(date).add(new UserAttendance(user, new Attendance(attendanceType, postingTime)));
                                 }
+                            }
+                            for (Map.Entry<String, List<UserAttendance>> entry : groupedAttendance.entrySet()) {
+                                userAttendanceGroupedList.add(new UserAttendanceGrouped(entry.getKey(), entry.getValue()));
                             }
                             userAdapter.notifyDataSetChanged();
                             filterData();
@@ -253,113 +260,98 @@ public class MonthlyReport extends AppCompatActivity {
         return calendar.getTimeInMillis();
     }
 
-    private void filterData() {
-        String selectedWorkstation = spinnerWorkstation.getSelectedItem().toString();
-        String selectedDesignation = spinnerDesignation.getSelectedItem().toString();
-
-        List<UserAttendance> filteredList = new ArrayList<>();
-        for (UserAttendance userAttendance : userAttendanceList) {
-            boolean matchWorkstation = selectedWorkstation.equals("All") || userAttendance.getUser().getWorkstation().equals(selectedWorkstation);
-            boolean matchDesignation = selectedDesignation.equals("All") || userAttendance.getUser().getDesignation().equals(selectedDesignation);
-
-            if (matchWorkstation && matchDesignation) {
-                filteredList.add(userAttendance);
-            }
-        }
-        userAdapter.updateList(filteredList);
-    }
-
     private void setSpinnerAdapters() {
+        // Add "All" option to workstation list
         workstationList.add(0, "All");
-        designationList.add(0, "All");
 
         ArrayAdapter<String> workstationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workstationList);
         workstationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerWorkstation.setAdapter(workstationAdapter);
 
+        // Add "All" option to designation list
+        designationList.add(0, "All");
+
         ArrayAdapter<String> designationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, designationList);
         designationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDesignation.setAdapter(designationAdapter);
     }
-    private static class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
-        private List<UserAttendance> userAttendanceList;
 
-        public UserAdapter(List<UserAttendance> userAttendanceList) {
-            this.userAttendanceList = userAttendanceList;
-        }
+    private void filterData() {
+        String selectedWorkstation = spinnerWorkstation.getSelectedItem().toString();
+        String selectedDesignation = spinnerDesignation.getSelectedItem().toString();
 
-        @NonNull
-        @Override
-        public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.monthly_report_table, parent, false);
-            return new UserViewHolder(view);
-        }
+        List<UserAttendanceGrouped> filteredList = new ArrayList<>();
+        for (UserAttendanceGrouped userAttendanceGrouped : userAttendanceGroupedList) {
+            List<UserAttendance> filteredUserAttendances = new ArrayList<>();
+            for (UserAttendance userAttendance : userAttendanceGrouped.getUserAttendances()) {
+                User user = userAttendance.getUser();
+                boolean addToFilteredList = true;
 
-        @Override
-        public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-            UserAttendance userAttendance = userAttendanceList.get(position);
-            User user = userAttendance.getUser();
-            Attendance attendance = userAttendance.getAttendance();
+                // Check if selectedWorkstation is "All" or matches user's workstation
+                if (!selectedWorkstation.equals("All") && !user.getWorkstation().equals(selectedWorkstation)) {
+                    addToFilteredList = false;
+                }
 
-            holder.textViewName.setText(user.getName());
-            holder.textViewDesignation.setText(user.getDesignation());
-            holder.textViewWorkstation.setText(user.getWorkstation());
-            holder.date.setText(formatDate(attendance.getPostingTime()));
+                // Check if selectedDesignation is "All" or matches user's designation
+                if (!selectedDesignation.equals("All") && !user.getDesignation().equals(selectedDesignation)) {
+                    addToFilteredList = false;
+                }
 
-            String formattedTime = formatTime(attendance.getPostingTime());
-            switch (attendance.getAttendanceType()) {
-                case "Intime":
-                    holder.intime.setText(formattedTime);
-                    break;
-                case "Late":
-                    holder.late.setText(formattedTime);
-                    break;
-                case "Exit":
-                    holder.exit.setText(formattedTime);
-                    break;
-                case "Approved leave":
-                    holder.approved_leave.setText(formattedTime);
-                    break;
-                case "Urgent leave":
-                    holder.urgent.setText(formattedTime);
-                    break;
-                case "Training":
-                    holder.training.setText(formattedTime);
-                    break;
+                if (addToFilteredList) {
+                    filteredUserAttendances.add(userAttendance);
+                }
+            }
+            if (!filteredUserAttendances.isEmpty()) {
+                filteredList.add(new UserAttendanceGrouped(userAttendanceGrouped.getDate(), filteredUserAttendances));
             }
         }
+        userAdapter.updateData(filteredList);
+    }
 
-        @Override
-        public int getItemCount() {
-            return userAttendanceList.size();
+
+    private String formatTime(long timestamp) {
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+        return sdf.format(new Date(timestamp));
+    }
+
+    static class UserAttendanceGrouped {
+        private String date;
+        private List<UserAttendance> userAttendances;
+
+        public UserAttendanceGrouped(String date, List<UserAttendance> userAttendances) {
+            this.date = date;
+            this.userAttendances = userAttendances;
         }
 
-        public void updateList(List<UserAttendance> newList) {
-            userAttendanceList = newList;
-            notifyDataSetChanged();
+        public String getDate() {
+            return date;
         }
 
-        public static class UserViewHolder extends RecyclerView.ViewHolder {
-            TextView textViewName, textViewDesignation, textViewWorkstation, date, intime, late, exit, approved_leave, training, urgent;
-
-            public UserViewHolder(@NonNull View itemView) {
-                super(itemView);
-                textViewName = itemView.findViewById(R.id.textViewName);
-                textViewDesignation = itemView.findViewById(R.id.textViewDesignation);
-                textViewWorkstation = itemView.findViewById(R.id.textViewWorkstation);
-                date = itemView.findViewById(R.id.date);
-                intime = itemView.findViewById(R.id.intime);
-                late = itemView.findViewById(R.id.late);
-                exit = itemView.findViewById(R.id.exit);
-                approved_leave = itemView.findViewById(R.id.approved_leave);
-                training = itemView.findViewById(R.id.training);
-                urgent = itemView.findViewById(R.id.urgent);
-            }
+        public List<UserAttendance> getUserAttendances() {
+            return userAttendances;
         }
     }
 
-    private static class User {
+    static class UserAttendance {
+        private User user;
+        private Attendance attendance;
+
+        public UserAttendance(User user, Attendance attendance) {
+            this.user = user;
+            this.attendance = attendance;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public Attendance getAttendance() {
+            return attendance;
+        }
+    }
+
+    static class User {
         private String userId;
         private String name;
         private String designation;
@@ -389,7 +381,7 @@ public class MonthlyReport extends AppCompatActivity {
         }
     }
 
-    private static class Attendance {
+    static class Attendance {
         private String attendanceType;
         private long postingTime;
 
@@ -407,33 +399,62 @@ public class MonthlyReport extends AppCompatActivity {
         }
     }
 
-    private static class UserAttendance {
-        private User user;
-        private Attendance attendance;
+    static class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
+        private List<UserAttendanceGrouped> userAttendanceGroupedList;
 
-        public UserAttendance(User user, Attendance attendance) {
-            this.user = user;
-            this.attendance = attendance;
+        public UserAdapter(List<UserAttendanceGrouped> userAttendanceGroupedList) {
+            this.userAttendanceGroupedList = userAttendanceGroupedList;
         }
 
-        public User getUser() {
-            return user;
+        public void updateData(List<UserAttendanceGrouped> userAttendanceGroupedList) {
+            this.userAttendanceGroupedList = userAttendanceGroupedList;
+            notifyDataSetChanged();
         }
 
-        public Attendance getAttendance() {
-            return attendance;
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.monthly_report_table, parent, false);
+            return new ViewHolder(view);
         }
-    }
 
-    private static String formatDate(long timeInMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        Date date = new Date(timeInMillis);
-        return sdf.format(date);
-    }
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            UserAttendanceGrouped userAttendanceGrouped = userAttendanceGroupedList.get(position);
+            holder.dateTextView.setText(userAttendanceGrouped.getDate());
 
-    private static String formatTime(long timeInMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        Date date = new Date(timeInMillis);
-        return sdf.format(date);
+            StringBuilder details = new StringBuilder();
+            for (UserAttendance userAttendance : userAttendanceGrouped.getUserAttendances()) {
+                User user = userAttendance.getUser();
+                Attendance attendance = userAttendance.getAttendance();
+                details.append("Name: ").append(user.getName()).append("\n")
+                        .append("Designation: ").append(user.getDesignation()).append("\n")
+                        .append("Workstation: ").append(user.getWorkstation()).append("\n")
+                        .append("Time: ").append(formatTime(attendance.getPostingTime())).append("\n")
+                        .append("Type: ").append(attendance.getAttendanceType()).append("\n\n");
+            }
+            holder.detailsTextView.setText(details.toString().trim());
+        }
+
+        @Override
+        public int getItemCount() {
+            return userAttendanceGroupedList.size();
+        }
+
+        private String formatTime(long timestamp) {
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+            return sdf.format(new Date(timestamp));
+        }
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView dateTextView;
+            TextView detailsTextView;
+
+            ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                dateTextView = itemView.findViewById(R.id.dateTextView);
+                detailsTextView = itemView.findViewById(R.id.detailsTextView);
+            }
+        }
     }
 }
