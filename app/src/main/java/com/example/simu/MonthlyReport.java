@@ -50,8 +50,14 @@ public class MonthlyReport extends AppCompatActivity {
 
     private Spinner spinnerWorkstation;
     private Spinner spinnerDesignation;
+    private Spinner spinnerDivision;
+    private Spinner spinnerDistrict;
+    private Spinner spinnerUpozila;
     private List<String> workstationList;
     private List<String> designationList;
+    private List<String> divisionList;
+    private List<String> districtList;
+    private List<String> upozilaList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +73,14 @@ public class MonthlyReport extends AppCompatActivity {
 
         spinnerWorkstation = findViewById(R.id.spinnerWorkstation);
         spinnerDesignation = findViewById(R.id.spinnerDesignation);
+        spinnerDivision = findViewById(R.id.spinnerDivision);
+        spinnerDistrict = findViewById(R.id.spinnerDistrict);
+        spinnerUpozila = findViewById(R.id.spinnerUpozila);
         workstationList = new ArrayList<>();
         designationList = new ArrayList<>();
+        divisionList = new ArrayList<>();
+        districtList = new ArrayList<>();
+        upozilaList = new ArrayList<>();
 
         db = FirebaseFirestore.getInstance();
         loadUsersAndAttendanceFromFirestore();
@@ -98,6 +110,36 @@ public class MonthlyReport extends AppCompatActivity {
                 filterData();
             }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        spinnerDivision.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterData();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        spinnerDistrict.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterData();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        spinnerUpozila.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterData();
+            }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -181,8 +223,11 @@ public class MonthlyReport extends AppCompatActivity {
                                 String name = document.getString("name");
                                 String designation = document.getString("designation");
                                 String workstation = document.getString("workstation");
+                                String division = document.getString("division");
+                                String district = document.getString("district");
+                                String upozila = document.getString("upozila");
 
-                                User user = new User(userId, name, designation, workstation);
+                                User user = new User(userId, name, designation, workstation, division, district, upozila);
                                 userMap.put(userId, user);
 
                                 if (!workstationList.contains(workstation)) {
@@ -190,6 +235,15 @@ public class MonthlyReport extends AppCompatActivity {
                                 }
                                 if (!designationList.contains(designation)) {
                                     designationList.add(designation);
+                                }
+                                if (!divisionList.contains(division)) {
+                                    divisionList.add(division);
+                                }
+                                if (!districtList.contains(district)) {
+                                    districtList.add(district);
+                                }
+                                if (!upozilaList.contains(upozila)) {
+                                    upozilaList.add(upozila);
                                 }
                             }
                             loadAttendanceFromFirestore(userMap);
@@ -261,25 +315,40 @@ public class MonthlyReport extends AppCompatActivity {
     }
 
     private void setSpinnerAdapters() {
-        // Add "All" option to workstation list
-        workstationList.add(0, "All");
+        workstationList.add(0, "Workstation");
+        designationList.add(0, "Designation");
+        divisionList.add(0, "Division");
+        districtList.add(0, "District");
+        upozilaList.add(0, "Upazila");
 
         ArrayAdapter<String> workstationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workstationList);
         workstationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerWorkstation.setAdapter(workstationAdapter);
 
-        // Add "All" option to designation list
-        designationList.add(0, "All");
-
         ArrayAdapter<String> designationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, designationList);
         designationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDesignation.setAdapter(designationAdapter);
+
+        ArrayAdapter<String> divisionAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, divisionList);
+        divisionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDivision.setAdapter(divisionAdapter);
+
+        ArrayAdapter<String> districtAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, districtList);
+        districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDistrict.setAdapter(districtAdapter);
+
+        ArrayAdapter<String> upozilaAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, upozilaList);
+        upozilaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerUpozila.setAdapter(upozilaAdapter);
     }
 
 
     private void filterData() {
         String selectedWorkstation = spinnerWorkstation.getSelectedItem().toString();
         String selectedDesignation = spinnerDesignation.getSelectedItem().toString();
+        String selectedDivision = spinnerDivision.getSelectedItem().toString();
+        String selectedDistrict = spinnerDistrict.getSelectedItem().toString();
+        String selectedUpozila = spinnerUpozila.getSelectedItem().toString();
 
         List<UserAttendanceGrouped> filteredList = new ArrayList<>();
         for (UserAttendanceGrouped userAttendanceGrouped : userAttendanceGroupedList) {
@@ -288,13 +357,23 @@ public class MonthlyReport extends AppCompatActivity {
                 User user = userAttendance.getUser();
                 boolean addToFilteredList = true;
 
-                // Check if selectedWorkstation is "All" or matches user's workstation
-                if (!selectedWorkstation.equals("All") && !user.getWorkstation().equals(selectedWorkstation)) {
+                if (!selectedWorkstation.equals("Workstation") && !user.getWorkstation().equals(selectedWorkstation)) {
                     addToFilteredList = false;
                 }
 
-                // Check if selectedDesignation is "All" or matches user's designation
-                if (!selectedDesignation.equals("All") && !user.getDesignation().equals(selectedDesignation)) {
+                if (!selectedDesignation.equals("Designation") && !user.getDesignation().equals(selectedDesignation)) {
+                    addToFilteredList = false;
+                }
+
+                if (!selectedDivision.equals("Division") && !user.getDivision().equals(selectedDivision)) {
+                    addToFilteredList = false;
+                }
+
+                if (!selectedDistrict.equals("District") && !user.getDistrict().equals(selectedDistrict)) {
+                    addToFilteredList = false;
+                }
+
+                if (!selectedUpozila.equals("Upazila") && !user.getUpozila().equals(selectedUpozila)) {
                     addToFilteredList = false;
                 }
 
@@ -356,12 +435,18 @@ public class MonthlyReport extends AppCompatActivity {
         private String name;
         private String designation;
         private String workstation;
+        private  String division;
+        private String district;
+        private String upozila;
 
-        public User(String userId, String name, String designation, String workstation) {
+        public User(String userId, String name, String designation, String workstation, String division, String district, String upozila) {
             this.userId = userId;
             this.name = name;
             this.designation = designation;
             this.workstation = workstation;
+            this.division = division;
+            this.district = district;
+            this.upozila = upozila;
         }
 
         public String getUserId() {
@@ -378,6 +463,16 @@ public class MonthlyReport extends AppCompatActivity {
 
         public String getWorkstation() {
             return workstation;
+        }
+
+        public String getDivision() { return division; }
+
+        public String getDistrict() {
+            return district;
+        }
+
+        public String getUpozila() {
+            return upozila;
         }
     }
 

@@ -72,6 +72,7 @@ public class Register extends AppCompatActivity {
     public static final String TAG = "TAG";
     EditText mName, mAddress, mWorkStation, mEmail, mNid, mDob, mPass, mUsername, mNumber;
     Spinner spinner, officerSpinner, departmentSpinner;
+    Spinner divisionSpinner, districtSpinner, upozilaSpinner;
     Button mRegister;
     Button mProfileBtn;
     TextView mLogin;
@@ -83,8 +84,6 @@ public class Register extends AppCompatActivity {
     ActivityResultLauncher<Intent> cameraLauncher;
     ActivityResultLauncher<Intent> galleryLauncher;
     private StorageReference storageReference;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,12 +107,155 @@ public class Register extends AppCompatActivity {
         mProfilePic = findViewById(R.id.profilepic);
         mUsername = findViewById(id.username);
         mNumber = findViewById(id.p_number);
+        divisionSpinner = findViewById(R.id.divisionSpinner);
+        districtSpinner = findViewById(R.id.districtSpinner);
+        upozilaSpinner = findViewById(R.id.upozilaSpinner);
 
 
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
+
+        //division, district, upozila spinner
+        String[] divisions = {"Dhaka", "Chattogram", "Rajshahi", "Rangpur", "Mymensingh", "Barishal", "Khulna", "Sylhet"};
+        String[][] districts = {
+                {"Dhaka", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Rajbari", "Shariatpur", "Faridpur", "Tangail", "Narsingdi"},
+                {"Bandarban", "Brahmanbaria", "Chandpur", "Chattogram", "Cumilla", "Cox's Bazar", "Feni", "Khagrachhari", "Lakshmipur", "Noakhali", "Rangamati"},
+                {"Joypurhat", "Bogura", "Naogaon", "Natore", "Nawabganj", "Pabna", "Sirajganj", "Rajshahi"},
+                {"Dinajpur", "Gaibandha", "Kurigram", "Lalmonirhat", "Nilphamari", "Panchagarh", "Rangpur", "Thakurgaon"},
+                {"Netrokona", "Sherpur", "Jamalpur", "Mymensingh"},
+                {"Barguna", "Barishal", "Bhola", "Jhalokati", "Patuakhali", "Pirojpur"},
+                {"Bagerhat", "Chuadanga", "Jashore", "Jhenaida", "Khulna", "Kushtia", "Magura", "Meherpur", "Narail", "Satkhira"},
+                {"Habiganj", "Moulvibazar", "Sunamganj", "Sylhet"},
+        };
+
+        String[][][] upozilas = {
+                {
+                        //dhaka division
+                        {"Dhamrai", "Dohar", "Keraniganj", "Nawabganj", "Savar"},  // Upozilas for Dhaka
+                        {"Gazipur Sadar", "Kaliakair", "Kaliganj", "Kapasia", "Sreepur"},  // Upozilas for Gazipur
+                        {"Gopalganj Sadar", "Kashiani", "Kotalipara", "Muksudpur", "Tungipara"},  // Upozilas for Gopalganj
+                        {"Austagram", "Bajitpur", "Bhairab", "Hossainpur", "Itna", "Karimganj", "Katiadi", "Kishoreganj Sadar", "Kuliarchar", "Mithamain", "Nikli", "Pakundia", "Tarail"},  // Upozilas for Kishoreganj
+                        {"Rajoir", "Madaripur Sadar", "Kalkini", "Shibchar", "Dasar"},  // Upozilas for Madaripur
+                        {"Daulatpur", "Ghior", "Harirampur", "Manikgonj Sadar", "Saturia", "Shivalaya", "Singair"},  // Upozilas for Manikganj
+                        {"Gazaria", "Lohajang", "Munshiganj Sadar", "Sirajdikhan", "Sreenagar", "Tongibari"},  // Upozilas for Munshiganj
+                        {"Araihazar", "Bandar", "Narayanganj Sadar", "Rupganj", "Sonargaon"},  // Upozilas for Narayanganj
+                        {"Baliakandi", "Goalandaghat", "Pangsha", "Rajbari Sadar", "Kalukhali"},  // Upozilas for Rajbari
+                        {"Bhedarganj", "Damudya", "Gosairhat", "Naria", "Shariatpur Sadar", "Zajira"},  // Upozilas for Shariatpur
+                        {"Alfadanga", "Bhanga", "Boalmari", "Charbhadrasan", "Faridpur Sadar", "Madhukhali", "Nagarkanda", "Sadarpur", "Saltha"},  // Upozilas for Faridpur
+                        {"Gopalpur", "Basail", "Bhuapur", "Delduar", "Ghatail", "Kalihati", "Madhupur", "Mirzapur", "Nagarpur", "Sakhipur", "Dhanbari", "Tangail Sadar"},  // Upozilas for Tangail
+                        {"Narsingdi Sadar", "Belabo", "Monohardi", "Palash", "Raipura", "Shibpur"}  // Upozilas for Narsingdi
+                },
+                {
+                        //chittagong division
+                        {"Ali Kadam", "Bandarban Sadar", "Lama", "Naikhongchhari", "Rowangchhari", "Ruma", "Thanchi"}, // Upozilas for Bandarban
+                        {"Akhaura", "Bancharampur", "Brahmanbaria Sadar", "Kasba", "Nabinagar", "Nasirnagar", "Sarail", "Ashuganj", "Bijoynagar"}, // Upozilas for Brahmanbaria
+                        {"Chandpur Sadar", "Faridganj", "Haimchar", "Haziganj", "Kachua", "Matlab Dakshin", "Matlab Uttar", "Shahrasti"}, // Upozilas for Chandpur
+                        {"Anwara", "Banshkhali", "Boalkhali", "Chandanaish", "Fatikchhari", "Hathazari", "Karnaphuli", "Lohagara", "Mirsharai", "Patiya", "Rangunia", "Raozan", "Sandwip", "Satkania", "Sitakunda"}, // Upozilas for Chattogram
+                        {"Barura", "Brahmanpara", "Burichang", "Chandina", "Chauddagram", "Daudkandi", "Debidwar", "Homna", "Laksam", "Lalmai", "Muradnagar", "Nangalkot", "Cumilla Adarsha Sadar", "Meghna", "Titas", "Monohargonj", "Cumilla Sadar Dakshin"}, // Upozilas for Cumilla
+                        {"Chakaria", "Cox's Bazar Sadar", "Kutubdia", "Maheshkhali", "Ramu", "Teknaf", "Ukhia", "Pekua", "Eidgaon"}, // Upozilas for Cox's Bazar
+                        {"Chhagalnaiya", "Daganbhuiyan", "Feni Sadar", "Parshuram", "Sonagazi", "Fulgazi"}, // Upozilas for Feni
+                        {"Dighinala", "Khagrachhari", "Lakshmichhari", "Mahalchhari", "Manikchhari", "Matiranga", "Panchhari", "Ramgarh", "Guimara"}, // Upozilas for Khagrachhari
+                        {"Lakshmipur Sadar", "Raipur", "Ramganj", "Ramgati", "Kamalnagar"}, // Upozilas for Lakshmipur
+                        {"Begumganj", "Noakhali Sadar", "Chatkhil", "Companiganj", "Hatiya", "Senbagh", "Sonaimuri", "Subarnachar", "Kabirhat"}, // Upozilas for Noakhali
+                        {"Bagaichhari", "Barkal", "Kawkhali (Betbunia)", "Belaichhari", "Kaptai", "Juraichhari", "Langadu", "Naniyachar", "Rajasthali", "Rangamati Sadar"} // Upozilas for Rangamati
+                },
+                {
+                        //rajshahi division
+                        {"Akkelpur", "Joypurhat Sadar", "Kalai", "Khetlal", "Panchbibi"}, // Upozilas for Joypurhat District
+                        {"Adamdighi", "Bogura Sadar", "Dhunat", "Dhupchanchia", "Gabtali", "Kahaloo", "Nandigram", "Sariakandi", "Shajahanpur", "Sherpur", "Shibganj", "Sonatola"}, // Upozilas for Bogura District
+                        {"Atrai", "Badalgachhi", "Manda", "Dhamoirhat", "Mohadevpur", "Naogaon Sadar", "Niamatpur", "Patnitala", "Porsha", "Raninagar", "Sapahar"}, // Upozilas for Naogaon District
+                        {"Bagatipara", "Baraigram", "Gurudaspur", "Lalpur", "Natore Sadar", "Singra", "Naldanga"}, // Upozilas for Natore District
+                        {"Bholahat", "Gomastapur", "Nachole", "Nawabganj Sadar", "Shibganj"}, // Upozilas for Nawabganj District
+                        {"Atgharia", "Bera", "Bhangura", "Chatmohar", "Faridpur", "Ishwardi", "Pabna Sadar", "Santhia", "Sujanagar"}, // Upozilas for Pabna District
+                        {"Belkuchi", "Chauhali", "Kamarkhanda", "Kazipur", "Raiganj", "Shahjadpur", "Sirajganj Sadar", "Tarash", "Ullahpara"}, // Upozilas for Sirajganj District
+                        {"Bagha", "Bagmara", "Charghat", "Durgapur", "Godagari", "Mohanpur", "Paba", "Puthia", "Tanore"}, // Upozilas for Rajshahi District
+                },
+                {
+                        //rangpur
+                        {"Birampur", "Birganj", "Biral", "Bochaganj", "Chirirbandar", "Phulbari", "Ghoraghat", "Hakimpur", "Kaharole", "Khansama", "Dinajpur Sadar", "Nawabganj", "Parbatipur"}, // Upozilas for Dinajpur
+                        {"Phulchhari", "Gaibandha Sadar", "Gobindaganj", "Palashbari", "Sadullapur", "Sughatta", "Sundarganj"}, // Upozilas for Gaibandha
+                        {"Bhurungamari", "Char Rajibpur", "Chilmari", "Phulbari (Kurigram)", "Kurigram Sadar", "Nageshwari", "Rajarhat", "Raomari", "Ulipur"},// Upozilas for Kurigram
+                        {"Aditmari", "Hatibandha", "Kaliganj", "Lalmonirhat Sadar", "Patgram"},// Upozilas for Lalmonirhat
+                        {"Dimla", "Domar", "Jaldhaka", "Kishoreganj", "Nilphamari Sadar", "Saidpur"}, // Upozilas for Nilphamari
+                        {"Atwari", "Boda", "Debiganj", "Panchagarh Sadar", "Tetulia"}, // Upozilas for Panchagarh
+                        {"Badarganj", "Gangachhara", "Kaunia", "Rangpur Sadar", "Mithapukur", "Pirgachha", "Pirganj", "Taraganj"},// Upozilas for Rangpur
+                        {"Baliadangi", "Haripur", "Pirganj (Thakurgaon)", "Ranisankail", "Thakurgaon Sadar"}// Upozilas for Thakurgaon
+                },
+                {
+                        //mymensingh division
+                        {"Atpara", "Barhatta", "Durgapur", "Khaliajuri", "Kalmakanda", "Kendua", "Madan", "Mohanganj", "Netrokona Sadar", "Purbadhala"}, // Upozilas for Netrokona
+                        {"Jhenaigati", "Nakla", "Nalitabari", "Sherpur Sadar", "Sreebardi"}, // Upozilas for Sherpur
+                        {"Baksiganj", "Dewanganj", "Islampur", "Jamalpur Sadar", "Madarganj", "Melandaha", "Sarishabari"}, // Upozilas for Jamalpur
+                        {"Trishal", "Dhobaura", "Fulbaria", "Gafargaon", "Gauripur", "Haluaghat", "Ishwarganj", "Mymensingh Sadar", "Muktagachha", "Nandail", "Phulpur", "Bhaluka", "Tara Khanda"} // Upozilas for Mymensingh
+                },
+                {
+                        //barishal
+                        {"Amtali", "Bamna", "Barguna Sadar", "Betagi", "Patharghata", "Taltali"}, // Upozilas for Barguna
+                        {"Agailjhara", "Babuganj", "Bakerganj", "Banaripara", "Gaurnadi", "Hizla", "Barishal Sadar", "Mehendiganj", "Muladi", "Wazirpur"}, // Upozilas for Barishal
+                        {"Bhola Sadar", "Burhanuddin", "Char Fasson", "Daulatkhan", "Lalmohan", "Manpura", "Tazumuddin"}, // Upozilas for Bhola
+                        {"Jhalokati Sadar", "Kathalia", "Nalchity", "Rajapur"}, // Upozilas for Jhalokati
+                        {"Bauphal", "Dashmina", "Galachipa", "Kalapara", "Mirzaganj", "Patuakhali Sadar", "Rangabali", "Dumki"}, // Upozilas for Patuakhali
+                        {"Bhandaria", "Kawkhali", "Mathbaria", "Nazirpur", "Pirojpur Sadar", "Nesarabad (Swarupkati)", "Indurkani"} // Upozilas for Pirojpur
+                },
+                {
+                        //khulna
+                        {"Bagerhat Sadar", "Chitalmari", "Fakirhat", "Kachua", "Mollahat", "Mongla", "Morrelganj", "Rampal", "Sarankhola"},// Upozilas for Bagerhat District
+                        {"Alamdanga", "Chuadanga Sadar", "Damurhuda", "Jibannagar"},// Upozilas for Chuadanga District
+                        {"Abhaynagar", "Bagherpara", "Chaugachha", "Jhikargachha", "Keshabpur", "Jashore Sadar", "Manirampur", "Sharsha"},// Upozilas for Jashore District
+                        {"Harinakunda", "Jhenaidah Sadar", "Kaliganj", "Kotchandpur", "Maheshpur", "Shailkupa"},// Upozilas for Jhenaida District
+                        {"Batiaghata", "Dacope", "Dumuria", "Dighalia", "Koyra", "Paikgachha", "Phultala", "Rupsha", "Terokhada"},// Upozilas for Khulna District
+                        {"Bheramara", "Daulatpur", "Khoksa", "Kumarkhali", "Kushtia Sadar", "Mirpur"},// Upozilas for Kushtia District
+                        {"Magura Sadar", "Mohammadpur", "Shalikha", "Sreepur"},// Upozilas for Magura District
+                        {"Gangni", "Meherpur Sadar", "Mujibnagar"},// Upozilas for Meherpur District
+                        {"Kalia", "Lohagara", "Narail Sadar"},// Upozilas for Narail District
+                        {"Assasuni", "Debhata", "Kalaroa", "Kaliganj", "Satkhira Sadar", "Shyamnagar", "Tala"}
+                },
+                {
+                        //sylhet
+                        {"Ajmiriganj", "Bahubal", "Baniyachong", "Chunarughat", "Habiganj Sadar", "Lakhai", "Madhabpur", "Nabiganj", "Shayestaganj"},// Upozilas for Habiganj District
+                        {"Barlekha", "Juri", "Kamalganj", "Kulaura", "Moulvibazar Sadar", "Rajnagar", "Sreemangal"},// Upozilas for Moulvibazar District
+                        {"Bishwamvarpur", "Chhatak", "Shantiganj", "Derai", "Dharamapasha", "Dowarabazar", "Jagannathpur", "Jamalganj", "Sullah", "Sunamganj Sadar", "Tahirpur", "Madhyanagar"},// Upozilas for Sunamganj District
+                        {"Balaganj", "Beanibazar", "Bishwanath", "Companiganj", "Dakshin Surma", "Fenchuganj", "Golapganj", "Gowainghat", "Jaintiapur", "Kanaighat", "Osmani Nagar", "Sylhet Sadar", "Zakiganj"}// Upozilas for Sylhet District
+                }
+        };
+
+        ArrayAdapter<String> divisionAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, divisions);
+        divisionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        divisionSpinner.setAdapter(divisionAdapter);
+        divisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                districtSpinner.setVisibility(View.VISIBLE);
+                String[] selectedDistricts = districts[position];
+                ArrayAdapter<String> districtAdapter = new ArrayAdapter<>(Register.this, android.R.layout.simple_spinner_item, selectedDistricts);
+                districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                districtSpinner.setAdapter(districtAdapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle no selection if needed
+            }
+        });
+
+        districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                upozilaSpinner.setVisibility(View.VISIBLE);
+                String[] selectedUpozilas = upozilas[divisionSpinner.getSelectedItemPosition()][position];
+                ArrayAdapter<String> upozilaAdapter = new ArrayAdapter<>(Register.this, android.R.layout.simple_spinner_item, selectedUpozilas);
+                upozilaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                upozilaSpinner.setAdapter(upozilaAdapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle no selection if needed
+            }
+        });
+        divisionSpinner.setSelection(0);
 
 
 
@@ -323,6 +465,9 @@ public class Register extends AppCompatActivity {
                 final String pnumber = mNumber.getText().toString();
                 String password = mPass.getText().toString().trim();
 
+                final String selectedDivision = divisionSpinner.getSelectedItem().toString();
+                final String selectedDistrict = districtSpinner.getSelectedItem().toString();
+                final String selectedUpozila = upozilaSpinner.getSelectedItem().toString();
 
                 if (Pattern.compile("\\s").matcher(email).find()) {
                     mEmail.setError("Email cannot contain whitespace");
@@ -383,6 +528,9 @@ public class Register extends AppCompatActivity {
                                     user.put("isAdmin", "No");
                                     user.put("isApproved", "No");
 
+                                    user.put("division", selectedDivision);
+                                    user.put("district", selectedDistrict);
+                                    user.put("upozila", selectedUpozila);
                                     documentReference.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {

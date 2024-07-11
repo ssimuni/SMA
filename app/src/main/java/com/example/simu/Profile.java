@@ -30,7 +30,7 @@ import com.google.firebase.storage.StorageReference;
 public class Profile extends AppCompatActivity {
 
     private ImageView profileImageView;
-    private TextView nameTextView, addressTextView, workstationTextView, emailTextView, nidTextView, dobTextView, designationTextView;
+    private TextView nameTextView, addressTextView, workstationTextView, emailTextView, nidTextView, dobTextView, designationTextView, divisionTextView, districtTextView, upozilaTextView;
     private Button logoutButton;
     FirebaseAuth fAuth;
     FirebaseStorage firebaseStorage;
@@ -50,6 +50,9 @@ public class Profile extends AppCompatActivity {
         dobTextView = findViewById(R.id.dobTextView);
         designationTextView = findViewById(R.id.designationTextView);
         logoutButton = findViewById(R.id.logoutButton);
+        divisionTextView = findViewById(R.id.division);
+        districtTextView = findViewById(R.id.district);
+        upozilaTextView = findViewById(R.id.upozila);
 
         fAuth = FirebaseAuth.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
@@ -76,6 +79,9 @@ public class Profile extends AppCompatActivity {
                                 String dob = document.getString("dob");
                                 String designation = document.getString("designation");
                                 String profileImageUrl = document.getString("profileImageUrl");
+                                String division = document.getString("division");
+                                String district = document.getString("district");
+                                String upozila = document.getString("upozila");
 
                                 // Display user information
                                 nameTextView.setText(String.format("Name: %s", name));
@@ -85,6 +91,10 @@ public class Profile extends AppCompatActivity {
                                 nidTextView.setText(String.format("NID: %s", nid));
                                 dobTextView.setText(String.format("Date of Birth: %s", dob));
                                 designationTextView.setText(String.format("Designation: %s", designation));
+                                divisionTextView.setText(String.format("Division: %s", division));
+                                districtTextView.setText(String.format("District: %s", district));
+                                upozilaTextView.setText(String.format("Upazila: %s", upozila));
+
                                 loadProfileImage(userID);
                             }
                         }

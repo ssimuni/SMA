@@ -10,7 +10,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="300dp"
-        android:layout_height="480dp"
+        android:layout_height="570dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         app:cardCornerRadius="30dp"
@@ -56,6 +56,33 @@
         android:text="Work station"
         android:textColor="@color/basic"
         android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/division"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Division"
+            android:textColor="@color/basic"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/district"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="District"
+            android:textColor="@color/basic"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/upozila"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Upazila"
+            android:textColor="@color/basic"
+            android:textSize="18sp" />
 
     <TextView
         android:id="@+id/emailTextView"
