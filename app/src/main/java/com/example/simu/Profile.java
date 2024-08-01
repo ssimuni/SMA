@@ -30,8 +30,10 @@ import com.google.firebase.storage.StorageReference;
 public class Profile extends AppCompatActivity {
 
     private ImageView profileImageView;
-    private TextView nameTextView, addressTextView, workstationTextView, emailTextView, nidTextView, dobTextView, designationTextView, divisionTextView, districtTextView, upozilaTextView;
-    private Button logoutButton;
+    private TextView nameTextView, addressTextView, workstationTextView, emailTextView, nidTextView,
+            dobTextView, designationTextView, divisionTextView, districtTextView, upozilaTextView,
+            directorateTextView, departmentTextView;
+    private Button logoutButton, update;
     FirebaseAuth fAuth;
     FirebaseStorage firebaseStorage;
     StorageReference storageReference;
@@ -53,6 +55,9 @@ public class Profile extends AppCompatActivity {
         divisionTextView = findViewById(R.id.division);
         districtTextView = findViewById(R.id.district);
         upozilaTextView = findViewById(R.id.upozila);
+        update = findViewById(R.id.update);
+        directorateTextView = findViewById(R.id.directorate);
+        departmentTextView = findViewById(R.id.department);
 
         fAuth = FirebaseAuth.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
@@ -82,6 +87,8 @@ public class Profile extends AppCompatActivity {
                                 String division = document.getString("division");
                                 String district = document.getString("district");
                                 String upozila = document.getString("upozila");
+                                String directorate = document.getString("directorate");
+                                String department = document.getString("department");
 
                                 // Display user information
                                 nameTextView.setText(String.format("Name: %s", name));
@@ -94,6 +101,8 @@ public class Profile extends AppCompatActivity {
                                 divisionTextView.setText(String.format("Division: %s", division));
                                 districtTextView.setText(String.format("District: %s", district));
                                 upozilaTextView.setText(String.format("Upazila: %s", upozila));
+                                directorateTextView.setText(String.format("Directorate: %s", directorate));
+                                departmentTextView.setText(String.format("Department: %s", department));
 
                                 loadProfileImage(userID);
                             }
@@ -108,6 +117,14 @@ public class Profile extends AppCompatActivity {
                 clearUserSession();
                 Intent intent = new Intent(Profile.this, Login.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
+
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Profile.this, UpdateProfile.class);
                 startActivity(intent);
             }
         });

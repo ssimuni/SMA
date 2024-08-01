@@ -1,130 +1,344 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Attendance"
-    android:background="@drawable/wave">
-    <Button
-        android:id="@+id/entry"
-        android:layout_marginTop="220dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Entry: 8:45 - 9.15"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
-    <Button
-        android:id="@+id/late"
-        android:layout_marginTop="270dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Late Entry: 9:16 - 10:00"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
+    android:background="@drawable/wave"
+    android:scrollbarSize="10dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            >
+
+            <Button
+                android:id="@+id/daily_report"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Daily Report"
+                android:textSize="18sp"
+                app:cornerRadius="20dp"
+                android:fontFamily="sans-serif"
+                android:layout_marginEnd="15dp"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/basic"/>
+
+            <Button
+                android:id="@+id/monthly_report"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Monthly Report"
+                android:textSize="18sp"
+                app:cornerRadius="20dp"
+                android:fontFamily="sans-serif"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/basic"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal">
+            <Button
+                android:id="@+id/buttonViewUsers"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="View User's Attendance"
+                android:textSize="18sp"
+                app:cornerRadius="20dp"
+                android:fontFamily="sans-serif"
+                android:layout_marginEnd="15dp"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/basic"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/activites_feed"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="80dp"
+                android:layout_height="60dp"
+                android:text="Attendance Feed"
+                android:textSize="17sp"
+                app:cornerRadius = "0dp"
+                android:backgroundTint="@color/basic" />
+
+            <Button
+                android:id="@+id/entry"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Entry: 8:45 - 9.15"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
+
+            <Button
+                android:id="@+id/late"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Late Entry: 9:16 - 10:00"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
+
+            <Button
+                android:id="@+id/exit1"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Exit: 3:00 - 3:30"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
+
+            <Button
+                android:id="@+id/exit2"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Exit: 5:00 - Anytime"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
+
+            <Button
+                android:id="@+id/approved_leave"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Approved Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
+
+            <Button
+                android:id="@+id/training"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Station Leave for Training/Workshop"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
+
+            <Button
+                android:id="@+id/urgent"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Urgent Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
 
 
-    <Button
-        android:id="@+id/approved_leave"
-        android:layout_marginTop="320dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Approved Leave"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
+            <Button
+                android:id="@+id/earned_leave"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Earned Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
 
-    <Button
-        android:id="@+id/training"
-        android:layout_marginTop="370dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Station Leave for Training/Workshop"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
+            <Button
+                android:id="@+id/extraordinary_leave"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Extraordinary Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
 
-    <Button
-        android:id="@+id/urgent"
-        android:layout_marginTop="420dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Urgent Leave"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
+            <Button
+                android:id="@+id/study_leave"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Study leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
 
+            <Button
+                android:id="@+id/leave_not_due"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Leave Not Due"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
 
-    <Button
-        android:id="@+id/activites_feed"
-        android:layout_marginTop="470dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Attendance Feed"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
+            <Button
+                android:id="@+id/post_retirement_leave"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Post Retirement Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
 
-    <Button
-        android:id="@+id/exit1"
-        android:layout_marginTop="520dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Exit: 3:00 - 3:30"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
+            <Button
+                android:id="@+id/casual_leave"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Casual Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
 
-    <Button
-        android:id="@+id/exit2"
-        android:layout_marginTop="570dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Exit: 5:00 - Anytime"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
+            <Button
+                android:id="@+id/public_and_gov_holiday"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Public and Government Holiday"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
 
-    <Button
-        android:id="@+id/daily_report"
-        android:layout_marginTop="620dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Daily Report"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
+            <Button
+                android:id="@+id/public_holiday"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Public Holiday"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
 
-    <Button
-        android:id="@+id/monthly_report"
-        android:layout_marginTop="670dp"
-        android:layout_width="wrap_content"
-        android:fontFamily="sans-serif"
-        android:layout_height="50dp"
-        android:text="Monthly Report"
-        android:textSize="15sp"
-        android:backgroundTint="@color/basic"
-        app:cornerRadius = "20dp"
-        android:layout_centerHorizontal="true" />
+            <Button
+                android:id="@+id/government_holiday"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Government Holiday"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/optional_leave"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Optional Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/rest_and_recreation_leave"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Rest and Recreation Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/special_disability_leave"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Special Disability Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/special_sick_leave"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Special Sick Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/leave_of_vacation_dept"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Leave of Vacation Department"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/departmental_leave"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Departmental Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/hospital_leave"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Hospital Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/compulsory_leave"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Compulsory Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/leave_without_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Leave Without Pay"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/quarantine_leave"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Quarantine Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
+
+            <Button
+                android:id="@+id/maternity_leave"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="50dp"
+                android:text="Maternity Leave"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

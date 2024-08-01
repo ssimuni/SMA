@@ -105,6 +105,8 @@ dependencies {
     implementation ("org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.0")
     implementation ("org.tensorflow:tensorflow-lite-gpu:2.9.0")
 
+    implementation ("com.github.blackfizz:eazegraph:1.2.2@aar")
+    implementation ("com.nineoldandroids:library:2.4.0")
 }
 
 apollo {

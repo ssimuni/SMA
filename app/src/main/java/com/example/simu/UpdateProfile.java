@@ -6,7 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +33,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.simu.R.id;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +43,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -47,9 +51,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -63,18 +65,15 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
-import java.util.regex.Pattern;
 
-
-public class Register extends AppCompatActivity {
-    String designation, fdesignation, fdepartment, fdirectorate, office, fOffice;
+public class UpdateProfile extends AppCompatActivity {
+    String designation, fdesignation, fdepartment, fdirectorate;
     public static final String TAG = "TAG";
-    EditText mName, mAddress, mWorkStation, mEmail, mNid, mDob, mPass, mUsername, mNumber;
-    Spinner spinner, officerSpinner, departmentSpinner, directorateSpinner, officeSpinner, sOfficeSpinner;
+    EditText mName, mAddress, mWorkStation, mNid, mDob, mPass, mNumber;
+    Spinner spinner, officerSpinner, departmentSpinner, directorateSpinner;
     Spinner divisionSpinner, districtSpinner, upozilaSpinner;
-    Button mRegister;
+    Button mUpdate;
     Button mProfileBtn;
-    TextView mLogin;
     ImageView mProfilePic;
     FirebaseFirestore fstore;
     String userID;
@@ -83,11 +82,13 @@ public class Register extends AppCompatActivity {
     ActivityResultLauncher<Intent> cameraLauncher;
     ActivityResultLauncher<Intent> galleryLauncher;
     private StorageReference storageReference;
+    ArrayAdapter<String> adapter, subAdapter, deptAdapter, divisionAdapter, districtAdapter, upozilaAdapter, directorateAdapter;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_update_profile);
 
 
         mName = findViewById(R.id.name);
@@ -95,19 +96,14 @@ public class Register extends AppCompatActivity {
         mWorkStation = findViewById(id.workstation);
         spinner = findViewById(id.spinner);
         officerSpinner = findViewById(id.officerSpinner);
-        officeSpinner = findViewById(id.office);
-        sOfficeSpinner = findViewById(id.sOffice);
         departmentSpinner = findViewById(id.department);
         directorateSpinner = findViewById(id.directorate);
-        mEmail = findViewById(R.id.email);
         mNid = findViewById(R.id.nid);
         mDob = findViewById(R.id.dob);
         mPass = findViewById(R.id.password);
-        mRegister = findViewById(R.id.buttonReg);
-        mLogin = findViewById(R.id.haveanaccount);
+        mUpdate = findViewById(id.buttonUpdate);
         mProfileBtn = findViewById(R.id.profilePicBtn);
         mProfilePic = findViewById(R.id.profilepic);
-        mUsername = findViewById(id.username);
         mNumber = findViewById(id.p_number);
         divisionSpinner = findViewById(R.id.divisionSpinner);
         districtSpinner = findViewById(R.id.districtSpinner);
@@ -117,6 +113,38 @@ public class Register extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
+
+        FirebaseUser currentUser = fAuth.getCurrentUser();
+        if (currentUser != null) {
+            userID = currentUser.getUid();
+            DocumentReference documentReference = fstore.collection("users").document(userID);
+            documentReference.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        mName.setText(document.getString("name"));
+                        mAddress.setText(document.getString("address"));
+                        mWorkStation.setText(document.getString("workstation"));
+                        mNid.setText(document.getString("nid"));
+                        mDob.setText(document.getString("dob"));
+                        mNumber.setText(document.getString("number"));
+
+                        String profileImageUrl = document.getString("profileImageUrl");
+                        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                            Glide.with(UpdateProfile.this)
+                                    .load(profileImageUrl)
+                                    .into(mProfilePic);
+                        }
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            });
+        }
+
 
 
         //division, district, upozila spinner
@@ -231,7 +259,7 @@ public class Register extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 districtSpinner.setVisibility(View.VISIBLE);
                 String[] selectedDistricts = districts[position];
-                ArrayAdapter<String> districtAdapter = new ArrayAdapter<>(Register.this, android.R.layout.simple_spinner_item, selectedDistricts);
+                ArrayAdapter<String> districtAdapter = new ArrayAdapter<>(UpdateProfile.this, android.R.layout.simple_spinner_item, selectedDistricts);
                 districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 districtSpinner.setAdapter(districtAdapter);
             }
@@ -247,7 +275,7 @@ public class Register extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 upozilaSpinner.setVisibility(View.VISIBLE);
                 String[] selectedUpozilas = upozilas[divisionSpinner.getSelectedItemPosition()][position];
-                ArrayAdapter<String> upozilaAdapter = new ArrayAdapter<>(Register.this, android.R.layout.simple_spinner_item, selectedUpozilas);
+                ArrayAdapter<String> upozilaAdapter = new ArrayAdapter<>(UpdateProfile.this, android.R.layout.simple_spinner_item, selectedUpozilas);
                 upozilaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 upozilaSpinner.setAdapter(upozilaAdapter);
             }
@@ -321,139 +349,15 @@ public class Register extends AppCompatActivity {
                         public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                             fdesignation = parentView.getItemAtPosition(position).toString();
                         }
-
                         @Override
                         public void onNothingSelected(AdapterView<?> parentView) {
                         }
                     });
                 }
-
                 else {
                     officerSpinner.setVisibility(View.INVISIBLE);
                 }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
-        });
-
-
-
-        //office spinner
-        String[] spinner2 = {"Click here", "Upazila", "District", "Division"};
-
-        ArrayAdapter<String> officeadapter = new ArrayAdapter<>(
-                getApplicationContext(),
-                android.R.layout.simple_spinner_item,
-                spinner2
-        );
-
-        officeadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        officeSpinner.setAdapter(officeadapter);
-        officeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                office = parentView.getItemAtPosition(position).toString();
-
-
-                if ("Upazila".equals(office)) {
-                    sOfficeSpinner.setVisibility(View.VISIBLE);
-
-                    String[] officeLevels = {"Select Upazila Office", "Upazila Nirbahi Officer's Office", "Upazila Family Planning Office", "Upazila Election Office", "Upazila Education Office",
-                            "Upazila Cooperative Office", "Upazila Accounts Office", "Police Station", "Office of the Upazila Engineer", "Upazila Ansar and VDP Office",
-                            "Upazila Project Implementation Office", "Upazila Food Office", "Office of the Upazila Chairman", "Upazila Agriculture Office",
-                            "Upazila Livestock Office", "Upazila Fisheries Office", "Upazila Public Health Engineering Office", "Upazila Women Affairs Office",
-                            "Upazila Rural Development Office", "Upazila Secondary Education Office", "Upazila Statistics Office", "Upazila Youth Development Office",
-                            "Upazila Land Office", "Upazila Health Complex", "Upazila Social Services Office", "Government College", "Government High School"};
-                    ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
-                            getApplicationContext(),
-                            android.R.layout.simple_spinner_item,
-                            officeLevels
-                    );
-
-                    sAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    sOfficeSpinner.setAdapter(sAdapter);
-
-                    sOfficeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                            fOffice = parentView.getItemAtPosition(position).toString();
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parentView) {
-                        }
-                    });
-                }
-
-                else if ("District".equals(office)) {
-                    sOfficeSpinner.setVisibility(View.VISIBLE);
-
-                    String[] officeLevels = {"Select District Office","Deputy Commissioner's Office", "District Family Planning Office", "District Election Office",
-                            "District Education Office", "District Cooperative Office", "District Accounts Office", "Police Station", "Office of the District Engineer",
-                            "District Ansar and VDP Office", "District Project Implementation Office", "District Food Office", "Office of the District Chairman",
-                            "District Agriculture Office", "District Livestock Office", "District Fisheries Office", "District Public Health Engineering Office",
-                            "District Women Affairs Office", "District Rural Development Office", "District Secondary Education Office", "District Statistics Office",
-                            "District Youth Development Office", "District Land Office", "District Health Complex", "District Social Services Office",
-                            "Government College", "Government High School"};
-                    ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
-                            getApplicationContext(),
-                            android.R.layout.simple_spinner_item,
-                            officeLevels
-                    );
-
-                    sAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    sOfficeSpinner.setAdapter(sAdapter);
-
-                    sOfficeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                            fOffice = parentView.getItemAtPosition(position).toString();
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parentView) {
-                        }
-                    });
-                }
-
-                else if ("Division".equals(office)) {
-                    sOfficeSpinner.setVisibility(View.VISIBLE);
-
-                    String[] officeLevels = {"Select Division Office","Office of the Divisional Commissioner", "Division Family Planning Office", "Division Election Office",
-                            "Division Education Office", "Division Cooperative Office", "Division Accounts Office", "Police Station", "Office of the Division Engineer",
-                            "Division Ansar and VDP Office", "Division Project Implementation Office", "Division Food Office", "Office of the Division Chairman",
-                            "Division Agriculture Office", "Division Livestock Office", "Division Fisheries Office", "Division Public Health Engineering Office",
-                            "Division Women Affairs Office", "Division Rural Development Office", "Division Secondary Education Office", "Division Statistics Office",
-                            "Division Youth Development Office", "Division Land Office", "Division Health Complex", "Division Social Services Office",
-                            "Government College", "Government High School"};
-                    ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
-                            getApplicationContext(),
-                            android.R.layout.simple_spinner_item,
-                            officeLevels
-                    );
-
-                    sAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    sOfficeSpinner.setAdapter(sAdapter);
-
-                    sOfficeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                            fOffice = parentView.getItemAtPosition(position).toString();
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parentView) {
-                        }
-                    });
-                }
-
-                else {
-                    sOfficeSpinner.setVisibility(View.INVISIBLE);
-                }
-            }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
@@ -462,10 +366,10 @@ public class Register extends AppCompatActivity {
 
 
         //department spinner
-        String[] department = {"Select Ministry", "Ministry of Chittagong Hill Tracts Affairs", "Ministry of Commerce", "Ministry of Cultural Affairs",
+        String[] department = {"Select Department", "Ministry of Chittagong Hill Tracts Affairs", "Ministry of Commerce", "Ministry of Cultural Affairs",
                 "Ministry of Defence", "Ministry of Disaster Management and Relief", "Ministry of Education", "Ministry of Environment, Forest and Climate Change",
                 "Ministry of Expatriates' Welfare and Overseas Employment", "Ministry of Fisheries and Livestock", "Ministry of Food", "Ministry of Foreign Affairs",
-                "Ministry of Health and Family Welfare", "Medical Education and Family Welfare Division", "Health Services Division","Ministry of Home Affairs", "Ministry of Housing and Public Works", "Ministry of Industries",
+                "Ministry of Health and Family Welfare", "Ministry of Home Affairs", "Ministry of Housing and Public Works", "Ministry of Industries",
                 "Ministry of Information and Broadcasting", "Ministry of Labour and Employment", "Ministry of Land", "Ministry of Law, Justice and Parliamentary Affairs",
                 "Ministry of Liberation War Affairs", "Ministry of Local Government, Rural Development and Co-operatives", "Ministry of Planning",
                 "Ministry of Posts, Telecommunications and Information Technology", "Ministry of Power, Energy and Mineral Resources", "Ministry of Primary and Mass Education",
@@ -481,42 +385,6 @@ public class Register extends AppCompatActivity {
         deptAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         departmentSpinner.setAdapter(deptAdapter);
 
-
-        EditText searchEditText = findViewById(R.id.searchEditText);
-        searchEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String searchdText = s.toString().toLowerCase(Locale.getDefault());
-
-                ArrayList<String> filteredDepartments = new ArrayList<>();
-                if (searchdText.isEmpty()) {
-                    filteredDepartments.addAll(Arrays.asList(department));
-                } else {
-                    for (String department : department) {
-                        if (department.toLowerCase(Locale.getDefault()).contains(searchdText)) {
-                            filteredDepartments.add(department);
-                        }
-                    }
-                }
-
-                ArrayAdapter<String> filteredAdapter = new ArrayAdapter<>(
-                        getApplicationContext(),
-                        android.R.layout.simple_spinner_item,
-                        filteredDepartments
-                );
-
-                filteredAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                departmentSpinner.setAdapter(filteredAdapter);
-            }
-        });
-
-
         departmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -529,7 +397,7 @@ public class Register extends AppCompatActivity {
         });
 
 
-        //directorate spinner
+//directorate spinner
         String[] directorate = {"Selct Directorate", "Agriculture Information Service (AIS)", "Ashugonj Power Station Company Ltd.", "Agrani Bank Limited", "Anti-Corruption Commission",
                 "Bangladesh Agricultural Development Corporation (BADC)", "Bangladesh Atomic Energy Commission", "Bangladesh Atomic Energy Regulatory Authority",
                 "Bangladesh Agricultural Research Council (BARC)", "Bangladesh Film and Television Institute", "Bangladesh Betar",
@@ -622,41 +490,6 @@ public class Register extends AppCompatActivity {
         directorateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         directorateSpinner.setAdapter(directorateAdapter);
 
-
-        EditText searchText = findViewById(R.id.searchText);
-        searchText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String searchText = s.toString().toLowerCase(Locale.getDefault());
-
-                ArrayList<String> filtereDirectorate = new ArrayList<>();
-                if (searchText.isEmpty()) {
-                    filtereDirectorate.addAll(Arrays.asList(directorate));
-                } else {
-                    for (String directorate : directorate) {
-                        if (directorate.toLowerCase(Locale.getDefault()).contains(searchText)) {
-                            filtereDirectorate.add(directorate);
-                        }
-                    }
-                }
-
-                ArrayAdapter<String> filteredAdapter = new ArrayAdapter<>(
-                        getApplicationContext(),
-                        android.R.layout.simple_spinner_item,
-                        filtereDirectorate
-                );
-
-                filteredAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                directorateSpinner.setAdapter(filteredAdapter);
-            }
-        });
-
         directorateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -667,9 +500,6 @@ public class Register extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parentView) {
             }
         });
-
-
-
 
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -700,17 +530,10 @@ public class Register extends AppCompatActivity {
                 });
 
 
-        mLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), Login.class));
-            }
-        });
-
         mProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(Register.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(UpdateProfile.this);
                 builder.setTitle("Choose Image Source");
                 builder.setItems(new CharSequence[]{"Camera", "Gallery"}, new DialogInterface.OnClickListener() {
                     @Override
@@ -731,133 +554,13 @@ public class Register extends AppCompatActivity {
             }
         });
 
-        CollectionReference usersCollection = FirebaseFirestore.getInstance().collection("users");
-        mUsername.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                final String enteredUsername = editable.toString();
-                if (!TextUtils.isEmpty(enteredUsername)) {
-                    usersCollection.whereEqualTo("username", enteredUsername)
-                            .addSnapshotListener((queryDocumentSnapshots, e) -> {
-                                if (e != null) {
-                                    Log.e("FirestoreQuery", "Error querying Firestore", e);
-                                    return;
-                                }
-
-                                if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                                    mUsername.setError("Username already taken");
-                                } else {
-                                    mUsername.setHint("username available");
-                                }
-                            });
-                }
-            }
-        });
-
-        mRegister.setOnClickListener(new View.OnClickListener() {
+        mUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String name = mName.getText().toString();
-                final String address = mAddress.getText().toString();
-                final String workstation = mWorkStation.getText().toString();
-                final String email = mEmail.getText().toString().trim();
-                final String nid = mNid.getText().toString();
-                final String dob = mDob.getText().toString();
-                final String username = mUsername.getText().toString();
-                final String pnumber = mNumber.getText().toString();
-                String password = mPass.getText().toString().trim();
-
-                final String selectedDivision = divisionSpinner.getSelectedItem().toString();
-                final String selectedDistrict = districtSpinner.getSelectedItem().toString();
-                final String selectedUpozila = upozilaSpinner.getSelectedItem().toString();
-
-                if (Pattern.compile("\\s").matcher(email).find()) {
-                    mEmail.setError("Email cannot contain whitespace");
-                    return;
-                }
-
-                if (TextUtils.isEmpty(email)) {
-                    mEmail.setError("Email is required");
-                    return;
-                }
-
-                if (TextUtils.isEmpty(password)) {
-                    mPass.setError("Password is required");
-                    return;
-                }
-
-                if (password.length() < 6) {
-                    mPass.setError("Password should be of more than 6 character");
-                    return;
-                }
-
-                if(pnumber.length() < 11) {
-                    mNumber.setError("Enter 11 digit number");
-                    return;
-                }
-
-                if(TextUtils.isEmpty(username)){
-                    mUsername.setError("Username required");
-                }
-
-                fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(Register.this,
-                        new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-
-                                    saveLoginState(true);
-                                    saveFirstTimeState(false);
-
-
-                                    Toast.makeText(getApplicationContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(getApplicationContext(), Login.class));
-
-                                    userID = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
-                                    DocumentReference documentReference = fstore.collection("users").document(userID);
-
-                                    Map<String, Object> user = new HashMap<>();
-                                    user.put("name", name);
-                                    user.put("address", address);
-                                    user.put("workstation", workstation);
-                                    user.put("email", email);
-                                    user.put("nid", nid);
-                                    user.put("dob", dob);
-                                    user.put("designation", fdesignation);
-                                    user.put("office", fOffice);
-                                    user.put("department", fdepartment);
-                                    user.put("directorate", fdirectorate);
-                                    user.put("username", username);
-                                    user.put("number", pnumber);
-                                    user.put("isAdmin", "No");
-                                    user.put("isApproved", "No");
-
-                                    user.put("division", selectedDivision);
-                                    user.put("district", selectedDistrict);
-                                    user.put("upozila", selectedUpozila);
-                                    documentReference.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                           Log.d(TAG, "on success: user profile is created for" + userID);
-                                            uploadImageToFirebaseStorage();
-                                            finish();
-                                        }
-                                    });
-                                }
-
-                                else {
-                                    Toast.makeText(Register.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+               updateProfile();
             }
         });
+
     }
 
     private void uploadImageToFirebaseStorage() {
@@ -871,7 +574,6 @@ public class Register extends AppCompatActivity {
             storageRef.putBytes(data)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Image uploaded successfully
                             Log.d(TAG, "Image uploaded to Firebase Storage");
                             storageRef.getDownloadUrl().addOnCompleteListener(urlTask -> {
                                 if (urlTask.isSuccessful()) {
@@ -901,18 +603,77 @@ public class Register extends AppCompatActivity {
                 });
     }
 
-    private void saveLoginState(boolean isLoggedIn) {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLoggedIn", isLoggedIn);
-        editor.apply();
-    }
+    private void updateProfile() {
+        final String name = mName.getText().toString();
+        final String address = mAddress.getText().toString();
+        final String workstation = mWorkStation.getText().toString();
+        final String nid = mNid.getText().toString();
+        final String dob = mDob.getText().toString();
+        final String pnumber = mNumber.getText().toString();
+        String password = mPass.getText().toString().trim();
 
-    private void saveFirstTimeState(boolean isFirstTime) {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isFirstTime", isFirstTime);
-        editor.apply();
+        final String selectedDivision = divisionSpinner.getSelectedItem().toString();
+        final String selectedDistrict = districtSpinner.getSelectedItem().toString();
+        final String selectedUpozila = upozilaSpinner.getSelectedItem().toString();
+
+        if (TextUtils.isEmpty(password)) {
+            mPass.setError("Password is required");
+            return;
+        }
+
+        if (password.length() < 6) {
+            mPass.setError("Password should be more than 6 characters");
+            return;
+        }
+
+        if (pnumber.length() < 11) {
+            mNumber.setError("Enter an 11-digit number");
+            return;
+        }
+
+        FirebaseUser currentUser = fAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userID = currentUser.getUid();
+            DocumentReference documentReference = fstore.collection("users").document(userID);
+
+            Map<String, Object> user = new HashMap<>();
+            user.put("name", name);
+            user.put("address", address);
+            user.put("workstation", workstation);
+            user.put("nid", nid);
+            user.put("dob", dob);
+            user.put("designation", fdesignation);
+            user.put("department", fdepartment);
+            user.put("directorate", fdirectorate);
+            user.put("number", pnumber);
+
+            user.put("division", selectedDivision);
+            user.put("district", selectedDistrict);
+            user.put("upozila", selectedUpozila);
+
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Updating profile...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            documentReference.update(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Profile updated successfully.");
+                        uploadImageToFirebaseStorage();
+                        progressDialog.dismiss();
+                        Toast.makeText(UpdateProfile.this, "Profile updated successfully.", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(UpdateProfile.this, Dashboard.class));
+                        finish();
+                    } else {
+                        Toast.makeText(UpdateProfile.this, "Error updating profile: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(UpdateProfile.this, "User not authenticated. Please log in.", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(UpdateProfile.this, Login.class));
+        }
     }
 
     public void showDatePickerDialog(View view) {

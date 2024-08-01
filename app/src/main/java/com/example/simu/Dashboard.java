@@ -42,8 +42,8 @@ public class Dashboard extends AppCompatActivity {
         newsFeed = findViewById(R.id.level2).findViewById(R.id.feed);
         location = findViewById(R.id.level3).findViewById(R.id.location);
         weather = findViewById(R.id.level3).findViewById(R.id.weather);
-        attendance = findViewById(R.id.level4).findViewById(R.id.attendance);
-        country = findViewById(R.id.level5).findViewById(R.id.country);
+        attendance = findViewById(R.id.level5).findViewById(R.id.attendance);
+        country = findViewById(R.id.level4).findViewById(R.id.country);
         approve = findViewById(R.id.level5).findViewById(R.id.approve);
 
         fAuth = FirebaseAuth.getInstance();

@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
     <Spinner
         android:id="@+id/spinnerWorkstation"
@@ -33,22 +32,22 @@
         android:id="@+id/spinnerUpozila"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Users"
+        android:layout_gravity="center_horizontal"
+        android:textSize="35sp"
+        android:textStyle="bold">
+    </TextView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <ListView
+        android:id="@+id/listViewUsers"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbars="vertical"
-        android:scrollbarSize="10dp"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:fadeScrollbars="false"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+
         />
 
-    <Button
-        android:id="@+id/download_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Download PDF" />
 </LinearLayout>
