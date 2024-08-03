@@ -17,6 +17,8 @@ import org.eazegraph.lib.models.PieModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -69,29 +71,40 @@ public class UserPostsActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            StringBuilder posts = new StringBuilder();
+                            List<Post> postsList = new ArrayList<>();
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String attendanceType = document.getString("attendanceType");
                                 long postingTime = document.getLong("postingTime");
-                                String date = sdf.format(new Date(postingTime));
+                                Date date = new Date(postingTime);
 
-                                posts.append("Date: ").append(date).append("\n")
-                                        .append("Type: ").append(attendanceType).append("\n\n");
-
+                                postsList.add(new Post(date, attendanceType));
 
                                 if ("Intime".equals(attendanceType)) {
                                     intimeCount++;
-                                }
-                                else if ("Late".equals(attendanceType)) {
+                                } else if ("Late".equals(attendanceType)) {
                                     lateCount++;
-                                }
-                                else if (leaveTypes.contains(attendanceType.toLowerCase())) {
+                                } else if (leaveTypes.contains(attendanceType.toLowerCase())) {
                                     leaveCount++;
                                 }
                                 totalCount++;
                             }
+
+                            Collections.sort(postsList, new Comparator<Post>() {
+                                @Override
+                                public int compare(Post o1, Post o2) {
+                                    return o1.getDate().compareTo(o2.getDate());
+                                }
+                            });
+
+                            StringBuilder posts = new StringBuilder();
+                            for (Post post : postsList) {
+                                String dateStr = sdf.format(post.getDate());
+                                posts.append("Date: ").append(dateStr).append("\n")
+                                        .append("Type: ").append(post.getAttendanceType()).append("\n\n");
+                            }
+
                             textViewPosts.setText(posts.toString().trim());
                             setData();
                         } else {
@@ -118,5 +131,23 @@ public class UserPostsActivity extends AppCompatActivity {
         pieChart.addPieSlice(new PieModel("Absent", (float) absentPercentage, Color.parseColor("#EF5350")));
         pieChart.addPieSlice(new PieModel("Leave", (float) leavePercentage, Color.parseColor("#29B6F6")));
         pieChart.startAnimation();
+    }
+
+    private static class Post {
+        private Date date;
+        private String attendanceType;
+
+        public Post(Date date, String attendanceType) {
+            this.date = date;
+            this.attendanceType = attendanceType;
+        }
+
+        public Date getDate() {
+            return date;
+        }
+
+        public String getAttendanceType() {
+            return attendanceType;
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.example.simu;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -11,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,19 +25,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.simu.R.id;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -54,13 +50,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import android.app.DatePickerDialog;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.DatePicker;
-import android.widget.EditText;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
 import java.util.regex.Pattern;
@@ -68,6 +58,7 @@ import java.util.regex.Pattern;
 
 public class Register extends AppCompatActivity {
     String designation, fdesignation, fdepartment, fdirectorate, office, fOffice;
+    private static final int REQUEST_CAMERA_PERMISSION = 100;
     public static final String TAG = "TAG";
     EditText mName, mAddress, mWorkStation, mEmail, mNid, mDob, mPass, mUsername, mNumber;
     Spinner spinner, officerSpinner, departmentSpinner, directorateSpinner, officeSpinner, sOfficeSpinner;
@@ -89,6 +80,9 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }
 
         mName = findViewById(R.id.name);
         mAddress = findViewById(R.id.address);
@@ -238,7 +232,7 @@ public class Register extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Handle no selection if needed
+
             }
         });
 
@@ -254,7 +248,7 @@ public class Register extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Handle no selection if needed
+
             }
         });
         divisionSpinner.setSelection(0);
@@ -710,26 +704,31 @@ public class Register extends AppCompatActivity {
         mProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(Register.this);
-                builder.setTitle("Choose Image Source");
-                builder.setItems(new CharSequence[]{"Camera", "Gallery"}, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                cameraLauncher.launch(cameraIntent);
-                                break;
-                            case 1:
-                                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                galleryLauncher.launch(galleryIntent);
-                                break;
+                if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Register.this);
+                    builder.setTitle("Choose Image Source");
+                    builder.setItems(new CharSequence[]{"Camera", "Gallery"}, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0:
+                                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    cameraLauncher.launch(cameraIntent);
+                                    break;
+                                case 1:
+                                    Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                    galleryLauncher.launch(galleryIntent);
+                                    break;
+                            }
                         }
-                    }
-                });
-                builder.show();
+                    });
+                    builder.show();
+                }
             }
         });
+
 
         CollectionReference usersCollection = FirebaseFirestore.getInstance().collection("users");
         mUsername.addTextChangedListener(new TextWatcher() {

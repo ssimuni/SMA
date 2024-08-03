@@ -5,14 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -42,8 +40,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import android.app.DatePickerDialog;
+import android.widget.DatePicker;
+import java.util.Calendar;
 
-public class MonthlyReport extends AppCompatActivity {
+public class YearlyReport extends AppCompatActivity {
 
     private EditText editTextDate;
     private Calendar calendar;
@@ -68,7 +69,7 @@ public class MonthlyReport extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_monthly_report);
+        setContentView(R.layout.activity_yearly_report);
 
         editTextDate = findViewById(R.id.editTextDate);
         calendar = Calendar.getInstance();
@@ -182,12 +183,6 @@ public class MonthlyReport extends AppCompatActivity {
         );
         datePickerDialog.show();
     }
-
-    private String formatDate(long timestamp) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        return sdf.format(new Date(timestamp));
-    }
-
     private void createPdf() {
         PdfDocument document = new PdfDocument();
         Paint paint = new Paint();
@@ -200,8 +195,8 @@ public class MonthlyReport extends AppCompatActivity {
 
         paint.setTextSize(15f);
         paint.setFakeBoldText(true);
-        canvas.drawText("Monthly Attendance Report", margin, y, paint);
-        y += paint.descent() - paint.ascent()+10;
+        canvas.drawText("Yearly Attendance Report", margin, y, paint);
+        y += paint.descent() - paint.ascent() + 10;
 
         paint.setTextSize(10f);
         paint.setFakeBoldText(false);
@@ -209,7 +204,7 @@ public class MonthlyReport extends AppCompatActivity {
             paint.setFakeBoldText(true);
 
             canvas.drawText("Date: " + userAttendanceGrouped.getDate(), margin, y, paint);
-            y += paint.descent() - paint.ascent()+10;
+            y += paint.descent() - paint.ascent() + 10;
 
             for (UserAttendance userAttendance : userAttendanceGrouped.getUserAttendances()) {
                 User user = userAttendance.getUser();
@@ -234,12 +229,12 @@ public class MonthlyReport extends AppCompatActivity {
 
         document.finishPage(page);
 
-        File pdfDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "MonthlyReports");
+        File pdfDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "YearlyReports");
         if (!pdfDir.exists()) {
             pdfDir.mkdirs();
         }
 
-        String fileName = "MonthlyReport_" + System.currentTimeMillis() + ".pdf";
+        String fileName = "YearlyReport_" + System.currentTimeMillis() + ".pdf";
         File file = new File(pdfDir, fileName);
 
         try {
@@ -299,8 +294,8 @@ public class MonthlyReport extends AppCompatActivity {
 
     private void loadAttendanceFromFirestore(final Map<String, User> userMap) {
         db.collection("Attendance")
-                .whereGreaterThanOrEqualTo("postingTime", getStartOfMonth())
-                .whereLessThanOrEqualTo("postingTime", getEndOfMonth())
+                .whereGreaterThanOrEqualTo("postingTime", getStartOfYear())
+                .whereLessThanOrEqualTo("postingTime", getEndOfYear())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -334,10 +329,10 @@ public class MonthlyReport extends AppCompatActivity {
                 });
     }
 
-    private long getStartOfMonth() {
+    private long getStartOfYear() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getDefault());
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.DAY_OF_YEAR, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -345,16 +340,17 @@ public class MonthlyReport extends AppCompatActivity {
         return calendar.getTimeInMillis();
     }
 
-    private long getEndOfMonth() {
+    private long getEndOfYear() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getDefault());
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.DAY_OF_YEAR, calendar.getActualMaximum(Calendar.DAY_OF_YEAR));
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
         calendar.set(Calendar.MILLISECOND, 999);
         return calendar.getTimeInMillis();
     }
+
 
     private void setSpinnerAdapters() {
         workstationList.add(0, "Workstation");
@@ -384,6 +380,10 @@ public class MonthlyReport extends AppCompatActivity {
         spinnerUpozila.setAdapter(upozilaAdapter);
     }
 
+    private String formatDate(long timestamp) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(new Date(timestamp));
+    }
 
     private void filterData() {
         String selectedWorkstation = spinnerWorkstation.getSelectedItem().toString();
@@ -394,10 +394,8 @@ public class MonthlyReport extends AppCompatActivity {
 
         List<UserAttendanceGrouped> filteredList = new ArrayList<>();
         for (UserAttendanceGrouped userAttendanceGrouped : userAttendanceGroupedList) {
-            List<UserAttendance> filteredUserAttendances = new ArrayList<>();
-            boolean dateMatches = selectedDate.isEmpty() || userAttendanceGrouped.getDate().equals(selectedDate);
-
-            if (dateMatches) {
+            if (userAttendanceGrouped.getDate().equals(selectedDate) || selectedDate.isEmpty()) {
+                List<UserAttendance> filteredUserAttendances = new ArrayList<>();
                 for (UserAttendance userAttendance : userAttendanceGrouped.getUserAttendances()) {
                     User user = userAttendance.getUser();
                     boolean addToFilteredList = true;
@@ -433,6 +431,7 @@ public class MonthlyReport extends AppCompatActivity {
         }
         userAdapter.updateData(filteredList);
     }
+
 
     private String formatTime(long timestamp) {
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());

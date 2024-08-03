@@ -124,6 +124,7 @@ public class Login extends AppCompatActivity {
     Button mButton;
     TextView mRegister;
     FirebaseAuth fAuth;
+    TextView mForgotPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +135,7 @@ public class Login extends AppCompatActivity {
         mEmail = findViewById(R.id.email);
         mButton = findViewById(R.id.button);
         mRegister = findViewById(R.id.newaccount);
+        mForgotPassword = findViewById(R.id.forgotPassword);
 
         fAuth = FirebaseAuth.getInstance();
 
@@ -201,6 +203,29 @@ public class Login extends AppCompatActivity {
                     }
                 });
 
+            }
+        });
+
+        mForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = mEmail.getText().toString().trim();
+
+                if (TextUtils.isEmpty(email)) {
+                    Toast.makeText(Login.this, "Please enter your registered email", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                fAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(Login.this, "Password reset email sent", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(Login.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
     }

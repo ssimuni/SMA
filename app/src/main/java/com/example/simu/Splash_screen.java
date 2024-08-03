@@ -7,11 +7,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
+
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -25,7 +23,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Objects;
+
 
 public class Splash_screen extends AppCompatActivity {
 

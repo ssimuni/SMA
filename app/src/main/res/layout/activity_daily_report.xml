@@ -63,6 +63,22 @@
                 android:layout_height="48dp" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/btnDownloadPdf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Download PDF" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Daily Attendance (Scroll Horizontally)"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold">
+
+        </TextView>
+
     </LinearLayout>
 
 
@@ -74,7 +90,7 @@
         android:scrollbarStyle="insideInset"
         android:scrollbarAlwaysDrawHorizontalTrack="true"
         android:fadeScrollbars="false"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="290dp"
         android:scrollbarSize="10dp">
 
         <LinearLayout
@@ -159,6 +175,166 @@
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:text="In urgent leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Earned Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="Extraordinary Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Study Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Leave Not Due"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="Post Retirement Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Casual Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="Public and Government Holiday"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Public Holiday"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Government Holiday"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Optional Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="Rest and Recreation Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="Special Disability Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="Special Sick Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="Leave of Vacation Department"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Departmental Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Hospital Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Compulsory Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Leave Without Pay"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Quarantine Leave"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Maternity Leave"
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:gravity="center" />

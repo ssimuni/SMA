@@ -51,6 +51,25 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal">
             <Button
+                android:id="@+id/yearly_Report"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Yearly Report"
+                android:textSize="18sp"
+                app:cornerRadius="20dp"
+                android:fontFamily="sans-serif"
+                android:layout_marginEnd="15dp"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/basic"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal">
+            <Button
                 android:id="@+id/buttonViewUsers"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
@@ -60,7 +79,8 @@
                 android:fontFamily="sans-serif"
                 android:layout_marginEnd="15dp"
                 android:backgroundTint="@color/white"
-                android:textColor="@color/basic"/>
+                android:textColor="@color/basic"
+                />
 
         </LinearLayout>
 

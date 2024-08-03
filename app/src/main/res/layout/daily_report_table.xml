@@ -69,4 +69,145 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:gravity="center" />
+
+    <TextView
+        android:id="@+id/earned_leave"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/extraordinary_leave"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/study_leave"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/leave_not_due"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/post_retirement_leave"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/casual_leave"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/public_and_government_holiday"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/public_holiday"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/government_holiday"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/optional_leave"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/rest_and_recreation_leave"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/special_disability_leave"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/special_sick_leave"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/leave_of_vacation_department"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/departmental_leave"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/hospital_leave"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/compulsory_leave"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/leave_without_pay"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/quarantine_leave"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/maternity_leave"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center" />
+
 </LinearLayout>

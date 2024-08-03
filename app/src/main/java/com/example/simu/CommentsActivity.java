@@ -130,7 +130,7 @@ public class CommentsActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Comment will be added through snapshot listener
+
                     }
                 });
     }

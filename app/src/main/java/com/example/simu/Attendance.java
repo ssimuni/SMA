@@ -26,7 +26,7 @@ public class Attendance extends AppCompatActivity {
 
     Button buttonViewUsers;
 
-    Button activites_feed, intime, late, approved_leave, training, urgent, exit1, exit2, dailyReport, monthlyReport,
+    Button activites_feed, intime, late, approved_leave, training, urgent, exit1, exit2, dailyReport, monthlyReport, yearlyReport,
             earned_leave, extraordinary_leave, study_leave, leave_not_due, post_retirement_leave, casual_leave, public_and_gov_holiday,
             public_holiday, government_holiday, optional_leave, rest_and_recreation_leave, special_disability_leave, special_sick_leave,
             leave_of_vacation_dept, departmental_leave, hospital_leave, compulsory_leave, leave_without_pay, quarantine_leave, maternity_leave;;
@@ -67,6 +67,7 @@ public class Attendance extends AppCompatActivity {
         maternity_leave = findViewById(R.id.maternity_leave);
         dailyReport = findViewById(R.id.daily_report);
         monthlyReport = findViewById(R.id.monthly_report);
+        yearlyReport = findViewById(R.id.yearly_Report);
 
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
@@ -320,6 +321,25 @@ public class Attendance extends AppCompatActivity {
                                 startActivity(new Intent(Attendance.this, MonthlyReport.class));
                             } else {
                                 Toast.makeText(Attendance.this, "Only Admins Can See Monthly Report", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        yearlyReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fstore.collection("users").document(fAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            DocumentSnapshot document = task.getResult();
+                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
+                                startActivity(new Intent(Attendance.this, YearlyReport.class));
+                            } else {
+                                Toast.makeText(Attendance.this, "Only Admins Can See Yearly Report", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

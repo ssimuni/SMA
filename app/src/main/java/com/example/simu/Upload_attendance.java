@@ -1,7 +1,6 @@
 package com.example.simu;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -31,7 +30,6 @@ import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.simu.databinding.ActivityUploadAttendanceBinding;
-import com.example.simu.databinding.ActivityUploadPostBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;

@@ -201,7 +201,6 @@ public class UserListActivity extends AppCompatActivity {
                                 userNames.add(user.getName());
                             }
 
-                            // Display all users initially
                             filteredUserList.addAll(userList);
                             userNames.clear();
                             for (MonthlyReport.User user : filteredUserList) {

@@ -1,8 +1,6 @@
 package com.example.simu;
 
-import android.app.AlertDialog;
-import androidx.activity.OnBackPressedCallback;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -31,7 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
-import com.example.simu.databinding.ActivityUploadAttendanceBinding;
+
 import com.example.simu.databinding.ActivityUploadPostBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -288,11 +286,10 @@ public class Upload_post extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                            // Get download URL of the image
                                             storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
-                                                    // Create PostModel with image URL
+
                                                     PostModel postModel = new PostModel(id,
                                                             FirebaseAuth.getInstance().getUid(),
                                                             postText.getText().toString(),
@@ -303,7 +300,6 @@ public class Upload_post extends AppCompatActivity {
                                                             longitude,
                                                             completeAddress, attendanceType, workstation, designation);
 
-                                                    // Save PostModel to Firestore
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Posts")
                                                             .document(id)
@@ -311,13 +307,11 @@ public class Upload_post extends AppCompatActivity {
                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                 @Override
                                                                 public void onSuccess(Void aVoid) {
-                                                                    // Handle success if needed
                                                                 }
                                                             })
                                                             .addOnFailureListener(new OnFailureListener() {
                                                                 @Override
                                                                 public void onFailure(@NonNull Exception e) {
-                                                                    // Handle failure if needed
                                                                 }
                                                             });
                                                 }
@@ -349,13 +343,11 @@ public class Upload_post extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            // Handle success if needed
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            // Handle failure if needed
                                         }
                                     });
                         }
