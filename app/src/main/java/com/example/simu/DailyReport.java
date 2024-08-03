@@ -397,114 +397,114 @@ public class DailyReport extends AppCompatActivity {
             holder.textViewDesignation.setText(user.getDesignation());
             holder.textViewWorkstation.setText(user.getWorkstation());
 
-            holder.intime.setText("");
-            holder.late.setText("");
-            holder.exit.setText("");
-            holder.approved_leave.setText("");
-            holder.training.setText("");
-            holder.urgent.setText("");
+            if (holder.intime != null) holder.intime.setText("");
+            if (holder.late != null) holder.late.setText("");
+            if (holder.exit != null) holder.exit.setText("");
+            if (holder.approved_leave != null) holder.approved_leave.setText("");
+            if (holder.training != null) holder.training.setText("");
+            if (holder.urgent != null) holder.urgent.setText("");
 
-            holder.earned_leave.setText("");
-            holder.extraordinary_leave.setText("");
-            holder.study_leave.setText("");
-            holder.leave_not_due.setText("");
-            holder.post_retirement_leave.setText("");
-            holder.casual_leave.setText("");
-            holder.public_and_gov_holiday.setText("");
-            holder.public_holiday.setText("");
-            holder.government_holiday.setText("");
-            holder.optional_leave.setText("");
-            holder.rest_and_recreation_leave.setText("");
-            holder.special_disability_leave.setText("");
-            holder.special_sick_leave.setText("");
-            holder.leave_of_vacation_dept.setText("");
-            holder.departmental_leave.setText("");
-            holder.hospital_leave.setText("");
-            holder.compulsory_leave.setText("");
-            holder.leave_without_pay.setText("");
-            holder.quarantine_leave.setText("");
-            holder.maternity_leave.setText("");
+            if (holder.earned_leave != null) holder.earned_leave.setText("");
+            if (holder.extraordinary_leave != null) holder.extraordinary_leave.setText("");
+            if (holder.study_leave != null) holder.study_leave.setText("");
+            if (holder.leave_not_due != null) holder.leave_not_due.setText("");
+            if (holder.post_retirement_leave != null) holder.post_retirement_leave.setText("");
+            if (holder.casual_leave != null) holder.casual_leave.setText("");
+            if (holder.public_and_gov_holiday != null) holder.public_and_gov_holiday.setText("");
+            if (holder.public_holiday != null) holder.public_holiday.setText("");
+            if (holder.government_holiday != null) holder.government_holiday.setText("");
+            if (holder.optional_leave != null) holder.optional_leave.setText("");
+            if (holder.rest_and_recreation_leave != null) holder.rest_and_recreation_leave.setText("");
+            if (holder.special_disability_leave != null) holder.special_disability_leave.setText("");
+            if (holder.special_sick_leave != null) holder.special_sick_leave.setText("");
+            if (holder.leave_of_vacation_dept != null) holder.leave_of_vacation_dept.setText("");
+            if (holder.departmental_leave != null) holder.departmental_leave.setText("");
+            if (holder.hospital_leave != null) holder.hospital_leave.setText("");
+            if (holder.compulsory_leave != null) holder.compulsory_leave.setText("");
+            if (holder.leave_without_pay != null) holder.leave_without_pay.setText("");
+            if (holder.quarantine_leave != null) holder.quarantine_leave.setText("");
+            if (holder.maternity_leave != null) holder.maternity_leave.setText("");
 
             for (Attendance attendance : user.getAttendanceList()) {
                 String formattedTime = formatTime(attendance.getPostingTime());
                 switch (attendance.getAttendanceType()) {
                     case "Intime":
-                        holder.intime.setText(formattedTime);
+                        if (holder.intime != null) holder.intime.setText(formattedTime);
                         break;
                     case "Late":
-                        holder.late.setText(formattedTime);
+                        if (holder.late != null) holder.late.setText(formattedTime);
                         break;
                     case "Exit":
-                        holder.exit.setText(formattedTime);
+                        if (holder.exit != null) holder.exit.setText(formattedTime);
                         break;
                     case "Approved leave":
-                        holder.approved_leave.setText(formattedTime);
+                        if (holder.approved_leave != null) holder.approved_leave.setText(formattedTime);
                         break;
                     case "Urgent leave":
-                        holder.urgent.setText(formattedTime);
+                        if (holder.urgent != null) holder.urgent.setText(formattedTime);
                         break;
                     case "Training":
-                        holder.training.setText(formattedTime);
+                        if (holder.training != null) holder.training.setText(formattedTime);
                         break;
                     case "Earned Leave":
-                        holder.earned_leave.setText(formattedTime);
+                        if (holder.earned_leave != null) holder.earned_leave.setText(formattedTime);
                         break;
                     case "Extraordinary Leave":
-                        holder.extraordinary_leave.setText(formattedTime);
+                        if (holder.extraordinary_leave != null) holder.extraordinary_leave.setText(formattedTime);
                         break;
                     case "Study Leave":
-                        holder.study_leave.setText(formattedTime);
+                        if (holder.study_leave != null) holder.study_leave.setText(formattedTime);
                         break;
                     case "Leave Not Due":
-                        holder.leave_not_due.setText(formattedTime);
+                        if (holder.leave_not_due != null) holder.leave_not_due.setText(formattedTime);
                         break;
                     case "Post Retirement Leave":
-                        holder.post_retirement_leave.setText(formattedTime);
+                        if (holder.post_retirement_leave != null) holder.post_retirement_leave.setText(formattedTime);
                         break;
                     case "Casual Leave":
-                        holder.casual_leave.setText(formattedTime);
+                        if (holder.casual_leave != null) holder.casual_leave.setText(formattedTime);
                         break;
                     case "Public and Government Holiday":
-                        holder.public_and_gov_holiday.setText(formattedTime);
+                        if (holder.public_and_gov_holiday != null) holder.public_and_gov_holiday.setText(formattedTime);
                         break;
                     case "Public Holiday":
-                        holder.public_holiday.setText(formattedTime);
+                        if (holder.public_holiday != null) holder.public_holiday.setText(formattedTime);
                         break;
                     case "Government Holiday":
-                        holder.government_holiday.setText(formattedTime);
+                        if (holder.government_holiday != null) holder.government_holiday.setText(formattedTime);
                         break;
                     case "Optional Leave":
-                        holder.optional_leave.setText(formattedTime);
+                        if (holder.optional_leave != null) holder.optional_leave.setText(formattedTime);
                         break;
                     case "Rest and Recreation Leave":
-                        holder.rest_and_recreation_leave.setText(formattedTime);
+                        if (holder.rest_and_recreation_leave != null) holder.rest_and_recreation_leave.setText(formattedTime);
                         break;
                     case "Special Disability Leave":
-                        holder.special_disability_leave.setText(formattedTime);
+                        if (holder.special_disability_leave != null) holder.special_disability_leave.setText(formattedTime);
                         break;
                     case "Special Sick Leave":
-                        holder.special_sick_leave.setText(formattedTime);
+                        if (holder.special_sick_leave != null) holder.special_sick_leave.setText(formattedTime);
                         break;
                     case "Leave of Vacation Department":
-                        holder.leave_of_vacation_dept.setText(formattedTime);
+                        if (holder.leave_of_vacation_dept != null) holder.leave_of_vacation_dept.setText(formattedTime);
                         break;
                     case "Departmental Leave":
-                        holder.departmental_leave.setText(formattedTime);
+                        if (holder.departmental_leave != null) holder.departmental_leave.setText(formattedTime);
                         break;
                     case "Hospital Leave":
-                        holder.hospital_leave.setText(formattedTime);
+                        if (holder.hospital_leave != null) holder.hospital_leave.setText(formattedTime);
                         break;
                     case "Compulsory Leave":
-                        holder.compulsory_leave.setText(formattedTime);
+                        if (holder.compulsory_leave != null) holder.compulsory_leave.setText(formattedTime);
                         break;
                     case "Leave Without Pay":
-                        holder.leave_without_pay.setText(formattedTime);
+                        if (holder.leave_without_pay != null) holder.leave_without_pay.setText(formattedTime);
                         break;
                     case "Quarantine Leave":
-                        holder.quarantine_leave.setText(formattedTime);
+                        if (holder.quarantine_leave != null) holder.quarantine_leave.setText(formattedTime);
                         break;
                     case "Maternity Leave":
-                        holder.maternity_leave.setText(formattedTime);
+                        if (holder.maternity_leave != null) holder.maternity_leave.setText(formattedTime);
                         break;
                 }
             }

@@ -121,7 +121,7 @@ public class Upload_post extends AppCompatActivity {
                                                                             System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation);
 
                                                                     FirebaseFirestore.getInstance()
-                                                                            .collection("Attendance")
+                                                                            .collection("Posts")
                                                                             .document(id)
                                                                             .set(postModel)
                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -175,7 +175,7 @@ public class Upload_post extends AppCompatActivity {
                                             System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation);
 
                                     FirebaseFirestore.getInstance()
-                                            .collection("Attendance")
+                                            .collection("Posts")
                                             .document(id)
                                             .set(postModel)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
