@@ -1,10 +1,12 @@
 package com.example.simu;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +22,7 @@ import java.util.List;
 
 public class ActivitiesFeed extends AppCompatActivity {
 
+
     private PostsAdapter postsAdapter;
     private RecyclerView attendanceRecyclerView;
     private FirebaseAuth fAuth;
@@ -28,6 +31,7 @@ public class ActivitiesFeed extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activities_feed);
+
         fAuth = FirebaseAuth.getInstance();
 
         attendanceRecyclerView = findViewById(R.id.attendanceRecyclerView);

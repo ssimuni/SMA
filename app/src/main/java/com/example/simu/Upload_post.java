@@ -64,6 +64,7 @@ public class Upload_post extends AppCompatActivity {
     private String address;
     private LocationManager locationManager;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
+    private static final int REQUEST_CAMERA_PERMISSION = 100;
     private String workstation;
     private String designation;
 
@@ -71,6 +72,16 @@ public class Upload_post extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_post);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.CAMERA
+            }, REQUEST_LOCATION_PERMISSION);
+            return;
+        }
 
         Intent intent = getIntent();
         String attendanceType = intent.getStringExtra("attendanceType");
@@ -229,6 +240,25 @@ public class Upload_post extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(this, "Location permission is required.", Toast.LENGTH_SHORT).show();
+            }
+
+            if (grantResults.length > 1 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(this, "Camera permission is required.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void loadUserProfileImage() {

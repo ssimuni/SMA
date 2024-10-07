@@ -86,7 +86,7 @@ Achieving Sustainable Development Goal 16.6 in Bangladesh"
             <WebView
                 android:id="@+id/web_view"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
                 android:layout_marginTop="10dp"
                 />
 

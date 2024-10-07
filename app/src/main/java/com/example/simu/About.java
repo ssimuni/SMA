@@ -38,8 +38,9 @@ public class About extends AppCompatActivity {
                 "document.getElementById('styled_content').innerHTML = '<style>' + result.text + '</style>';});}";
 
 
-        String youtubeVideoCode = "<iframe width=\"100%\" height=\"100%\"" +
-                "src=\"https://www.youtube.com/embed/E5qHYKi7zX8?si=8mIpIx1HJcr0qJK_\" " +
+        String youtubeVideoCode =
+                "<iframe width=\"100%\" height=\"100%\"" +
+                "src=\"https://www.youtube.com/embed/Rd8hid-PwXw?si=XSR-Wp4O6R5egn0t\" " +
                 "title=\"YouTube video player\" frameborder=\"0\" " +
                 "allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; " +
                 "picture-in-picture; web-share\" allowfullscreen></iframe>";
@@ -70,7 +71,7 @@ public class About extends AppCompatActivity {
         textViewYouTube.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openLink("https://www.youtube.com/watch?v=ZYvbmVEwX14&list=PLgH5QX0i9K3p9xzYLFGdfYliIRBLVDRV5");
+                openLink("https://www.youtube.com/watch?v=Rd8hid-PwXw");
             }
         });
 

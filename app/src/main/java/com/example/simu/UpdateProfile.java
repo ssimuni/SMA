@@ -301,7 +301,7 @@ public class UpdateProfile extends AppCompatActivity {
                 if ("Worker".equals(designation)) {
                     officerSpinner.setVisibility(View.VISIBLE);
 
-                    String[] officerLevels = {"Select Level", "Union level Worker", "Upozela level Worker", "District level Worker", "Division level Worker"};
+                    String[] officerLevels = {"Select Level", "Union level Worker", "Upozila level Worker", "District level Worker", "Division level Worker"};
                     ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -326,7 +326,7 @@ public class UpdateProfile extends AppCompatActivity {
                 else if ("Officer".equals(designation)) {
                     officerSpinner.setVisibility(View.VISIBLE);
 
-                    String[] officerLevels = {"Select Level", "Union level Officer", "Upozela level Officer", "District level Officer", "Division level Officer"};
+                    String[] officerLevels = {"Select Level", "Union level Officer", "Upozila level Officer", "District level Officer", "Division level Officer"};
                     ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,

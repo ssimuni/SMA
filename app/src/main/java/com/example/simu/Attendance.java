@@ -2,8 +2,10 @@ package com.example.simu;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,10 +25,12 @@ import java.util.Calendar;
 import java.util.Objects;
 
 public class Attendance extends AppCompatActivity {
+    private static final int REQUEST_CAMERA_PERMISSION = 100;
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
 
     Button buttonViewUsers;
 
-    Button activites_feed, intime, late, approved_leave, training, urgent, exit1, exit2, dailyReport, monthlyReport, yearlyReport,
+    Button activites_feed, intime, late, approved_leave, training, urgent, exit1, exit2, exitformorningshift, dailyReport, monthlyReport, yearlyReport,
             earned_leave, extraordinary_leave, study_leave, leave_not_due, post_retirement_leave, casual_leave, public_and_gov_holiday,
             public_holiday, government_holiday, optional_leave, rest_and_recreation_leave, special_disability_leave, special_sick_leave,
             leave_of_vacation_dept, departmental_leave, hospital_leave, compulsory_leave, leave_without_pay, quarantine_leave, maternity_leave;;
@@ -37,6 +41,16 @@ public class Attendance extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendance);
 
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.CAMERA
+            }, REQUEST_LOCATION_PERMISSION);
+            return;
+        }
+
         activites_feed = findViewById(R.id.activites_feed);
         intime = findViewById(R.id.entry);
         late = findViewById(R.id.late);
@@ -45,6 +59,7 @@ public class Attendance extends AppCompatActivity {
         urgent = findViewById(R.id.urgent);
         exit1 = findViewById(R.id.exit1);
         exit2 = findViewById(R.id.exit2);
+        exitformorningshift = findViewById(R.id.exitformorningshift);
         earned_leave = findViewById(R.id.earned_leave);
         extraordinary_leave = findViewById(R.id.extraordinary_leave);
         study_leave = findViewById(R.id.study_leave);
@@ -112,6 +127,13 @@ public class Attendance extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkLateValidity();
+            }
+        });
+
+        exitformorningshift.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkExitForMorningValidity();
             }
         });
 
@@ -347,6 +369,7 @@ public class Attendance extends AppCompatActivity {
             }
         });
     }
+
     private void checkIntimeValidity() {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -362,7 +385,7 @@ public class Attendance extends AppCompatActivity {
 
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
-                    if ((hour == 8 && minute >= 45) || (hour == 9 && minute <= 15)) {
+                    if (hour == 7 || hour == 9 && minute <= 15) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -427,6 +450,46 @@ public class Attendance extends AppCompatActivity {
         thread.start();
     }
 
+    private void checkExitForMorningValidity() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    NTPUDPClient client = new NTPUDPClient();
+                    InetAddress inetAddress = InetAddress.getByName("pool.ntp.org");
+                    TimeInfo timeInfo = client.getTime(inetAddress);
+                    long currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(currentTime);
+
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+                    if (hour > 11 || (hour == 11 && minute > 30)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                exitformorningshift.setEnabled(true);
+                                startActivityWithAttendanceType("Exit");
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                exitformorningshift.setEnabled(false);
+                                Toast.makeText(Attendance.this, "Click after 11:30am", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
     private void checkExit1Validity() {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -442,7 +505,7 @@ public class Attendance extends AppCompatActivity {
 
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
-                    if (hour == 15 && minute <= 30) {
+                    if (hour == 15 || (hour == 16 && minute == 0)) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -455,7 +518,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exit1.setEnabled(false);
-                                Toast.makeText(Attendance.this, "Click within 3pm to 3:30pm", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Attendance.this, "Click within 3pm to 4pm", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -506,9 +569,29 @@ public class Attendance extends AppCompatActivity {
         });
         thread.start();
     }
+
     private void startActivityWithAttendanceType(String attendanceType) {
         Intent intent = new Intent(Attendance.this, Upload_attendance.class);
         intent.putExtra("attendanceType", attendanceType);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(this, "Location permission is required.", Toast.LENGTH_SHORT).show();
+            }
+
+            if (grantResults.length > 1 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(this, "Camera permission is required.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

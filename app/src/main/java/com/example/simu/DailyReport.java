@@ -239,13 +239,16 @@ public class DailyReport extends AppCompatActivity {
                                 String district = document.getString("district");
                                 String upozila = document.getString("upozila");
 
+                                designation = (designation != null) ? designation : "";
+
+
                                 User user = new User(userId, name, designation, workstation, division, district, upozila);
                                 userMap.put(userId, user);
 
                                 if (!workstationList.contains(workstation)) {
                                     workstationList.add(workstation);
                                 }
-                                if (!designationList.contains(designation)) {
+                                if (!designationList.contains(designation) && !designation.isEmpty()) {
                                     designationList.add(designation);
                                 }
                                 if (!divisionList.contains(division)) {
@@ -260,8 +263,6 @@ public class DailyReport extends AppCompatActivity {
                             }
                             loadAttendanceFromFirestore(userMap);
                             setSpinnerAdapters();
-                        } else {
-                            // Handle error
                         }
                     }
                 });
@@ -276,7 +277,6 @@ public class DailyReport extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            // Create a list to keep track of users with attendance records
                             List<User> usersWithAttendance = new ArrayList<>();
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
@@ -287,13 +287,12 @@ public class DailyReport extends AppCompatActivity {
                                 User user = userMap.get(userId);
                                 if (user != null) {
                                     user.addAttendance(new Attendance(attendanceType, postingTime));
-                                    // Add user to the list if not already added
+
                                     if (!usersWithAttendance.contains(user)) {
                                         usersWithAttendance.add(user);
                                     }
                                 }
                             }
-                            // Update the userList with only users who have attendance records
                             userList.clear();
                             userList.addAll(usersWithAttendance);
                             userAdapter.notifyDataSetChanged();

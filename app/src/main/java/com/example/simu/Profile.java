@@ -160,9 +160,7 @@ public class Profile extends AppCompatActivity {
     private boolean isValidFirebaseStorageUrl(String url) {
         if (url != null) {
             Uri uri = Uri.parse(url);
-            // Check the schema (https)
             if ("https".equals(uri.getScheme())) {
-                // Check the host (Firebase Storage bucket)
                 if ("firebasestorage.googleapis.com".equals(uri.getHost())) {
                     return true;
                 }

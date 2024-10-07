@@ -107,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:fontFamily="sans-serif"
                 android:layout_height="50dp"
-                android:text="Entry: 8:45 - 9.15"
+                android:text="Entry: 7:00 - 9:15"
                 android:textSize="15sp"
                 android:backgroundTint="@color/basic"
                 app:cornerRadius = "20dp" />
@@ -123,11 +123,21 @@
                 app:cornerRadius = "20dp" />
 
             <Button
+                android:id="@+id/exitformorningshift"
+                android:layout_width="wrap_content"
+                android:fontFamily="sans-serif"
+                android:layout_height="60dp"
+                android:text="Exit for morning shift school: 11:30 - Anytime"
+                android:textSize="15sp"
+                android:backgroundTint="@color/basic"
+                app:cornerRadius = "20dp" />
+
+            <Button
                 android:id="@+id/exit1"
                 android:layout_width="wrap_content"
                 android:fontFamily="sans-serif"
                 android:layout_height="50dp"
-                android:text="Exit: 3:00 - 3:30"
+                android:text="Exit: 3:00 - 4:00"
                 android:textSize="15sp"
                 android:backgroundTint="@color/basic"
                 app:cornerRadius = "20dp" />

@@ -54,7 +54,6 @@ public class YearlyReport extends AppCompatActivity {
     private List<UserAttendanceGrouped> userAttendanceGroupedList;
     private FirebaseFirestore db;
     private Button buttonDownload;
-
     private Spinner spinnerWorkstation;
     private Spinner spinnerDesignation;
     private Spinner spinnerDivision;
@@ -264,13 +263,15 @@ public class YearlyReport extends AppCompatActivity {
                                 String district = document.getString("district");
                                 String upozila = document.getString("upozila");
 
+                                designation = (designation != null) ? designation : "";
+
                                 User user = new User(userId, name, designation, workstation, division, district, upozila);
                                 userMap.put(userId, user);
 
                                 if (!workstationList.contains(workstation)) {
                                     workstationList.add(workstation);
                                 }
-                                if (!designationList.contains(designation)) {
+                                if (!designationList.contains(designation) && !designation.isEmpty()) {
                                     designationList.add(designation);
                                 }
                                 if (!divisionList.contains(division)) {

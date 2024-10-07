@@ -20,6 +20,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class UserListActivity extends AppCompatActivity {
 
@@ -92,21 +93,21 @@ public class UserListActivity extends AppCompatActivity {
                                 String upozila = document.getString("upozila");
 
                                 if (!workstations.contains(workstation)) workstations.add(workstation);
-                                if (!designations.contains(designation)) designations.add(designation);
+                                if (designation != null && !designation.isEmpty() && !designations.contains(designation))
+                                    designations.add(designation);
                                 if (!divisions.contains(division)) divisions.add(division);
                                 if (!districts.contains(district)) districts.add(district);
                                 if (!upozilas.contains(upozila)) upozilas.add(upozila);
                             }
                             setupSpinners();
                         } else {
-                            Toast.makeText(UserListActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(UserListActivity.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
     }
 
     private void setupSpinners() {
-        // Add a "Select" item at the top of each list
         workstations.add(0, "Select Workstation");
         designations.add(0, "Select Designation");
         divisions.add(0, "Select Division");
@@ -196,6 +197,8 @@ public class UserListActivity extends AppCompatActivity {
                                 String district = document.getString("district");
                                 String upozila = document.getString("upozila");
 
+                                designation = designation != null ? designation : "Unknown Designation";
+
                                 MonthlyReport.User user = new MonthlyReport.User(userId, name, designation, workstation, division, district, upozila);
                                 userList.add(user);
                                 userNames.add(user.getName());
@@ -210,7 +213,7 @@ public class UserListActivity extends AppCompatActivity {
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(UserListActivity.this, android.R.layout.simple_list_item_1, userNames);
                             listViewUsers.setAdapter(adapter);
                         } else {
-                            Toast.makeText(UserListActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(UserListActivity.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });

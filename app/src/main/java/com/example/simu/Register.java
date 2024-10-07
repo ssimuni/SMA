@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -59,9 +60,10 @@ import java.util.regex.Pattern;
 public class Register extends AppCompatActivity {
     String designation, fdesignation, fdepartment, fdirectorate, office, fOffice;
     private static final int REQUEST_CAMERA_PERMISSION = 100;
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
     public static final String TAG = "TAG";
     EditText mName, mAddress, mWorkStation, mEmail, mNid, mDob, mPass, mUsername, mNumber;
-    Spinner spinner, officerSpinner, departmentSpinner, directorateSpinner, officeSpinner, sOfficeSpinner;
+    Spinner spinner, officerSpinner, departmentSpinner, directorateSpinner, officeSpinner, sOfficeSpinner, subSpinner;
     Spinner divisionSpinner, districtSpinner, upozilaSpinner;
     Button mRegister;
     Button mProfileBtn;
@@ -80,8 +82,14 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.CAMERA
+            }, REQUEST_LOCATION_PERMISSION);
+            return;
         }
 
         mName = findViewById(R.id.name);
@@ -91,6 +99,7 @@ public class Register extends AppCompatActivity {
         officerSpinner = findViewById(id.officerSpinner);
         officeSpinner = findViewById(id.office);
         sOfficeSpinner = findViewById(id.sOffice);
+        subSpinner = findViewById(id.subSpinner);
         departmentSpinner = findViewById(id.department);
         directorateSpinner = findViewById(id.directorate);
         mEmail = findViewById(R.id.email);
@@ -255,8 +264,8 @@ public class Register extends AppCompatActivity {
 
 
 
-        //designation spinner
-        String[] spinner1 = {"Click here", "Officer", "Worker"};
+
+        String[] spinner1 = {"Click here", "Officer", "Worker", "Teacher"};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 getApplicationContext(),
@@ -275,7 +284,7 @@ public class Register extends AppCompatActivity {
                 if ("Worker".equals(designation)) {
                     officerSpinner.setVisibility(View.VISIBLE);
 
-                    String[] officerLevels = {"Select Level", "Union level Worker", "Upozila level Worker", "District level Worker", "Division level Worker"};
+                    String[] officerLevels = {"Select Level", "Union level Worker", "Upazila level Worker", "District level Worker", "Division level Worker"};
                     ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -300,7 +309,7 @@ public class Register extends AppCompatActivity {
                 else if ("Officer".equals(designation)) {
                     officerSpinner.setVisibility(View.VISIBLE);
 
-                    String[] officerLevels = {"Select Level", "Union level Officer", "Upozila level Officer", "District level Officer", "Division level Officer"};
+                    String[] officerLevels = {"Select Level", "Union level Officer", "Upazila level Officer", "District level Officer", "Division level Officer"};
                     ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -322,8 +331,111 @@ public class Register extends AppCompatActivity {
                     });
                 }
 
+                else if ("Teacher".equals(designation)) {
+                    officerSpinner.setVisibility(View.VISIBLE);
+
+                    String[] teacherLevels = {"Select Institution Type", "High School", "Primary School", "College"};
+                    ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
+                            getApplicationContext(),
+                            android.R.layout.simple_spinner_item,
+                            teacherLevels
+                    );
+
+                    subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    officerSpinner.setAdapter(subAdapter);
+
+                    officerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                            String schoolType = parentView.getItemAtPosition(position).toString();
+
+                            if ("High School".equals(schoolType)) {
+                                subSpinner.setVisibility(View.VISIBLE);
+
+                                String[] highSchoolRoles = {"Select Role", "Head Teacher", "Senior Assistant Teacher", "Assistant Teacher"};
+                                ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(
+                                        getApplicationContext(),
+                                        android.R.layout.simple_spinner_item,
+                                        highSchoolRoles
+                                );
+
+                                roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                subSpinner.setAdapter(roleAdapter);
+
+                                subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                        fdesignation = parentView.getItemAtPosition(position).toString();
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parentView) {
+                                    }
+                                });
+                            }
+                            else if ("Primary School".equals(schoolType)) {
+                                subSpinner.setVisibility(View.VISIBLE);
+
+                                String[] primarySchoolRoles = {"Select Role", "Head Teacher", "Assistant Teacher"};
+                                ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(
+                                        getApplicationContext(),
+                                        android.R.layout.simple_spinner_item,
+                                        primarySchoolRoles
+                                );
+
+                                roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                subSpinner.setAdapter(roleAdapter);
+
+                                subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                        fdesignation = parentView.getItemAtPosition(position).toString();
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parentView) {
+                                    }
+                                });
+                            }
+                            else if ("College".equals(schoolType)) {
+                                subSpinner.setVisibility(View.VISIBLE);
+
+                                String[] primarySchoolRoles = {"Select Role", "Principal", "Vice Principal", "Professor", "Associate Professor", "Assistant Professor", "Lecturer"};
+                                ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(
+                                        getApplicationContext(),
+                                        android.R.layout.simple_spinner_item,
+                                        primarySchoolRoles
+                                );
+
+                                roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                subSpinner.setAdapter(roleAdapter);
+
+                                subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                        fdesignation = parentView.getItemAtPosition(position).toString();
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parentView) {
+                                    }
+                                });
+                            }
+                            else {
+                                subSpinner.setVisibility(View.INVISIBLE);
+                            }
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parentView) {
+                        }
+                    });
+                }
+
+
                 else {
                     officerSpinner.setVisibility(View.INVISIBLE);
+                    subSpinner.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -354,12 +466,13 @@ public class Register extends AppCompatActivity {
                 if ("Upazila".equals(office)) {
                     sOfficeSpinner.setVisibility(View.VISIBLE);
 
-                    String[] officeLevels = {"Select Upazila Office", "Upazila Nirbahi Officer's Office", "Upazila Family Planning Office", "Upazila Election Office", "Upazila Education Office",
+                    String[] officeLevels = {"Select Upazila Office", "Upazila Nirbahi Officer's Office", "Upazila Family Planning Office", "Upazila Election Office",
+                            "Upazila Education Office", "Upozila ICT Division",
                             "Upazila Cooperative Office", "Upazila Accounts Office", "Police Station", "Office of the Upazila Engineer", "Upazila Ansar and VDP Office",
                             "Upazila Project Implementation Office", "Upazila Food Office", "Office of the Upazila Chairman", "Upazila Agriculture Office",
                             "Upazila Livestock Office", "Upazila Fisheries Office", "Upazila Public Health Engineering Office", "Upazila Women Affairs Office",
                             "Upazila Rural Development Office", "Upazila Secondary Education Office", "Upazila Statistics Office", "Upazila Youth Development Office",
-                            "Upazila Land Office", "Upazila Health Complex", "Upazila Social Services Office", "Government College", "Government High School"};
+                            "Upazila Land Office", "Upazila Health Complex", "Upazila Social Services Office", "Government College", "Government High School", "Uoazila Service Center"};
                     ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -385,12 +498,12 @@ public class Register extends AppCompatActivity {
                     sOfficeSpinner.setVisibility(View.VISIBLE);
 
                     String[] officeLevels = {"Select District Office","Deputy Commissioner's Office", "District Family Planning Office", "District Election Office",
-                            "District Education Office", "District Cooperative Office", "District Accounts Office", "Police Station", "Office of the District Engineer",
+                            "District Education Office", "District ICT Division", "District Cooperative Office", "District Accounts Office", "Police Station", "Office of the District Engineer",
                             "District Ansar and VDP Office", "District Project Implementation Office", "District Food Office", "Office of the District Chairman",
                             "District Agriculture Office", "District Livestock Office", "District Fisheries Office", "District Public Health Engineering Office",
                             "District Women Affairs Office", "District Rural Development Office", "District Secondary Education Office", "District Statistics Office",
                             "District Youth Development Office", "District Land Office", "District Health Complex", "District Social Services Office",
-                            "Government College", "Government High School"};
+                            "Government College", "Government High School", "District Service Center"};
                     ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -416,12 +529,12 @@ public class Register extends AppCompatActivity {
                     sOfficeSpinner.setVisibility(View.VISIBLE);
 
                     String[] officeLevels = {"Select Division Office","Office of the Divisional Commissioner", "Division Family Planning Office", "Division Election Office",
-                            "Division Education Office", "Division Cooperative Office", "Division Accounts Office", "Police Station", "Office of the Division Engineer",
+                            "Division Education Office","ICT Division", "Division Cooperative Office", "Division Accounts Office", "Police Station", "Office of the Division Engineer",
                             "Division Ansar and VDP Office", "Division Project Implementation Office", "Division Food Office", "Office of the Division Chairman",
                             "Division Agriculture Office", "Division Livestock Office", "Division Fisheries Office", "Division Public Health Engineering Office",
                             "Division Women Affairs Office", "Division Rural Development Office", "Division Secondary Education Office", "Division Statistics Office",
                             "Division Youth Development Office", "Division Land Office", "Division Health Complex", "Division Social Services Office",
-                            "Government College", "Government High School"};
+                            "Government College", "Government High School", "Division Service Center"};
                     ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -870,7 +983,6 @@ public class Register extends AppCompatActivity {
             storageRef.putBytes(data)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Image uploaded successfully
                             Log.d(TAG, "Image uploaded to Firebase Storage");
                             storageRef.getDownloadUrl().addOnCompleteListener(urlTask -> {
                                 if (urlTask.isSuccessful()) {
@@ -936,5 +1048,24 @@ public class Register extends AppCompatActivity {
                 year, month, day);
 
         datePickerDialog.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(this, "Location permission is required.", Toast.LENGTH_SHORT).show();
+            }
+
+            if (grantResults.length > 1 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(this, "Camera permission is required.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -269,13 +269,15 @@ public class MonthlyReport extends AppCompatActivity {
                                 String district = document.getString("district");
                                 String upozila = document.getString("upozila");
 
+                                designation = (designation != null) ? designation : "";
+
                                 User user = new User(userId, name, designation, workstation, division, district, upozila);
                                 userMap.put(userId, user);
 
                                 if (!workstationList.contains(workstation)) {
                                     workstationList.add(workstation);
                                 }
-                                if (!designationList.contains(designation)) {
+                                if (!designationList.contains(designation) && !designation.isEmpty()) {
                                     designationList.add(designation);
                                 }
                                 if (!divisionList.contains(division)) {
