@@ -64,6 +64,9 @@
             android:name=".NewsFeed"
             android:exported="false" />
         <activity
+            android:name=".Dept_NewsFeed"
+            android:exported="false" />
+        <activity
             android:name=".Rating"
             android:exported="false" />
         <activity
@@ -89,6 +92,9 @@
             android:exported="false" />
         <activity
             android:name=".Upload_attendance"
+            android:exported="false" />
+        <activity
+            android:name=".Upload_dept_post"
             android:exported="false" />
         <activity
             android:name=".Splash_screen"

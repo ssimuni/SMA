@@ -65,6 +65,7 @@ public class Upload_attendance extends AppCompatActivity {
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     private String workstation;
     private String designation;
+    private String department;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class Upload_attendance extends AppCompatActivity {
 
         Intent intent = getIntent();
         String attendanceType = intent.getStringExtra("attendanceType");
+        String numberOfDays = getIntent().getStringExtra("numberOfDays");
 
         pickedImg = findViewById(R.id.pickedimg);
         addPhoto = findViewById(R.id.addPhoto);
@@ -114,12 +116,13 @@ public class Upload_attendance extends AppCompatActivity {
                                                                 if (documentSnapshot.exists()) {
                                                                     workstation = documentSnapshot.getString("workstation");
                                                                     designation = documentSnapshot.getString("designation");
+                                                                    department = documentSnapshot.getString("department");
 
                                                                     PostModel postModel = new PostModel(id,
                                                                             FirebaseAuth.getInstance().getUid(),
                                                                             postText.getText().toString(),
                                                                             uri.toString(), "0", "0", "0",
-                                                                            System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation);
+                                                                            System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation, numberOfDays, department);
 
                                                                     FirebaseFirestore.getInstance()
                                                                             .collection("Attendance")
@@ -168,12 +171,13 @@ public class Upload_attendance extends AppCompatActivity {
                                 if (documentSnapshot.exists()) {
                                     workstation = documentSnapshot.getString("workstation");
                                     designation = documentSnapshot.getString("designation");
+                                    department = documentSnapshot.getString("department");
 
                                     PostModel postModel = new PostModel(id,
                                             FirebaseAuth.getInstance().getUid(),
                                             postText.getText().toString(),
                                             null, "0", "0", "0",
-                                            System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation);
+                                            System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation, numberOfDays, department);
 
                                     FirebaseFirestore.getInstance()
                                             .collection("Attendance")
@@ -261,6 +265,8 @@ public class Upload_attendance extends AppCompatActivity {
     private void getLocationCoordinates(String id) {
         Intent intent = getIntent();
         String attendanceType = intent.getStringExtra("attendanceType");
+        String numberOfDays = getIntent().getStringExtra("numberOfDays");
+
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -298,7 +304,7 @@ public class Upload_attendance extends AppCompatActivity {
                                                             System.currentTimeMillis(),
                                                             latitude,
                                                             longitude,
-                                                            completeAddress, attendanceType, workstation, designation);
+                                                            completeAddress, attendanceType, workstation, designation, numberOfDays, department);
 
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Attendance")
@@ -336,7 +342,7 @@ public class Upload_attendance extends AppCompatActivity {
                                     System.currentTimeMillis(),
                                     latitude,
                                     longitude,
-                                    completeAddress, attendanceType,  workstation, designation);
+                                    completeAddress, attendanceType,  workstation, designation, numberOfDays, department);
 
                             FirebaseFirestore.getInstance()
                                     .collection("Attendance")

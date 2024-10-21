@@ -4,11 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,7 +32,6 @@ import java.util.Objects;
 public class Attendance extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
-
     Button buttonViewUsers;
 
     Button activites_feed, intime, late, approved_leave, training, urgent, exit1, exit2, exitformorningshift, dailyReport, monthlyReport, yearlyReport,
@@ -87,7 +91,10 @@ public class Attendance extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
 
+        String userId = fAuth.getCurrentUser().getUid();
+
         buttonViewUsers = findViewById(R.id.buttonViewUsers);
+
 
         buttonViewUsers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,7 +217,7 @@ public class Attendance extends AppCompatActivity {
         casual_leave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityWithAttendanceType("Casual Leave");
+                startActivityWithLimit("Casual Leave");
             }
         });
 
@@ -390,7 +397,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 intime.setEnabled(true);
-                                startActivityWithAttendanceType("Intime");
+                                startActivityWithoutLeave("Intime");
                             }
                         });
                     } else {
@@ -430,7 +437,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 late.setEnabled(true);
-                                startActivityWithAttendanceType("Late");
+                                startActivityWithoutLeave("Late");
                             }
                         });
                     } else {
@@ -470,7 +477,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exitformorningshift.setEnabled(true);
-                                startActivityWithAttendanceType("Exit");
+                                startActivityWithoutLeave("Exit");
                             }
                         });
                     } else {
@@ -510,7 +517,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exit1.setEnabled(true);
-                                startActivityWithAttendanceType("Exit");
+                                startActivityWithoutLeave("Exit");
                             }
                         });
                     } else {
@@ -550,7 +557,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exit2.setEnabled(true);
-                                startActivityWithAttendanceType("Exit");
+                                startActivityWithoutLeave("Exit");
                             }
                         });
                     } else {
@@ -570,10 +577,128 @@ public class Attendance extends AppCompatActivity {
         thread.start();
     }
 
-    private void startActivityWithAttendanceType(String attendanceType) {
+    private void startActivityWithoutLeave(String attendanceType) {
         Intent intent = new Intent(Attendance.this, Upload_attendance.class);
         intent.putExtra("attendanceType", attendanceType);
         startActivity(intent);
+    }
+
+    private void startActivityWithLimit(String attendanceType) {
+
+        String userId = fAuth.getCurrentUser().getUid();
+
+        fstore.collection("UserLeaveRecords")
+                .document(userId + "_" + attendanceType)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            DocumentSnapshot document = task.getResult();
+                            int totalDays = Objects.requireNonNull(document.getLong("totalDays")).intValue();
+
+                            int leaveLimit = 0;
+                            if (attendanceType.equals("Casual Leave")) {
+                                leaveLimit = 20;
+                            } else if (attendanceType.equals("Maternity Leave")) {
+                                leaveLimit = 180;
+                            }
+                            if (document.exists()) {
+                                if (totalDays >= leaveLimit) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(Attendance.this, "You have exceeded the limit for " + attendanceType + ".", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else {
+                                    showEnterDaysDialog(attendanceType, totalDays, leaveLimit);
+                                }
+                            } else {
+                                showEnterDaysDialog(attendanceType, 0, leaveLimit);
+                            }
+                        } else {
+                            Log.w("Firestore", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+    }
+
+    private void showEnterDaysDialog(String attendanceType, int totalDays, int leaveLimit) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Attendance.this);
+        builder.setTitle("Enter Number of Days");
+
+        final EditText input = new EditText(Attendance.this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String numberOfDaysStr = input.getText().toString();
+
+                if (!numberOfDaysStr.isEmpty()) {
+                    int numberOfDays = Integer.parseInt(numberOfDaysStr);
+
+                    if (totalDays + numberOfDays > leaveLimit) {
+                        Toast.makeText(Attendance.this, "You cannot take more than " + leaveLimit + " days for " + attendanceType + ".", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent intent = new Intent(Attendance.this, Upload_attendance.class);
+                        intent.putExtra("attendanceType", attendanceType);
+                        intent.putExtra("numberOfDays", String.valueOf(numberOfDays));
+                        startActivity(intent);
+                    }
+                } else {
+                    Toast.makeText(Attendance.this, "Please enter a valid number of days", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void startActivityWithAttendanceType(String attendanceType) {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Attendance.this);
+        builder.setTitle("Enter Number of Days");
+
+        final EditText input = new EditText(Attendance.this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String numberOfDays = input.getText().toString();
+
+                if (!numberOfDays.isEmpty()) {
+                    Intent intent = new Intent(Attendance.this, Upload_attendance.class);
+                    intent.putExtra("attendanceType", attendanceType);
+                    intent.putExtra("numberOfDays", numberOfDays);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(Attendance.this, "Please enter a valid number of days", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     @Override

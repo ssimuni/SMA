@@ -28,6 +28,7 @@ public class Dashboard extends AppCompatActivity {
     private CardView attendance;
     private CardView country;
     private CardView approve;
+    private CardView deptNews;
     private FirebaseAuth fAuth;
     private FirebaseFirestore fstore;
 
@@ -38,13 +39,14 @@ public class Dashboard extends AppCompatActivity {
 
         profileCard = findViewById(R.id.level1).findViewById(R.id.profile);
         aboutCard = findViewById(R.id.level1).findViewById(R.id.about);
-        rateCard = findViewById(R.id.level2).findViewById(R.id.rating);
+        rateCard = findViewById(R.id.level4).findViewById(R.id.rating);
         newsFeed = findViewById(R.id.level2).findViewById(R.id.feed);
         location = findViewById(R.id.level3).findViewById(R.id.location);
         weather = findViewById(R.id.level3).findViewById(R.id.weather);
         attendance = findViewById(R.id.level5).findViewById(R.id.attendance);
         country = findViewById(R.id.level4).findViewById(R.id.country);
         approve = findViewById(R.id.level5).findViewById(R.id.approve);
+        deptNews = findViewById(R.id.level2).findViewById(R.id.deptNews);
 
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
@@ -88,6 +90,11 @@ public class Dashboard extends AppCompatActivity {
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { startActivity(new Intent(Dashboard.this, Attendance.class));}
+        });
+
+        deptNews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { startActivity(new Intent(Dashboard.this, Dept_NewsFeed.class));}
         });
 
         approve.setOnClickListener(new View.OnClickListener() {

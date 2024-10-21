@@ -26,6 +26,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -472,7 +474,7 @@ public class Register extends AppCompatActivity {
                             "Upazila Project Implementation Office", "Upazila Food Office", "Office of the Upazila Chairman", "Upazila Agriculture Office",
                             "Upazila Livestock Office", "Upazila Fisheries Office", "Upazila Public Health Engineering Office", "Upazila Women Affairs Office",
                             "Upazila Rural Development Office", "Upazila Secondary Education Office", "Upazila Statistics Office", "Upazila Youth Development Office",
-                            "Upazila Land Office", "Upazila Health Complex", "Upazila Social Services Office", "Government College", "Government High School", "Uoazila Service Center"};
+                            "Upazila Land Office", "Upazila Health Complex", "Upazila Social Services Office", "Government College", "Government High School", "Upazila Service Center"};
                     ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -571,14 +573,14 @@ public class Register extends AppCompatActivity {
         //department spinner
         String[] department = {"Select Ministry", "Ministry of Chittagong Hill Tracts Affairs", "Ministry of Commerce", "Ministry of Cultural Affairs",
                 "Ministry of Defence", "Ministry of Disaster Management and Relief", "Ministry of Education", "Ministry of Environment, Forest and Climate Change",
-                "Ministry of Expatriates' Welfare and Overseas Employment", "Ministry of Fisheries and Livestock", "Ministry of Food", "Ministry of Foreign Affairs",
-                "Ministry of Health and Family Welfare", "Medical Education and Family Welfare Division", "Health Services Division","Ministry of Home Affairs", "Ministry of Housing and Public Works", "Ministry of Industries",
-                "Ministry of Information and Broadcasting", "Ministry of Labour and Employment", "Ministry of Land", "Ministry of Law, Justice and Parliamentary Affairs",
-                "Ministry of Liberation War Affairs", "Ministry of Local Government, Rural Development and Co-operatives", "Ministry of Planning",
-                "Ministry of Posts, Telecommunications and Information Technology", "Ministry of Power, Energy and Mineral Resources", "Ministry of Primary and Mass Education",
-                "Ministry of Public Administration", "Ministry of Railways", "Ministry of Religious Affairs", "Ministry of Road Transport and Bridges", "Ministry of Science and Technology",
-                "Ministry of Shipping", "Ministry of Social Welfare", "Ministry of Textiles and Jute", "Ministry of Water Resources", "Ministry of Women and Children Affairs",
-                "Ministry of Youth and Sports"};
+                "Ministry of Expatriates' Welfare and Overseas Employment", "Ministry of Fisheries and Livestock", "Ministry of Finance", "Ministry of Food",
+                "Ministry of Foreign Affairs", "Medical Education and Family Welfare Division", "Health Services Division","Ministry of Home Affairs",
+                "Ministry of Housing and Public Works", "Ministry of Industries", "Ministry of Information and Broadcasting", "Ministry of Labour and Employment",
+                "Ministry of Land", "Ministry of Law, Justice and Parliamentary Affairs", "Ministry of Liberation War Affairs", "Ministry of Local Government, Rural Development and Co-operatives",
+                "Ministry of Planning", "Ministry of Posts, Telecommunications and Information Technology", "Ministry of Power, Energy and Mineral Resources",
+                "Ministry of Primary and Mass Education", "Ministry of Public Administration", "Ministry of Railways", "Ministry of Religious Affairs",
+                "Ministry of Road Transport and Bridges", "Ministry of Science and Technology", "Ministry of Shipping", "Ministry of Social Welfare",
+                "Ministry of Textiles and Jute", "Ministry of Water Resources", "Ministry of Women and Children Affairs", "Ministry of Youth and Sports"};
         ArrayAdapter<String> deptAdapter = new ArrayAdapter<>(
                 getApplicationContext(),
                 android.R.layout.simple_spinner_item,
@@ -885,6 +887,22 @@ public class Register extends AppCompatActivity {
                 final String pnumber = mNumber.getText().toString();
                 String password = mPass.getText().toString().trim();
 
+                final String[] radioSelection = {"None"};
+
+                RadioGroup radioGroup = findViewById(R.id.radioGroup);
+                RadioButton radioYes = findViewById(R.id.radioYes);
+                RadioButton radioNo = findViewById(R.id.radioNo);
+                int selectedId = radioGroup.getCheckedRadioButtonId();
+
+                if (selectedId == radioYes.getId()) {
+                    radioSelection[0] = "Yes";
+                } else if (selectedId == radioNo.getId()) {
+                    radioSelection[0] = "No";
+                } else {
+                    Toast.makeText(Register.this, "Please select an option (Yes/No)", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 final String selectedDivision = divisionSpinner.getSelectedItem().toString();
                 final String selectedDistrict = districtSpinner.getSelectedItem().toString();
                 final String selectedUpozila = upozilaSpinner.getSelectedItem().toString();
@@ -896,6 +914,11 @@ public class Register extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(email)) {
                     mEmail.setError("Email is required");
+                    return;
+                }
+
+                if (TextUtils.isEmpty(name)) {
+                    mName.setError("Name is required");
                     return;
                 }
 
@@ -949,7 +972,7 @@ public class Register extends AppCompatActivity {
                                     user.put("number", pnumber);
                                     user.put("isAdmin", "No");
                                     user.put("isApproved", "No");
-
+                                    user.put("head", radioSelection[0]);
                                     user.put("division", selectedDivision);
                                     user.put("district", selectedDistrict);
                                     user.put("upozila", selectedUpozila);

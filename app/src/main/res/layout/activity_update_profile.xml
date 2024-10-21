@@ -108,7 +108,7 @@
                         android:fontFamily="sans-serif"
                         android:textSize="18sp"
                         android:drawablePadding="8dp"
-                        android:hint="Update Designation"
+                        android:hint="@string/enter_designation"
                         android:textColorHint="@color/basic"
                         android:padding="8dp"
                         android:textColor="@color/basic"
@@ -128,6 +128,14 @@
                         android:layout_height="wrap_content"
                         android:minHeight="50dp"
                         android:visibility="invisible"/>
+
+                    <Spinner
+                        android:id="@+id/subSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="50dp"
+                        android:visibility="invisible"
+                        />
 
                 </LinearLayout>
 
@@ -188,13 +196,61 @@
                         android:fontFamily="sans-serif"
                         android:textSize="18sp"
                         android:drawablePadding="8dp"
-                        android:hint="Update Department"
+                        android:hint="Update Office"
                         android:textColorHint="@color/basic"
                         android:padding="8dp"
                         android:textColor="@color/basic"
                         android:textColorHighlight="@color/cardview_dark_background"
                         android:autofillHints="text"
                         app:drawableStartCompat="@drawable/designation" />
+
+                    <Spinner
+                        android:id="@+id/office"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="50dp"
+                        />
+                    <Spinner
+                        android:id="@+id/sOffice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="50dp"
+                        android:visibility="invisible"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/textboxborder">
+
+                    <TextView
+                        android:gravity=""
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:fontFamily="sans-serif"
+                        android:textSize="18sp"
+                        android:drawablePadding="8dp"
+                        android:hint="Update Ministry"
+                        android:textColorHint="@color/basic"
+                        android:padding="8dp"
+                        android:textColor="@color/basic"
+                        android:textColorHighlight="@color/cardview_dark_background"
+                        android:autofillHints="text"
+                        app:drawableStartCompat="@drawable/designation" />
+
+
+                    <EditText
+                        android:id="@+id/searchEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="Search"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"
+                        />
 
                     <Spinner
                         android:id="@+id/department"
@@ -226,6 +282,16 @@
                         android:textColorHighlight="@color/cardview_dark_background"
                         android:autofillHints="text"
                         app:drawableStartCompat="@drawable/designation" />
+
+                    <EditText
+                        android:id="@+id/searchText"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="Search"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"
+                        />
 
                     <Spinner
                         android:id="@+id/directorate"

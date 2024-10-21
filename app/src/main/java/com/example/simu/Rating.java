@@ -77,10 +77,8 @@ public class Rating extends AppCompatActivity {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     if (task.getResult().isEmpty()) {
-                                        // User has not rated before, increment numOfPeopleRatedUs
                                         incrementNumOfPeopleRatedUs();
                                     }
-                                    // Add or update the rating
                                     addOrUpdateRating(userId, rating, feedbackText);
                                 }
                             }
@@ -119,7 +117,6 @@ public class Rating extends AppCompatActivity {
 
 
     private void addOrUpdateRating(String userId, float rating, String feedbackText) {
-        // Add or update the rating
         Map<String, Object> ratingData = new HashMap<>();
         ratingData.put("userId", userId);
         ratingData.put("rating", rating);

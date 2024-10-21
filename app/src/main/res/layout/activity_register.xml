@@ -409,6 +409,50 @@
                 android:layout_marginTop="20dp"/>
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/textboxborder"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:hint="Are you head of your department?"
+                    android:textColorHint="@color/basic"
+                    android:textColor="@color/basic"
+                    android:textColorHighlight="@color/cardview_dark_background"
+                    android:autofillHints="text" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioYes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Yes"
+                        android:checked="false"
+                        android:layout_marginEnd="20dp"/>
+
+                    <RadioButton
+                        android:id="@+id/radioNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No"
+                        android:checked="false"/>
+                </RadioGroup>
+
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:id="@+id/profileImageLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

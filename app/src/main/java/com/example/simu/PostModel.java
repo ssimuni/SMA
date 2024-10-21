@@ -1,12 +1,13 @@
 package com.example.simu;
 
 public class PostModel {
-    private String postId, userId, postText, postImage, postLikes, postDislikes ,postComments, address, attendanceType, workstation, designation;
+    private String postId, userId, postText, postImage, postLikes, postDislikes ,postComments, address, attendanceType, workstation, designation, numberOfDays, department;
     private long postingTime;
     private boolean isLiked;
     private boolean isDisliked;
     private double latitude, longitude;
-    public PostModel(String postId, String userId, String postText, String postImage, String postLikes, String postDislikes, String postComments, long postingTime, double latitude, double longitude, String address, String attendanceType, String workstation, String designation) {
+
+    public PostModel(String postId, String userId, String postText, String postImage, String postLikes, String postDislikes, String postComments, long postingTime, double latitude, double longitude, String address, String attendanceType, String workstation, String designation, String numberOfDays, String department) {
         this.postId = postId;
         this.userId = userId;
         this.postText = postText;
@@ -21,6 +22,8 @@ public class PostModel {
         this.attendanceType = attendanceType;
         this.workstation = workstation;
         this.designation = designation;
+        this.numberOfDays = numberOfDays;
+        this.department = department;
     }
 
     public PostModel() {
@@ -32,6 +35,13 @@ public class PostModel {
 
     public void setAttendanceType(String attendanceType) {
         this.attendanceType = attendanceType;
+    }
+    public String getNumberOfDays() {
+        return numberOfDays;
+    }
+
+    public void setNumberOfDays(String numberOfDays) {
+        this.numberOfDays = numberOfDays;
     }
 
     public String getAddress() {
@@ -48,6 +58,13 @@ public class PostModel {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public double getLongitude() {

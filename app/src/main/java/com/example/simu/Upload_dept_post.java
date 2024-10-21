@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Upload_post extends AppCompatActivity {
+public class Upload_dept_post extends AppCompatActivity {
     ActivityUploadPostBinding binding;
     private Uri pickedImgUri;
     ImageView pickedImg;
@@ -107,7 +107,7 @@ public class Upload_post extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
                 String id = UUID.randomUUID().toString();
                 getLocationCoordinates(id);
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference("Posts/" + id + "image.png");
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference("DeptPosts/" + id + "image.png");
 
                 if(selectedImageBitmap!=null){
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -135,15 +135,15 @@ public class Upload_post extends AppCompatActivity {
                                                                             System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation, numberOfDays, department);
 
                                                                     FirebaseFirestore.getInstance()
-                                                                            .collection("Posts")
+                                                                            .collection("DeptPosts")
                                                                             .document(id)
                                                                             .set(postModel)
                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
                                                                                 public void onSuccess(Void aVoid) {
                                                                                     progressBar.setVisibility(View.GONE);
-                                                                                    Toast.makeText(Upload_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                                                                                    Intent intent = new Intent(Upload_post.this, NewsFeed.class);
+                                                                                    Toast.makeText(Upload_dept_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                                                                                    Intent intent = new Intent(Upload_dept_post.this, Dept_NewsFeed.class);
                                                                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                                                     startActivity(intent);
                                                                                     finish();
@@ -153,7 +153,7 @@ public class Upload_post extends AppCompatActivity {
                                                                                 @Override
                                                                                 public void onFailure(@NonNull Exception e) {
                                                                                     progressBar.setVisibility(View.GONE);
-                                                                                    Toast.makeText(Upload_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                                    Toast.makeText(Upload_dept_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                                                                 }
                                                                             });
                                                                 }
@@ -163,7 +163,7 @@ public class Upload_post extends AppCompatActivity {
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(Upload_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(Upload_dept_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                 }
@@ -171,7 +171,7 @@ public class Upload_post extends AppCompatActivity {
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(Upload_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Upload_dept_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }
@@ -190,15 +190,15 @@ public class Upload_post extends AppCompatActivity {
                                             System.currentTimeMillis(), latitude, longitude, address, attendanceType, workstation, designation, numberOfDays, department);
 
                                     FirebaseFirestore.getInstance()
-                                            .collection("Posts")
+                                            .collection("DeptPosts")
                                             .document(id)
                                             .set(postModel)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     progressBar.setVisibility(View.GONE);
-                                                    Toast.makeText(Upload_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                                                    Intent intent = new Intent(Upload_post.this, NewsFeed.class);
+                                                    Toast.makeText(Upload_dept_post.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(Upload_dept_post.this, Dept_NewsFeed.class);
                                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                     startActivity(intent);
                                                     finish();
@@ -208,7 +208,7 @@ public class Upload_post extends AppCompatActivity {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
                                                     progressBar.setVisibility(View.GONE);
-                                                    Toast.makeText(Upload_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(Upload_dept_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                 }
@@ -217,7 +217,7 @@ public class Upload_post extends AppCompatActivity {
                 else {
                     progressBar.setVisibility(View.GONE);
                     postButton.setEnabled(false);
-                    Toast.makeText(Upload_post.this, "Please write something or upload image!!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Upload_dept_post.this, "Please write something or upload image!!!", Toast.LENGTH_SHORT).show();
                     postButton.setEnabled(true);
                 }
             }
@@ -277,7 +277,7 @@ public class Upload_post extends AppCompatActivity {
                         String userName = documentSnapshot.getString("name");
 
                         if (userProfileImage != null) {
-                            Glide.with(Upload_post.this).load(userProfileImage).into(userdp);
+                            Glide.with(Upload_dept_post.this).load(userProfileImage).into(userdp);
                         }
                         if (userName != null) {
                             username.setText(userName);
@@ -287,7 +287,7 @@ public class Upload_post extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(Upload_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Upload_dept_post.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -310,7 +310,7 @@ public class Upload_post extends AppCompatActivity {
                         Address address = addresses.get(0);
                         String addressLine = address.getAddressLine(0);
                         String completeAddress = addressLine != null ? addressLine : "";
-                        StorageReference storageRef = FirebaseStorage.getInstance().getReference("Posts/" + id + "image.png");
+                        StorageReference storageRef = FirebaseStorage.getInstance().getReference("DeptPosts/" + id + "image.png");
 
                         if (selectedImageBitmap!=null) {
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -336,7 +336,7 @@ public class Upload_post extends AppCompatActivity {
                                                             completeAddress, attendanceType, workstation, designation, numberOfDays, department);
 
                                                     FirebaseFirestore.getInstance()
-                                                            .collection("Posts")
+                                                            .collection("DeptPosts")
                                                             .document(id)
                                                             .set(postModel)
                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -356,7 +356,7 @@ public class Upload_post extends AppCompatActivity {
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(Upload_post.this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(Upload_dept_post.this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
                         }
@@ -372,7 +372,7 @@ public class Upload_post extends AppCompatActivity {
                                     completeAddress, attendanceType, workstation, designation, numberOfDays, department);
 
                             FirebaseFirestore.getInstance()
-                                    .collection("Posts")
+                                    .collection("DeptPosts")
                                     .document(id)
                                     .set(postModel)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {

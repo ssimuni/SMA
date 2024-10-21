@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,6 +30,8 @@ public class Approve extends AppCompatActivity {
     private UserAdapter userAdapter;
     private List<User> userList;
     private FirebaseFirestore db;
+    private String currentUserDesignation;
+    private String currentUserDepartment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,16 @@ public class Approve extends AppCompatActivity {
         recyclerView.setAdapter(userAdapter);
 
         db = FirebaseFirestore.getInstance();
-        loadPendingUsers();
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String userId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+
+        db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+            currentUserDesignation = documentSnapshot.getString("designation");
+            currentUserDepartment = documentSnapshot.getString("department");
+
+            loadPendingUsers();
+        });
     }
 
     private void loadPendingUsers() {
@@ -54,13 +66,35 @@ public class Approve extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                String userId = document.getId();
-                                String name = document.getString("name");
-                                String designation = document.getString("designation");
-                                String department = document.getString("department");
-                                String workstation = document.getString("workstation");
-                                String directorate = document.getString("directorate");
-                                userList.add(new User(userId, name, designation, department, workstation, directorate));
+                                String pendingUserDesignation = document.getString("designation");
+                                String pendingUserDepartment = document.getString("department");
+                                String pendingUserOffice = document.getString("office");
+
+                                if (!Objects.equals(pendingUserDepartment, currentUserDepartment)) {
+                                    continue;
+                                }
+                                switch (currentUserDesignation) {
+                                    case "Upazila level Officer":
+                                        assert pendingUserDesignation != null;
+                                        if (isUpazilaLevelUserValid(pendingUserDesignation, pendingUserOffice)) {
+                                            addUserToList(document);
+                                        }
+                                        break;
+                                    case "District level Officer":
+                                        assert pendingUserDesignation != null;
+                                        if (isDistrictLevelUserValid(pendingUserDesignation, pendingUserOffice)) {
+                                            addUserToList(document);
+                                        }
+                                        break;
+                                    case "Division level Officer":
+                                        assert pendingUserDesignation != null;
+                                        if (isDivisionLevelUserValid(pendingUserDesignation, pendingUserOffice)) {
+                                            addUserToList(document);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                             userAdapter.notifyDataSetChanged();
                         } else {
@@ -68,6 +102,35 @@ public class Approve extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private boolean isUpazilaLevelUserValid(String designation, String office) {
+        return (designation.equals("Union level Officer") || designation.equals("Upazila level Officer") ||
+                designation.equals("Union level Worker") || designation.equals("Upazila level Worker")) &&
+                (office != null && office.contains("Upazila"));
+    }
+
+    private boolean isDistrictLevelUserValid(String designation, String office) {
+        return (designation.equals("Upazila level Officer") || designation.equals("District level Officer") ||
+                designation.equals("District level Worker")) &&
+                (office != null && (office.contains("Upazila") || office.contains("District")));
+    }
+
+    private boolean isDivisionLevelUserValid(String designation, String office) {
+        return (designation.equals("District level Officer") || designation.equals("Division level Officer") ||
+                designation.equals("Division level Worker")) &&
+                (office != null && (office.contains("District") || office.contains("Division")));
+    }
+
+
+    private void addUserToList(DocumentSnapshot document) {
+        String userId = document.getId();
+        String name = document.getString("name");
+        String designation = document.getString("designation");
+        String department = document.getString("department");
+        String workstation = document.getString("workstation");
+        String directorate = document.getString("directorate");
+        userList.add(new User(userId, name, designation, department, workstation, directorate));
     }
 
     private static class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
@@ -121,9 +184,7 @@ public class Approve extends AppCompatActivity {
                 buttonApprove = itemView.findViewById(R.id.buttonApprove);
             }
 
-
             public void approveUser(String userId) {
-
                 FirebaseFirestore.getInstance().collection("users")
                         .document(userId)
                         .update("isApproved", "Yes")
@@ -178,6 +239,8 @@ public class Approve extends AppCompatActivity {
             return workstation;
         }
 
-        public String getDirectorate(){return directorate;}
+        public String getDirectorate() {
+            return directorate;
+        }
     }
 }

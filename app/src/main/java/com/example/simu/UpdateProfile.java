@@ -19,7 +19,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,7 +46,10 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -55,12 +60,12 @@ import android.widget.DatePicker;
 import java.util.Calendar;
 
 public class UpdateProfile extends AppCompatActivity {
-    String designation, fdesignation, fdepartment, fdirectorate;
+    String designation, fdesignation, fdepartment, fdirectorate, office, fOffice;
     public static final String TAG = "TAG";
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     EditText mName, mAddress, mWorkStation, mNid, mDob, mPass, mNumber;
-    Spinner spinner, officerSpinner, departmentSpinner, directorateSpinner;
-    Spinner divisionSpinner, districtSpinner, upozilaSpinner;
+    Spinner spinner, officerSpinner,subSpinner, departmentSpinner, directorateSpinner;
+    Spinner divisionSpinner, districtSpinner, upozilaSpinner, officeSpinner, sOfficeSpinner;
     Button mUpdate;
     Button mProfileBtn;
     ImageView mProfilePic;
@@ -88,6 +93,9 @@ public class UpdateProfile extends AppCompatActivity {
         mWorkStation = findViewById(id.workstation);
         spinner = findViewById(id.spinner);
         officerSpinner = findViewById(id.officerSpinner);
+        officeSpinner = findViewById(id.office);
+        sOfficeSpinner = findViewById(id.sOffice);
+        subSpinner = findViewById(id.subSpinner);
         departmentSpinner = findViewById(id.department);
         directorateSpinner = findViewById(id.directorate);
         mNid = findViewById(R.id.nid);
@@ -301,7 +309,7 @@ public class UpdateProfile extends AppCompatActivity {
                 if ("Worker".equals(designation)) {
                     officerSpinner.setVisibility(View.VISIBLE);
 
-                    String[] officerLevels = {"Select Level", "Union level Worker", "Upozila level Worker", "District level Worker", "Division level Worker"};
+                    String[] officerLevels = {"Select Level", "Union level Worker", "Upazila level Worker", "District level Worker", "Division level Worker"};
                     ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -326,7 +334,7 @@ public class UpdateProfile extends AppCompatActivity {
                 else if ("Officer".equals(designation)) {
                     officerSpinner.setVisibility(View.VISIBLE);
 
-                    String[] officerLevels = {"Select Level", "Union level Officer", "Upozila level Officer", "District level Officer", "Division level Officer"};
+                    String[] officerLevels = {"Select Level", "Union level Officer", "Upazila level Officer", "District level Officer", "Division level Officer"};
                     ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
                             getApplicationContext(),
                             android.R.layout.simple_spinner_item,
@@ -346,8 +354,111 @@ public class UpdateProfile extends AppCompatActivity {
                         }
                     });
                 }
+                else if ("Teacher".equals(designation)) {
+                    officerSpinner.setVisibility(View.VISIBLE);
+
+                    String[] teacherLevels = {"Select Institution Type", "High School", "Primary School", "College"};
+                    ArrayAdapter<String> subAdapter = new ArrayAdapter<>(
+                            getApplicationContext(),
+                            android.R.layout.simple_spinner_item,
+                            teacherLevels
+                    );
+
+                    subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    officerSpinner.setAdapter(subAdapter);
+
+                    officerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                            String schoolType = parentView.getItemAtPosition(position).toString();
+
+                            if ("High School".equals(schoolType)) {
+                                subSpinner.setVisibility(View.VISIBLE);
+
+                                String[] highSchoolRoles = {"Select Role", "Head Teacher", "Senior Assistant Teacher", "Assistant Teacher"};
+                                ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(
+                                        getApplicationContext(),
+                                        android.R.layout.simple_spinner_item,
+                                        highSchoolRoles
+                                );
+
+                                roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                subSpinner.setAdapter(roleAdapter);
+
+                                subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                        fdesignation = parentView.getItemAtPosition(position).toString();
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parentView) {
+                                    }
+                                });
+                            }
+                            else if ("Primary School".equals(schoolType)) {
+                                subSpinner.setVisibility(View.VISIBLE);
+
+                                String[] primarySchoolRoles = {"Select Role", "Head Teacher", "Assistant Teacher"};
+                                ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(
+                                        getApplicationContext(),
+                                        android.R.layout.simple_spinner_item,
+                                        primarySchoolRoles
+                                );
+
+                                roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                subSpinner.setAdapter(roleAdapter);
+
+                                subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                        fdesignation = parentView.getItemAtPosition(position).toString();
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parentView) {
+                                    }
+                                });
+                            }
+                            else if ("College".equals(schoolType)) {
+                                subSpinner.setVisibility(View.VISIBLE);
+
+                                String[] primarySchoolRoles = {"Select Role", "Principal", "Vice Principal", "Professor", "Associate Professor", "Assistant Professor", "Lecturer"};
+                                ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(
+                                        getApplicationContext(),
+                                        android.R.layout.simple_spinner_item,
+                                        primarySchoolRoles
+                                );
+
+                                roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                subSpinner.setAdapter(roleAdapter);
+
+                                subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                        fdesignation = parentView.getItemAtPosition(position).toString();
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parentView) {
+                                    }
+                                });
+                            }
+                            else {
+                                subSpinner.setVisibility(View.INVISIBLE);
+                            }
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parentView) {
+                        }
+                    });
+                }
+
+
                 else {
                     officerSpinner.setVisibility(View.INVISIBLE);
+                    subSpinner.setVisibility(View.INVISIBLE);
                 }
             }
             @Override
@@ -356,18 +467,139 @@ public class UpdateProfile extends AppCompatActivity {
         });
 
 
+        //office spinner
+        String[] spinner2 = {"Click here", "Upazila", "District", "Division"};
+
+        ArrayAdapter<String> officeadapter = new ArrayAdapter<>(
+                getApplicationContext(),
+                android.R.layout.simple_spinner_item,
+                spinner2
+        );
+
+        officeadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        officeSpinner.setAdapter(officeadapter);
+        officeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                office = parentView.getItemAtPosition(position).toString();
+
+
+                if ("Upazila".equals(office)) {
+                    sOfficeSpinner.setVisibility(View.VISIBLE);
+
+                    String[] officeLevels = {"Select Upazila Office", "Upazila Nirbahi Officer's Office", "Upazila Family Planning Office", "Upazila Election Office",
+                            "Upazila Education Office", "Upozila ICT Division",
+                            "Upazila Cooperative Office", "Upazila Accounts Office", "Police Station", "Office of the Upazila Engineer", "Upazila Ansar and VDP Office",
+                            "Upazila Project Implementation Office", "Upazila Food Office", "Office of the Upazila Chairman", "Upazila Agriculture Office",
+                            "Upazila Livestock Office", "Upazila Fisheries Office", "Upazila Public Health Engineering Office", "Upazila Women Affairs Office",
+                            "Upazila Rural Development Office", "Upazila Secondary Education Office", "Upazila Statistics Office", "Upazila Youth Development Office",
+                            "Upazila Land Office", "Upazila Health Complex", "Upazila Social Services Office", "Government College", "Government High School", "Upazila Service Center"};
+                    ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
+                            getApplicationContext(),
+                            android.R.layout.simple_spinner_item,
+                            officeLevels
+                    );
+
+                    sAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    sOfficeSpinner.setAdapter(sAdapter);
+
+                    sOfficeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                            fOffice = parentView.getItemAtPosition(position).toString();
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parentView) {
+                        }
+                    });
+                }
+
+                else if ("District".equals(office)) {
+                    sOfficeSpinner.setVisibility(View.VISIBLE);
+
+                    String[] officeLevels = {"Select District Office","Deputy Commissioner's Office", "District Family Planning Office", "District Election Office",
+                            "District Education Office", "District ICT Division", "District Cooperative Office", "District Accounts Office", "Police Station", "Office of the District Engineer",
+                            "District Ansar and VDP Office", "District Project Implementation Office", "District Food Office", "Office of the District Chairman",
+                            "District Agriculture Office", "District Livestock Office", "District Fisheries Office", "District Public Health Engineering Office",
+                            "District Women Affairs Office", "District Rural Development Office", "District Secondary Education Office", "District Statistics Office",
+                            "District Youth Development Office", "District Land Office", "District Health Complex", "District Social Services Office",
+                            "Government College", "Government High School", "District Service Center"};
+                    ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
+                            getApplicationContext(),
+                            android.R.layout.simple_spinner_item,
+                            officeLevels
+                    );
+
+                    sAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    sOfficeSpinner.setAdapter(sAdapter);
+
+                    sOfficeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                            fOffice = parentView.getItemAtPosition(position).toString();
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parentView) {
+                        }
+                    });
+                }
+
+                else if ("Division".equals(office)) {
+                    sOfficeSpinner.setVisibility(View.VISIBLE);
+
+                    String[] officeLevels = {"Select Division Office","Office of the Divisional Commissioner", "Division Family Planning Office", "Division Election Office",
+                            "Division Education Office","ICT Division", "Division Cooperative Office", "Division Accounts Office", "Police Station", "Office of the Division Engineer",
+                            "Division Ansar and VDP Office", "Division Project Implementation Office", "Division Food Office", "Office of the Division Chairman",
+                            "Division Agriculture Office", "Division Livestock Office", "Division Fisheries Office", "Division Public Health Engineering Office",
+                            "Division Women Affairs Office", "Division Rural Development Office", "Division Secondary Education Office", "Division Statistics Office",
+                            "Division Youth Development Office", "Division Land Office", "Division Health Complex", "Division Social Services Office",
+                            "Government College", "Government High School", "Division Service Center"};
+                    ArrayAdapter<String> sAdapter = new ArrayAdapter<>(
+                            getApplicationContext(),
+                            android.R.layout.simple_spinner_item,
+                            officeLevels
+                    );
+
+                    sAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    sOfficeSpinner.setAdapter(sAdapter);
+
+                    sOfficeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                            fOffice = parentView.getItemAtPosition(position).toString();
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parentView) {
+                        }
+                    });
+                }
+
+                else {
+                    sOfficeSpinner.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+
 
         //department spinner
-        String[] department = {"Select Department", "Ministry of Chittagong Hill Tracts Affairs", "Ministry of Commerce", "Ministry of Cultural Affairs",
+        String[] department = {"Select Ministry", "Ministry of Chittagong Hill Tracts Affairs", "Ministry of Commerce", "Ministry of Cultural Affairs",
                 "Ministry of Defence", "Ministry of Disaster Management and Relief", "Ministry of Education", "Ministry of Environment, Forest and Climate Change",
-                "Ministry of Expatriates' Welfare and Overseas Employment", "Ministry of Fisheries and Livestock", "Ministry of Food", "Ministry of Foreign Affairs",
-                "Ministry of Health and Family Welfare", "Ministry of Home Affairs", "Ministry of Housing and Public Works", "Ministry of Industries",
-                "Ministry of Information and Broadcasting", "Ministry of Labour and Employment", "Ministry of Land", "Ministry of Law, Justice and Parliamentary Affairs",
-                "Ministry of Liberation War Affairs", "Ministry of Local Government, Rural Development and Co-operatives", "Ministry of Planning",
-                "Ministry of Posts, Telecommunications and Information Technology", "Ministry of Power, Energy and Mineral Resources", "Ministry of Primary and Mass Education",
-                "Ministry of Public Administration", "Ministry of Railways", "Ministry of Religious Affairs", "Ministry of Road Transport and Bridges", "Ministry of Science and Technology",
-                "Ministry of Shipping", "Ministry of Social Welfare", "Ministry of Textiles and Jute", "Ministry of Water Resources", "Ministry of Women and Children Affairs",
-                "Ministry of Youth and Sports"};
+                "Ministry of Expatriates' Welfare and Overseas Employment", "Ministry of Fisheries and Livestock", "Ministry of Finance", "Ministry of Food",
+                "Ministry of Foreign Affairs", "Medical Education and Family Welfare Division", "Health Services Division","Ministry of Home Affairs",
+                "Ministry of Housing and Public Works", "Ministry of Industries", "Ministry of Information and Broadcasting", "Ministry of Labour and Employment",
+                "Ministry of Land", "Ministry of Law, Justice and Parliamentary Affairs", "Ministry of Liberation War Affairs", "Ministry of Local Government, Rural Development and Co-operatives",
+                "Ministry of Planning", "Ministry of Posts, Telecommunications and Information Technology", "Ministry of Power, Energy and Mineral Resources",
+                "Ministry of Primary and Mass Education", "Ministry of Public Administration", "Ministry of Railways", "Ministry of Religious Affairs",
+                "Ministry of Road Transport and Bridges", "Ministry of Science and Technology", "Ministry of Shipping", "Ministry of Social Welfare",
+                "Ministry of Textiles and Jute", "Ministry of Water Resources", "Ministry of Women and Children Affairs", "Ministry of Youth and Sports"};
         ArrayAdapter<String> deptAdapter = new ArrayAdapter<>(
                 getApplicationContext(),
                 android.R.layout.simple_spinner_item,
@@ -376,6 +608,42 @@ public class UpdateProfile extends AppCompatActivity {
 
         deptAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         departmentSpinner.setAdapter(deptAdapter);
+
+
+        EditText searchEditText = findViewById(R.id.searchEditText);
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String searchdText = s.toString().toLowerCase(Locale.getDefault());
+
+                ArrayList<String> filteredDepartments = new ArrayList<>();
+                if (searchdText.isEmpty()) {
+                    filteredDepartments.addAll(Arrays.asList(department));
+                } else {
+                    for (String department : department) {
+                        if (department.toLowerCase(Locale.getDefault()).contains(searchdText)) {
+                            filteredDepartments.add(department);
+                        }
+                    }
+                }
+
+                ArrayAdapter<String> filteredAdapter = new ArrayAdapter<>(
+                        getApplicationContext(),
+                        android.R.layout.simple_spinner_item,
+                        filteredDepartments
+                );
+
+                filteredAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                departmentSpinner.setAdapter(filteredAdapter);
+            }
+        });
+
 
         departmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -481,6 +749,41 @@ public class UpdateProfile extends AppCompatActivity {
 
         directorateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         directorateSpinner.setAdapter(directorateAdapter);
+
+
+        EditText searchText = findViewById(R.id.searchText);
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String searchText = s.toString().toLowerCase(Locale.getDefault());
+
+                ArrayList<String> filtereDirectorate = new ArrayList<>();
+                if (searchText.isEmpty()) {
+                    filtereDirectorate.addAll(Arrays.asList(directorate));
+                } else {
+                    for (String directorate : directorate) {
+                        if (directorate.toLowerCase(Locale.getDefault()).contains(searchText)) {
+                            filtereDirectorate.add(directorate);
+                        }
+                    }
+                }
+
+                ArrayAdapter<String> filteredAdapter = new ArrayAdapter<>(
+                        getApplicationContext(),
+                        android.R.layout.simple_spinner_item,
+                        filtereDirectorate
+                );
+
+                filteredAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                directorateSpinner.setAdapter(filteredAdapter);
+            }
+        });
 
         directorateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -639,6 +942,7 @@ public class UpdateProfile extends AppCompatActivity {
             user.put("nid", nid);
             user.put("dob", dob);
             user.put("designation", fdesignation);
+            user.put("office", fOffice);
             user.put("department", fdepartment);
             user.put("directorate", fdirectorate);
             user.put("number", pnumber);
