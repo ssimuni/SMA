@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -46,21 +47,14 @@ import java.io.IOException;
 
 
 public class DailyReport extends AppCompatActivity {
-
+    Button toggleSpinnersBtn;
+    LinearLayout spinnerLayout;
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<User> userList;
     private FirebaseFirestore db;
-    private Spinner spinnerWorkstation;
-    private Spinner spinnerDesignation;
-    private Spinner spinnerDivision;
-    private Spinner spinnerDistrict;
-    private Spinner spinnerUpozila;
-    private List<String> workstationList;
-    private List<String> designationList;
-    private List<String> divisionList;
-    private List<String> districtList;
-    private List<String> upozilaList;
+    private Spinner spinnerWorkstation, spinnerDesignation, spinnerDivision, spinnerDistrict, spinnerUpozila;
+    private List<String> workstationList, designationList, divisionList, districtList, upozilaList;
     private Button btnDownloadPdf;
 
     @Override
@@ -74,6 +68,9 @@ public class DailyReport extends AppCompatActivity {
         userAdapter = new UserAdapter(userList);
         recyclerView.setAdapter(userAdapter);
         btnDownloadPdf = findViewById(R.id.btnDownloadPdf);
+
+        spinnerLayout = findViewById(R.id.spinnerLayout);
+        toggleSpinnersBtn = findViewById(R.id.toggleSpinnersBtn);
 
         db = FirebaseFirestore.getInstance();
         loadUsersAndAttendanceFromFirestore();
@@ -89,6 +86,18 @@ public class DailyReport extends AppCompatActivity {
         districtList = new ArrayList<>();
         upozilaList = new ArrayList<>();
 
+        toggleSpinnersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (spinnerLayout.getVisibility() == View.GONE) {
+                    spinnerLayout.setVisibility(View.VISIBLE);
+                    toggleSpinnersBtn.setText("Hide");
+                } else {
+                    spinnerLayout.setVisibility(View.GONE);
+                    toggleSpinnersBtn.setText("Search");
+                }
+            }
+        });
         btnDownloadPdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

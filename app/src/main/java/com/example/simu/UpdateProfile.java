@@ -29,6 +29,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -60,12 +62,12 @@ import android.widget.DatePicker;
 import java.util.Calendar;
 
 public class UpdateProfile extends AppCompatActivity {
-    String designation, fdesignation, fdepartment, fdirectorate, office, fOffice;
+    String designation, fdesignation, fdepartment, fdirectorate, office, fOffice, fblood;
     public static final String TAG = "TAG";
     private static final int REQUEST_CAMERA_PERMISSION = 100;
-    EditText mName, mAddress, mWorkStation, mNid, mDob, mPass, mNumber;
+    EditText mName, mAddress, mWorkStation, mNid, mDob, mPass, mNumber, mdesignation_type;
     Spinner spinner, officerSpinner,subSpinner, departmentSpinner, directorateSpinner;
-    Spinner divisionSpinner, districtSpinner, upozilaSpinner, officeSpinner, sOfficeSpinner;
+    Spinner divisionSpinner, districtSpinner, upozilaSpinner, officeSpinner, sOfficeSpinner, bloodSpinner;
     Button mUpdate;
     Button mProfileBtn;
     ImageView mProfilePic;
@@ -108,6 +110,8 @@ public class UpdateProfile extends AppCompatActivity {
         divisionSpinner = findViewById(R.id.divisionSpinner);
         districtSpinner = findViewById(R.id.districtSpinner);
         upozilaSpinner = findViewById(R.id.upozilaSpinner);
+        mdesignation_type = findViewById(R.id.designation_type);
+        bloodSpinner = findViewById(id.blood);
 
 
         fAuth = FirebaseAuth.getInstance();
@@ -128,6 +132,40 @@ public class UpdateProfile extends AppCompatActivity {
                         mNid.setText(document.getString("nid"));
                         mDob.setText(document.getString("dob"));
                         mNumber.setText(document.getString("number"));
+
+                        String bloodGroup = document.getString("blood");
+                        if (bloodGroup != null && !bloodGroup.isEmpty()) {
+                            ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) bloodSpinner.getAdapter();
+                            if (adapter != null) {
+                                int position = adapter.getPosition(bloodGroup);
+                                if (position >= 0) {
+                                    bloodSpinner.setSelection(position);
+                                }
+                            }
+                        }
+
+
+                        String departmentFromFirestore = document.getString("department");
+                        if (departmentFromFirestore != null && !departmentFromFirestore.isEmpty()) {
+                            ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) departmentSpinner.getAdapter();
+                            if (adapter != null) {
+                                int position = adapter.getPosition(departmentFromFirestore);
+                                if (position >= 0) {
+                                    departmentSpinner.setSelection(position);
+                                }
+                            }
+                        }
+
+                        String directorateFromFirestore = document.getString("directorate");
+                        if (directorateFromFirestore != null && !directorateFromFirestore.isEmpty()) {
+                            ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) directorateSpinner.getAdapter();
+                            if (adapter != null) {
+                                int position = adapter.getPosition(directorateFromFirestore);
+                                if (position >= 0) {
+                                    directorateSpinner.setSelection(position);
+                                }
+                            }
+                        }
 
                         String profileImageUrl = document.getString("profileImageUrl");
                         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
@@ -288,6 +326,27 @@ public class UpdateProfile extends AppCompatActivity {
         divisionSpinner.setSelection(0);
 
 
+        //blood spinner
+        String[] blood = {"Update Blood Group","A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"};
+        ArrayAdapter<String> bloodAdapter = new ArrayAdapter<>(
+                getApplicationContext(),
+                android.R.layout.simple_spinner_item,
+                blood
+        );
+
+        bloodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        bloodSpinner.setAdapter(bloodAdapter);
+
+        bloodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                fblood = parentView.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
 
         //designation spinner
         String[] spinner1 = {"Click here", "Officer", "Worker"};
@@ -658,7 +717,7 @@ public class UpdateProfile extends AppCompatActivity {
 
 
 //directorate spinner
-        String[] directorate = {"Selct Directorate", "Agriculture Information Service (AIS)", "Ashugonj Power Station Company Ltd.", "Agrani Bank Limited", "Anti-Corruption Commission",
+        String[] directorate = {"Select Directorate", "Agriculture Information Service (AIS)", "Ashugonj Power Station Company Ltd.", "Agrani Bank Limited", "Anti-Corruption Commission",
                 "Bangladesh Agricultural Development Corporation (BADC)", "Bangladesh Atomic Energy Commission", "Bangladesh Atomic Energy Regulatory Authority",
                 "Bangladesh Agricultural Research Council (BARC)", "Bangladesh Film and Television Institute", "Bangladesh Betar",
                 "BANGLADESH FISHERIES DEVELOPMENT CORPORATION (BFDC)", "Bandarban Hill District Council", "Bangladesh Space Research and Remote Sensing Organization",
@@ -909,6 +968,7 @@ public class UpdateProfile extends AppCompatActivity {
         final String nid = mNid.getText().toString();
         final String dob = mDob.getText().toString();
         final String pnumber = mNumber.getText().toString();
+        final String designation_type = mdesignation_type.getText().toString();
         String password = mPass.getText().toString().trim();
 
         final String selectedDivision = divisionSpinner.getSelectedItem().toString();
@@ -930,6 +990,18 @@ public class UpdateProfile extends AppCompatActivity {
             return;
         }
 
+        if ("Click here".equals(office)) {
+            Toast.makeText(getApplicationContext(), "Office selection is required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if ("Click here".equals(designation)) {
+            Toast.makeText(getApplicationContext(), "Designation is required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+
         FirebaseUser currentUser = fAuth.getCurrentUser();
         if (currentUser != null) {
             String userID = currentUser.getUid();
@@ -939,6 +1011,7 @@ public class UpdateProfile extends AppCompatActivity {
             user.put("name", name);
             user.put("address", address);
             user.put("workstation", workstation);
+            user.put("designation_type", designation_type);
             user.put("nid", nid);
             user.put("dob", dob);
             user.put("designation", fdesignation);
@@ -946,10 +1019,10 @@ public class UpdateProfile extends AppCompatActivity {
             user.put("department", fdepartment);
             user.put("directorate", fdirectorate);
             user.put("number", pnumber);
-
             user.put("division", selectedDivision);
             user.put("district", selectedDistrict);
             user.put("upozila", selectedUpozila);
+            user.put("blood", fblood);
 
             ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setMessage("Updating profile...");
@@ -999,4 +1072,5 @@ public class UpdateProfile extends AppCompatActivity {
 
         datePickerDialog.show();
     }
+
 }

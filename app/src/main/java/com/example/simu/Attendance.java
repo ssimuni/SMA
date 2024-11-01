@@ -32,12 +32,12 @@ import java.util.Objects;
 public class Attendance extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
-    Button buttonViewUsers;
+    Button buttonViewUsers, approve;
 
     Button activites_feed, intime, late, approved_leave, training, urgent, exit1, exit2, exitformorningshift, dailyReport, monthlyReport, yearlyReport,
             earned_leave, extraordinary_leave, study_leave, leave_not_due, post_retirement_leave, casual_leave, public_and_gov_holiday,
             public_holiday, government_holiday, optional_leave, rest_and_recreation_leave, special_disability_leave, special_sick_leave,
-            leave_of_vacation_dept, departmental_leave, hospital_leave, compulsory_leave, leave_without_pay, quarantine_leave, maternity_leave;;
+            leave_of_vacation_dept, departmental_leave, hospital_leave, compulsory_leave, leave_without_pay, quarantine_leave, maternity_leave;
     private FirebaseAuth fAuth;
     private FirebaseFirestore fstore;
     @Override
@@ -87,6 +87,7 @@ public class Attendance extends AppCompatActivity {
         dailyReport = findViewById(R.id.daily_report);
         monthlyReport = findViewById(R.id.monthly_report);
         yearlyReport = findViewById(R.id.yearly_Report);
+        approve = findViewById(R.id.approve);
 
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
@@ -95,26 +96,6 @@ public class Attendance extends AppCompatActivity {
 
         buttonViewUsers = findViewById(R.id.buttonViewUsers);
 
-
-        buttonViewUsers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fstore.collection("users").document(fAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            DocumentSnapshot document = task.getResult();
-                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
-                                startActivity(new Intent(Attendance.this, UserListActivity.class));
-                            } else {
-                                Toast.makeText(Attendance.this, "Only Admins Can See this", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
-
-            }
-        });
 
         activites_feed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -375,6 +356,45 @@ public class Attendance extends AppCompatActivity {
                 });
             }
         });
+
+        buttonViewUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fstore.collection("users").document(fAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            DocumentSnapshot document = task.getResult();
+                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
+                                startActivity(new Intent(Attendance.this, UserListActivity.class));
+                            } else {
+                                Toast.makeText(Attendance.this, "Only Admins Can See this", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+
+            }
+        });
+
+        approve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fstore.collection("users").document(fAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            DocumentSnapshot document = task.getResult();
+                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
+                                startActivity(new Intent(Attendance.this, Approve.class));
+                            } else {
+                                Toast.makeText(Attendance.this, "Only Admins Can Approve Users", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void checkIntimeValidity() {
@@ -512,7 +532,7 @@ public class Attendance extends AppCompatActivity {
 
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
-                    if (hour == 15 || (hour == 16 && minute == 0)) {
+                    if (hour > 15 || (hour == 15 && minute > 0)) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -525,7 +545,7 @@ public class Attendance extends AppCompatActivity {
                             @Override
                             public void run() {
                                 exit1.setEnabled(false);
-                                Toast.makeText(Attendance.this, "Click within 3pm to 4pm", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Attendance.this, "Click after 3pm.", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -593,17 +613,17 @@ public class Attendance extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
+                        if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
-                            int totalDays = Objects.requireNonNull(document.getLong("totalDays")).intValue();
+                            if (document != null && document.exists()) {
+                                int totalDays = Objects.requireNonNull(document.getLong("totalDays")).intValue();
+                                int leaveLimit = 0;
+                                if (attendanceType.equals("Casual Leave")) {
+                                    leaveLimit = 20;
+                                } else if (attendanceType.equals("Maternity Leave")) {
+                                    leaveLimit = 180;
+                                }
 
-                            int leaveLimit = 0;
-                            if (attendanceType.equals("Casual Leave")) {
-                                leaveLimit = 20;
-                            } else if (attendanceType.equals("Maternity Leave")) {
-                                leaveLimit = 180;
-                            }
-                            if (document.exists()) {
                                 if (totalDays >= leaveLimit) {
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -614,11 +634,14 @@ public class Attendance extends AppCompatActivity {
                                 } else {
                                     showEnterDaysDialog(attendanceType, totalDays, leaveLimit);
                                 }
+
                             } else {
+                                int leaveLimit = attendanceType.equals("Casual Leave") ? 20 : attendanceType.equals("Maternity Leave") ? 180 : 0;
                                 showEnterDaysDialog(attendanceType, 0, leaveLimit);
                             }
+
                         } else {
-                            Log.w("Firestore", "Error getting documents.", task.getException());
+                            startActivityWithAttendanceType("Casual Leave");
                         }
                     }
                 });

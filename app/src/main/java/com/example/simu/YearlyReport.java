@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,8 @@ import java.util.Calendar;
 public class YearlyReport extends AppCompatActivity {
 
     private EditText editTextDate;
+    Button toggleSpinnersBtn;
+    LinearLayout spinnerLayout;
     private Calendar calendar;
     private String selectedDate = "";
     private RecyclerView recyclerView;
@@ -73,6 +76,9 @@ public class YearlyReport extends AppCompatActivity {
         editTextDate = findViewById(R.id.editTextDate);
         calendar = Calendar.getInstance();
 
+        spinnerLayout = findViewById(R.id.spinnerLayout);
+        toggleSpinnersBtn = findViewById(R.id.toggleSpinnersBtn);
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         userAttendanceGroupedList = new ArrayList<>();
@@ -95,6 +101,18 @@ public class YearlyReport extends AppCompatActivity {
         loadUsersAndAttendanceFromFirestore();
 
         buttonDownload = findViewById(R.id.download_button);
+        toggleSpinnersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (spinnerLayout.getVisibility() == View.GONE) {
+                    spinnerLayout.setVisibility(View.VISIBLE);
+                    toggleSpinnersBtn.setText("Hide");
+                } else {
+                    spinnerLayout.setVisibility(View.GONE);
+                    toggleSpinnersBtn.setText("Search");
+                }
+            }
+        });
         buttonDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

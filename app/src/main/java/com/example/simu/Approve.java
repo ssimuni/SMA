@@ -130,8 +130,8 @@ public class Approve extends AppCompatActivity {
         String department = document.getString("department");
         String workstation = document.getString("workstation");
         String directorate = document.getString("directorate");
-        userList.add(new User(userId, name, designation, department, workstation, directorate));
-    }
+        String designationType = document.getString("designation_type");
+        userList.add(new User(userId, name, designation, department, workstation, directorate, designationType));    }
 
     private static class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
@@ -152,18 +152,17 @@ public class Approve extends AppCompatActivity {
         public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
             User user = userList.get(position);
             holder.textViewName.setText(user.getName());
-            holder.textViewDesignation.setText(user.getDesignation());
             holder.textViewDepartment.setText(user.getDepartment());
             holder.textViewWorkstation.setText(user.getWorkstation());
             holder.textViewDirectorate.setText(user.getDirectorate());
+            String designationWithType = user.getDesignation() + " (" + user.getDesignationType() + ")";
+            holder.textViewDesignation.setText(designationWithType);
 
-            holder.buttonApprove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    holder.approveUser(user.getUserId());
-                }
-            });
+            holder.buttonApprove.setOnClickListener(v -> holder.approveUser(user.getUserId()));
+
+            holder.buttonReject.setOnClickListener(v -> holder.rejectUser(user.getUserId(), UserAdapter.this));
         }
+
 
         @Override
         public int getItemCount() {
@@ -172,7 +171,7 @@ public class Approve extends AppCompatActivity {
 
         public static class UserViewHolder extends RecyclerView.ViewHolder {
             TextView textViewName, textViewDesignation, textViewDepartment, textViewWorkstation, textViewDirectorate;
-            Button buttonApprove;
+            Button buttonApprove, buttonReject;
 
             public UserViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -182,24 +181,41 @@ public class Approve extends AppCompatActivity {
                 textViewWorkstation = itemView.findViewById(R.id.textViewWorkstation);
                 textViewDirectorate = itemView.findViewById(R.id.textViewDirectorate);
                 buttonApprove = itemView.findViewById(R.id.buttonApprove);
+                buttonReject = itemView.findViewById(R.id.buttonReject);
             }
 
             public void approveUser(String userId) {
                 FirebaseFirestore.getInstance().collection("users")
                         .document(userId)
                         .update("isApproved", "Yes")
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(itemView.getContext(), "User approved successfully", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(itemView.getContext(), "Error approving user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(itemView.getContext(), "User approved successfully", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(itemView.getContext(), "Error approving user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+
+            public void rejectUser(String userId, UserAdapter adapter) {
+                FirebaseFirestore.getInstance().collection("users")
+                        .document(userId)
+                        .update("isApproved", "out")
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                int position = getAdapterPosition();
+                                if (position != RecyclerView.NO_POSITION) {
+                                    adapter.userList.remove(position);
+                                    adapter.notifyItemRemoved(position);
+                                    Toast.makeText(itemView.getContext(), "User rejected successfully", Toast.LENGTH_SHORT).show();
                                 }
+                            } else {
+                                Toast.makeText(itemView.getContext(), "Error rejecting user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
             }
         }
+
     }
 
     private static class User {
@@ -209,14 +225,15 @@ public class Approve extends AppCompatActivity {
         private String department;
         private String workstation;
         private String directorate;
-
-        public User(String userId, String name, String designation, String department, String workstation, String directorate) {
+        private String designationType;
+        public User(String userId, String name, String designation, String department, String workstation, String directorate, String designationType) {
             this.userId = userId;
             this.name = name;
             this.designation = designation;
             this.department = department;
             this.workstation = workstation;
             this.directorate = directorate;
+            this.designationType = designationType;
         }
 
         public String getUserId() {
@@ -230,7 +247,6 @@ public class Approve extends AppCompatActivity {
         public String getDesignation() {
             return designation;
         }
-
         public String getDepartment() {
             return department;
         }
@@ -241,6 +257,9 @@ public class Approve extends AppCompatActivity {
 
         public String getDirectorate() {
             return directorate;
+        }
+        public String getDesignationType() {
+            return designationType;
         }
     }
 }

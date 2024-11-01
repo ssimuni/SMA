@@ -63,6 +63,17 @@
                 android:textSize="15sp" />
 
             <TextView
+                android:id="@+id/blood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="8dp"
+                android:text="Blood Group"
+                android:textColor="@color/basic"
+                android:textSize="15sp" />
+
+            <TextView
                 android:id="@+id/designationTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

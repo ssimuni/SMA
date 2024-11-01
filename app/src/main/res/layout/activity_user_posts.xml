@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -23,8 +27,7 @@
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@id/textViewPosts">
 
-        <!-- Card view for displaying the -->
-        <!-- Pie chart and details of pie chart -->
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewGraph"
             android:layout_width="match_parent"
@@ -36,16 +39,12 @@
             app:cardCornerRadius="10dp">
 
 
-            <!--Linear layout to display pie chart -->
-            <!-- and details of pie chart-->
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
-                <!--Pie chart to display the data-->
 
                 <org.eazegraph.lib.charts.PieChart
                     android:id="@+id/piechart"
@@ -160,9 +159,6 @@
 
         </androidx.cardview.widget.CardView>
 
-
-        <!-- Another Card view for displaying -->
-        <!-- Use of programming languages -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="260dp"
@@ -175,8 +171,7 @@
             app:cardCornerRadius="10dp"
             android:id="@+id/details">
 
-            <!--Relative layout to display -->
-            <!-- use of programming languages -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -193,7 +188,6 @@
                     android:layout_marginEnd="25dp"
                     android:layout_marginTop="20dp"/>
 
-                <!--View to display the line-->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -210,7 +204,6 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp">
 
-                    <!--Text view to display R -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -348,3 +341,4 @@
 
     </RelativeLayout>
 </HorizontalScrollView>
+</ScrollView>

@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,8 @@ import java.util.TimeZone;
 public class MonthlyReport extends AppCompatActivity {
 
     private EditText editTextDate;
+    Button toggleSpinnersBtn;
+    LinearLayout spinnerLayout;
     private Calendar calendar;
     private String selectedDate = "";
     private RecyclerView recyclerView;
@@ -53,17 +56,8 @@ public class MonthlyReport extends AppCompatActivity {
     private List<UserAttendanceGrouped> userAttendanceGroupedList;
     private FirebaseFirestore db;
     private Button buttonDownload;
-
-    private Spinner spinnerWorkstation;
-    private Spinner spinnerDesignation;
-    private Spinner spinnerDivision;
-    private Spinner spinnerDistrict;
-    private Spinner spinnerUpozila;
-    private List<String> workstationList;
-    private List<String> designationList;
-    private List<String> divisionList;
-    private List<String> districtList;
-    private List<String> upozilaList;
+    private Spinner spinnerWorkstation, spinnerDesignation, spinnerDivision, spinnerDistrict, spinnerUpozila;
+    private List<String> workstationList, designationList, divisionList, districtList, upozilaList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +66,9 @@ public class MonthlyReport extends AppCompatActivity {
 
         editTextDate = findViewById(R.id.editTextDate);
         calendar = Calendar.getInstance();
+
+        spinnerLayout = findViewById(R.id.spinnerLayout);
+        toggleSpinnersBtn = findViewById(R.id.toggleSpinnersBtn);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -94,7 +91,21 @@ public class MonthlyReport extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         loadUsersAndAttendanceFromFirestore();
 
+
         buttonDownload = findViewById(R.id.download_button);
+
+        toggleSpinnersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (spinnerLayout.getVisibility() == View.GONE) {
+                    spinnerLayout.setVisibility(View.VISIBLE);
+                    toggleSpinnersBtn.setText("Hide");
+                } else {
+                    spinnerLayout.setVisibility(View.GONE);
+                    toggleSpinnersBtn.setText("Search");
+                }
+            }
+        });
         buttonDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -125,6 +125,37 @@
                     android:fontFamily="sans-serif"
                     android:textSize="18sp"
                     android:drawablePadding="8dp"
+                    android:hint="Enter Blood Group"
+                    android:textColorHint="@color/basic"
+                    android:padding="8dp"
+                    android:textColor="@color/basic"
+                    android:textColorHighlight="@color/cardview_dark_background"
+                    android:autofillHints="text"
+                    app:drawableStartCompat="@drawable/blood" />
+
+                <Spinner
+                    android:id="@+id/blood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="50dp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/textboxborder">
+
+                <TextView
+                    android:gravity=""
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:fontFamily="sans-serif"
+                    android:textSize="18sp"
+                    android:drawablePadding="8dp"
                     android:hint="@string/enter_designation"
                     android:textColorHint="@color/basic"
                     android:padding="8dp"
@@ -132,6 +163,16 @@
                     android:textColorHighlight="@color/cardview_dark_background"
                     android:autofillHints="text"
                     app:drawableStartCompat="@drawable/designation" />
+
+                <EditText
+                    android:id="@+id/designation_type"
+                    android:layout_width="match_parent"
+                    android:fontFamily="sans-serif"
+                    android:layout_height="65dp"
+                    android:hint="@string/write_your_designation_n_for_example_fpi_uno"
+                    android:padding="8dp"
+                    android:textColor="@color/basic"
+                    android:inputType="textPersonName" />
 
                 <Spinner
                     android:id="@+id/spinner"
@@ -239,7 +280,6 @@
                     />
 
             </LinearLayout>
-
 
             <LinearLayout
                 android:layout_marginTop="20dp"

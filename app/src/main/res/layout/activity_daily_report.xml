@@ -15,348 +15,353 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="10dp">
+            android:paddingHorizontal="10dp"
+            android:layout_marginVertical="5dp">
+
+            <Button
+                android:id="@+id/toggleSpinnersBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search" />
+
+            <Button
+                android:id="@+id/btnDownloadPdf"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_height="wrap_content"
+                android:text="Download PDF" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/spinnerLayout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="16dp">
 
             <Spinner
                 android:id="@+id/spinnerWorkstation"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginEnd="10dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal">
+                android:layout_marginBottom="16dp"/>
 
             <Spinner
                 android:id="@+id/spinnerDesignation"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="10dp">
+                android:layout_marginBottom="16dp"/>
 
             <Spinner
                 android:id="@+id/spinnerDivision"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginEnd="10dp" />
+                android:layout_marginBottom="16dp"/>
 
             <Spinner
                 android:id="@+id/spinnerDistrict"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="10dp">
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="16dp"/>
 
             <Spinner
                 android:id="@+id/spinnerUpozila"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp" />
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="16dp"/>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnDownloadPdf"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Download PDF" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Daily Attendance (Scroll Horizontally)"
+            android:textAlignment="center"
+            android:layout_marginStart="10dp"
             android:textSize="20sp"
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
             android:textStyle="bold">
-
         </TextView>
 
-    </LinearLayout>
 
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:scrollbars="horizontal"
-        android:scrollbarStyle="insideInset"
-        android:scrollbarAlwaysDrawHorizontalTrack="true"
-        android:fadeScrollbars="false"
-        android:layout_marginTop="340dp"
-        android:scrollbarSize="10dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:fillViewport="true"
+            android:scrollbars="horizontal"
+            android:scrollbarStyle="insideInset"
+            android:scrollbarAlwaysDrawHorizontalTrack="true"
+            android:fadeScrollbars="false"
+            android:layout_marginTop="20dp"
+            android:scrollbarSize="10dp">
 
-            <!-- Header Row -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Name"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#000000" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Designation"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Workstation"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Intime Entry"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Designation"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Late Entry"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Workstation"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Intime Entry"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Late Entry"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Exit"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Exit"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Approved Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Approved Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="In Training/Workshop"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:text="In Training/Workshop"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="In urgent leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="In urgent leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Earned Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Earned Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="Extraordinary Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:text="Extraordinary Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Study Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Study Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Leave Not Due"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Leave Not Due"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="Post Retirement Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:text="Post Retirement Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Casual Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Casual Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="Public and Government Holiday"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:text="Public and Government Holiday"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Public Holiday"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Public Holiday"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Government Holiday"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Government Holiday"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Optional Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Optional Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="Rest and Recreation Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:text="Rest and Recreation Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="Special Disability Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:text="Special Disability Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="Special Sick Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:text="Special Sick Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="Leave of Vacation Department"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:text="Leave of Vacation Department"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Departmental Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Departmental Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Hospital Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Hospital Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Compulsory Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Compulsory Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Leave Without Pay"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Leave Without Pay"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Quarantine Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Quarantine Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Maternity Leave"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="Maternity Leave"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#000000" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
+                    />
             </LinearLayout>
 
-            <!-- RecyclerView -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                />
-        </LinearLayout>
-    </HorizontalScrollView>
+        </HorizontalScrollView>
+
+    </LinearLayout>
 
 </RelativeLayout>

@@ -53,7 +53,10 @@
                 <TextView
                     android:id="@+id/locationText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textIsSelectable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"/>
 
             </LinearLayout>
 

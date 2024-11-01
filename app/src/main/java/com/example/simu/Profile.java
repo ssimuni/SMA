@@ -32,7 +32,7 @@ public class Profile extends AppCompatActivity {
     private ImageView profileImageView;
     private TextView nameTextView, addressTextView, workstationTextView, emailTextView, nidTextView,
             dobTextView, designationTextView, divisionTextView, districtTextView, upozilaTextView,
-            directorateTextView, departmentTextView;
+            directorateTextView, departmentTextView, bloodTextView;
     private Button logoutButton, update;
     FirebaseAuth fAuth;
     FirebaseStorage firebaseStorage;
@@ -58,6 +58,7 @@ public class Profile extends AppCompatActivity {
         update = findViewById(R.id.update);
         directorateTextView = findViewById(R.id.directorate);
         departmentTextView = findViewById(R.id.department);
+        bloodTextView = findViewById(R.id.blood);
 
         fAuth = FirebaseAuth.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
@@ -75,7 +76,6 @@ public class Profile extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
-                                // User data found in Firestore
                                 String name = document.getString("name");
                                 String address = document.getString("address");
                                 String workstation = document.getString("workstation");
@@ -89,6 +89,8 @@ public class Profile extends AppCompatActivity {
                                 String upozila = document.getString("upozila");
                                 String directorate = document.getString("directorate");
                                 String department = document.getString("department");
+                                String designation_type = document.getString("designation_type");
+                                String blood = document.getString("blood");
 
                                 // Display user information
                                 nameTextView.setText(String.format("Name: %s", name));
@@ -97,7 +99,14 @@ public class Profile extends AppCompatActivity {
                                 emailTextView.setText(String.format("Email: %s", email));
                                 nidTextView.setText(String.format("NID: %s", nid));
                                 dobTextView.setText(String.format("Date of Birth: %s", dob));
-                                designationTextView.setText(String.format("Designation: %s", designation));
+                                if (designation_type != null) {
+                                    designationTextView.setText(String.format("Designation: %s (%s)", designation, designation_type));
+                                } else {
+                                    designationTextView.setText(String.format("Designation: %s", designation));
+                                }
+                                if (blood != null){
+                                    bloodTextView.setText(String.format("Blood Group: %s", blood));
+                                }
                                 divisionTextView.setText(String.format("Division: %s", division));
                                 districtTextView.setText(String.format("District: %s", district));
                                 upozilaTextView.setText(String.format("Upazila: %s", upozila));

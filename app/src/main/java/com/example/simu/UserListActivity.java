@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -34,7 +36,8 @@ public class UserListActivity extends AppCompatActivity {
     private List<String> divisions;
     private List<String> districts;
     private List<String> upozilas;
-
+    Button toggleSpinnersBtn;
+    LinearLayout spinnerLayout;
     private Spinner spinnerWorkstation;
     private Spinner spinnerDesignation;
     private Spinner spinnerDivision;
@@ -45,6 +48,9 @@ public class UserListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
+
+        spinnerLayout = findViewById(R.id.spinnerLayout);
+        toggleSpinnersBtn = findViewById(R.id.toggleSpinnersBtn);
 
         listViewUsers = findViewById(R.id.listViewUsers);
         db = FirebaseFirestore.getInstance();
@@ -66,6 +72,19 @@ public class UserListActivity extends AppCompatActivity {
         loadUsers();
         loadUniqueSpinnerValues();
         setSpinnerListeners();
+
+        toggleSpinnersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (spinnerLayout.getVisibility() == View.GONE) {
+                    spinnerLayout.setVisibility(View.VISIBLE);
+                    toggleSpinnersBtn.setText("Hide");
+                } else {
+                    spinnerLayout.setVisibility(View.GONE);
+                    toggleSpinnersBtn.setText("Search");
+                }
+            }
+        });
 
         listViewUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

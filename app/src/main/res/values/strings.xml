@@ -61,4 +61,5 @@
     <string name="max_temperature">Max Temperature</string>
     <string name="humidity">Humidity</string>
     <string name="pressure">Pressure</string>
+    <string name="write_your_designation_n_for_example_fpi_uno">Write your designation \n(For example: FPI / UNO)</string>
 </resources>

@@ -60,13 +60,13 @@ import java.util.regex.Pattern;
 
 
 public class Register extends AppCompatActivity {
-    String designation, fdesignation, fdepartment, fdirectorate, office, fOffice;
+    String designation, fdesignation, fdepartment, fdirectorate, office, fOffice, fblood;
     private static final int REQUEST_CAMERA_PERMISSION = 100;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     public static final String TAG = "TAG";
-    EditText mName, mAddress, mWorkStation, mEmail, mNid, mDob, mPass, mUsername, mNumber;
+    EditText mName, mAddress, mWorkStation, mEmail, mNid, mDob, mPass, mUsername, mNumber, mdesignation_type;
     Spinner spinner, officerSpinner, departmentSpinner, directorateSpinner, officeSpinner, sOfficeSpinner, subSpinner;
-    Spinner divisionSpinner, districtSpinner, upozilaSpinner;
+    Spinner divisionSpinner, districtSpinner, upozilaSpinner, bloodSpinner;
     Button mRegister;
     Button mProfileBtn;
     TextView mLogin;
@@ -117,7 +117,8 @@ public class Register extends AppCompatActivity {
         divisionSpinner = findViewById(R.id.divisionSpinner);
         districtSpinner = findViewById(R.id.districtSpinner);
         upozilaSpinner = findViewById(R.id.upozilaSpinner);
-
+        mdesignation_type = findViewById(R.id.designation_type);
+        bloodSpinner = findViewById(id.blood);
 
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
@@ -570,6 +571,29 @@ public class Register extends AppCompatActivity {
 
 
 
+        //blood spinner
+        String[] blood = {"Select Blood Group", "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"};
+        ArrayAdapter<String> bloodAdapter = new ArrayAdapter<>(
+                getApplicationContext(),
+                android.R.layout.simple_spinner_item,
+                blood
+        );
+
+        bloodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        bloodSpinner.setAdapter(bloodAdapter);
+
+        bloodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                fblood = parentView.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+
         //department spinner
         String[] department = {"Select Ministry", "Ministry of Chittagong Hill Tracts Affairs", "Ministry of Commerce", "Ministry of Cultural Affairs",
                 "Ministry of Defence", "Ministry of Disaster Management and Relief", "Ministry of Education", "Ministry of Environment, Forest and Climate Change",
@@ -639,7 +663,7 @@ public class Register extends AppCompatActivity {
 
 
         //directorate spinner
-        String[] directorate = {"Selct Directorate", "Agriculture Information Service (AIS)", "Ashugonj Power Station Company Ltd.", "Agrani Bank Limited", "Anti-Corruption Commission",
+        String[] directorate = {"Select Directorate", "Agriculture Information Service (AIS)", "Ashugonj Power Station Company Ltd.", "Agrani Bank Limited", "Anti-Corruption Commission",
                 "Bangladesh Agricultural Development Corporation (BADC)", "Bangladesh Atomic Energy Commission", "Bangladesh Atomic Energy Regulatory Authority",
                 "Bangladesh Agricultural Research Council (BARC)", "Bangladesh Film and Television Institute", "Bangladesh Betar",
                 "BANGLADESH FISHERIES DEVELOPMENT CORPORATION (BFDC)", "Bandarban Hill District Council", "Bangladesh Space Research and Remote Sensing Organization",
@@ -885,6 +909,7 @@ public class Register extends AppCompatActivity {
                 final String dob = mDob.getText().toString();
                 final String username = mUsername.getText().toString();
                 final String pnumber = mNumber.getText().toString();
+                final String designation_type = mdesignation_type.getText().toString();
                 String password = mPass.getText().toString().trim();
 
                 final String[] radioSelection = {"None"};
@@ -922,6 +947,11 @@ public class Register extends AppCompatActivity {
                     return;
                 }
 
+                if (TextUtils.isEmpty(designation_type)) {
+                    mdesignation_type.setError("Designation is required");
+                    return;
+                }
+
                 if (TextUtils.isEmpty(password)) {
                     mPass.setError("Password is required");
                     return;
@@ -929,6 +959,16 @@ public class Register extends AppCompatActivity {
 
                 if (password.length() < 6) {
                     mPass.setError("Password should be of more than 6 character");
+                    return;
+                }
+
+                if ("Click here".equals(office)) {
+                    Toast.makeText(getApplicationContext(), "Office selection is required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if ("Select Blood Group".equals(fblood)) {
+                    Toast.makeText(getApplicationContext(), "Blood Group is not selected", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -962,12 +1002,14 @@ public class Register extends AppCompatActivity {
                                     user.put("address", address);
                                     user.put("workstation", workstation);
                                     user.put("email", email);
+                                    user.put("designation_type", designation_type);
                                     user.put("nid", nid);
                                     user.put("dob", dob);
                                     user.put("designation", fdesignation);
                                     user.put("office", fOffice);
                                     user.put("department", fdepartment);
                                     user.put("directorate", fdirectorate);
+                                    user.put("blood", fblood);
                                     user.put("username", username);
                                     user.put("number", pnumber);
                                     user.put("isAdmin", "No");

@@ -27,7 +27,7 @@ public class Dashboard extends AppCompatActivity {
     private CardView weather;
     private CardView attendance;
     private CardView country;
-    private CardView approve;
+    private CardView blood;
     private CardView deptNews;
     private FirebaseAuth fAuth;
     private FirebaseFirestore fstore;
@@ -45,7 +45,7 @@ public class Dashboard extends AppCompatActivity {
         weather = findViewById(R.id.level3).findViewById(R.id.weather);
         attendance = findViewById(R.id.level5).findViewById(R.id.attendance);
         country = findViewById(R.id.level4).findViewById(R.id.country);
-        approve = findViewById(R.id.level5).findViewById(R.id.approve);
+        blood = findViewById(R.id.level5).findViewById(R.id.blood);
         deptNews = findViewById(R.id.level2).findViewById(R.id.deptNews);
 
         fAuth = FirebaseAuth.getInstance();
@@ -97,23 +97,9 @@ public class Dashboard extends AppCompatActivity {
             public void onClick(View v) { startActivity(new Intent(Dashboard.this, Dept_NewsFeed.class));}
         });
 
-        approve.setOnClickListener(new View.OnClickListener() {
+        blood.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                fstore.collection("users").document(fAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            DocumentSnapshot document = task.getResult();
-                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
-                                startActivity(new Intent(Dashboard.this, Approve.class));
-                            } else {
-                                Toast.makeText(Dashboard.this, "Only Admins Can Approve Users", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
-            }
+            public void onClick(View v) { startActivity(new Intent(Dashboard.this, Blood.class));}
         });
 
         country.setOnClickListener(new View.OnClickListener() {
