@@ -308,7 +308,7 @@ public class Attendance extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
                             DocumentSnapshot document = task.getResult();
-                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
+                            if ((Objects.equals(document.getString("isAdmin"), "Yes")) || (Objects.equals(document.getString("head"), "Yes"))) {
                                 startActivity(new Intent(Attendance.this, DailyReport.class));
                             } else {
                                 Toast.makeText(Attendance.this, "Only Admins Can See Daily Report", Toast.LENGTH_SHORT).show();
@@ -327,7 +327,7 @@ public class Attendance extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
                             DocumentSnapshot document = task.getResult();
-                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
+                            if ((Objects.equals(document.getString("isAdmin"), "Yes")) || (Objects.equals(document.getString("head"), "Yes"))) {
                                 startActivity(new Intent(Attendance.this, MonthlyReport.class));
                             } else {
                                 Toast.makeText(Attendance.this, "Only Admins Can See Monthly Report", Toast.LENGTH_SHORT).show();
@@ -346,7 +346,7 @@ public class Attendance extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
                             DocumentSnapshot document = task.getResult();
-                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
+                            if ((Objects.equals(document.getString("isAdmin"), "Yes")) || (Objects.equals(document.getString("head"), "Yes"))) {
                                 startActivity(new Intent(Attendance.this, YearlyReport.class));
                             } else {
                                 Toast.makeText(Attendance.this, "Only Admins Can See Yearly Report", Toast.LENGTH_SHORT).show();
@@ -365,7 +365,7 @@ public class Attendance extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
                             DocumentSnapshot document = task.getResult();
-                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
+                            if ((Objects.equals(document.getString("isAdmin"), "Yes")) || (Objects.equals(document.getString("head"), "Yes"))) {
                                 startActivity(new Intent(Attendance.this, UserListActivity.class));
                             } else {
                                 Toast.makeText(Attendance.this, "Only Admins Can See this", Toast.LENGTH_SHORT).show();
@@ -385,7 +385,7 @@ public class Attendance extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
                             DocumentSnapshot document = task.getResult();
-                            if (Objects.equals(document.getString("isAdmin"), "Yes")) {
+                            if ((Objects.equals(document.getString("isAdmin"), "Yes")) || (Objects.equals(document.getString("head"), "Yes"))) {
                                 startActivity(new Intent(Attendance.this, Approve.class));
                             } else {
                                 Toast.makeText(Attendance.this, "Only Admins Can Approve Users", Toast.LENGTH_SHORT).show();
