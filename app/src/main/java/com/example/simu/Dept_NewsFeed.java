@@ -282,7 +282,6 @@ public class Dept_NewsFeed extends AppCompatActivity {
                 });
     }
 
-
     private void loadPosts() {
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getUid());
         FirebaseFirestore.getInstance()

@@ -403,39 +403,56 @@ public class Attendance extends AppCompatActivity {
             public void run() {
                 try {
                     NTPUDPClient client = new NTPUDPClient();
-                    InetAddress inetAddress = InetAddress.getByName("pool.ntp.org");
-                    TimeInfo timeInfo = client.getTime(inetAddress);
-                    long currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                    client.setDefaultTimeout(5000);
+
+                    String[] ntpServers = {
+                            "pool.ntp.org",
+                            "time.google.com",
+                            "time.windows.com",
+                            "time.nist.gov"
+                    };
+
+                    long currentTime = -1;
+                    for (String server : ntpServers) {
+                        try {
+                            InetAddress inetAddress = InetAddress.getByName(server);
+                            TimeInfo timeInfo = client.getTime(inetAddress);
+                            currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                            break;
+                        } catch (Exception e) {
+                            Log.e("NTP", "Failed to fetch time from " + server, e);
+                        }
+                    }
+                    if (currentTime == -1) {
+                        currentTime = System.currentTimeMillis();
+                        Log.w("NTP", "Using system time as fallback");
+                    }
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(currentTime);
 
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
-                    if (hour == 7 || hour == 9 && minute <= 15) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                intime.setEnabled(true);
-                                startActivityWithoutLeave("Intime");
-                            }
+                    if (hour == 7 || (hour == 9 && minute <= 15)) {
+                        runOnUiThread(() -> {
+                            intime.setEnabled(true);
+                            startActivityWithoutLeave("Intime");
                         });
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                intime.setEnabled(false);
-                                Toast.makeText(Attendance.this, "You are late!!!", Toast.LENGTH_SHORT).show();
-                            }
+                        runOnUiThread(() -> {
+                            intime.setEnabled(false);
+                            Toast.makeText(Attendance.this, "You are late!!!", Toast.LENGTH_SHORT).show();
                         });
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("NTP", "Error fetching time", e);
+                    runOnUiThread(() -> Toast.makeText(Attendance.this, "Unable to validate time. Please try again later.", Toast.LENGTH_LONG).show());
                 }
             }
         });
         thread.start();
     }
+
 
     private void checkLateValidity() {
         Thread thread = new Thread(new Runnable() {
@@ -443,39 +460,57 @@ public class Attendance extends AppCompatActivity {
             public void run() {
                 try {
                     NTPUDPClient client = new NTPUDPClient();
-                    InetAddress inetAddress = InetAddress.getByName("pool.ntp.org");
-                    TimeInfo timeInfo = client.getTime(inetAddress);
-                    long currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                    client.setDefaultTimeout(5000);
 
+                    String[] ntpServers = {
+                            "pool.ntp.org",
+                            "time.google.com",
+                            "time.windows.com",
+                            "time.nist.gov"
+                    };
+
+                    long currentTime = -1;
+
+                    for (String server : ntpServers) {
+                        try {
+                            InetAddress inetAddress = InetAddress.getByName(server);
+                            TimeInfo timeInfo = client.getTime(inetAddress);
+                            currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                            break;
+                        } catch (Exception e) {
+                            Log.e("NTP", "Failed to fetch time from " + server, e);
+                        }
+                    }
+                    if (currentTime == -1) {
+                        currentTime = System.currentTimeMillis();
+                        Log.w("NTP", "Using system time as fallback");
+                    }
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(currentTime);
 
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
+
                     if ((hour == 9 && minute >= 16) || (hour == 10 && minute == 0)) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                late.setEnabled(true);
-                                startActivityWithoutLeave("Late");
-                            }
+                        runOnUiThread(() -> {
+                            late.setEnabled(true);
+                            startActivityWithoutLeave("Late");
                         });
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                late.setEnabled(false);
-                                Toast.makeText(Attendance.this, "Time is over!!!", Toast.LENGTH_SHORT).show();
-                            }
+                        runOnUiThread(() -> {
+                            late.setEnabled(false);
+                            Toast.makeText(Attendance.this, "Time is over!!!", Toast.LENGTH_SHORT).show();
                         });
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("NTP", "Error in checkLateValidity", e);
+                    runOnUiThread(() -> Toast.makeText(Attendance.this, "Unable to validate time. Please try again later.", Toast.LENGTH_LONG).show());
                 }
             }
         });
         thread.start();
     }
+
 
     private void checkExitForMorningValidity() {
         Thread thread = new Thread(new Runnable() {
@@ -483,39 +518,58 @@ public class Attendance extends AppCompatActivity {
             public void run() {
                 try {
                     NTPUDPClient client = new NTPUDPClient();
-                    InetAddress inetAddress = InetAddress.getByName("pool.ntp.org");
-                    TimeInfo timeInfo = client.getTime(inetAddress);
-                    long currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                    client.setDefaultTimeout(5000);
+
+                    String[] ntpServers = {
+                            "pool.ntp.org",
+                            "time.google.com",
+                            "time.windows.com",
+                            "time.nist.gov"
+                    };
+
+                    long currentTime = -1;
+
+                    for (String server : ntpServers) {
+                        try {
+                            InetAddress inetAddress = InetAddress.getByName(server);
+                            TimeInfo timeInfo = client.getTime(inetAddress);
+                            currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                            break;
+                        } catch (Exception e) {
+                            Log.e("NTP", "Failed to fetch time from " + server, e);
+                        }
+                    }
+                    if (currentTime == -1) {
+                        currentTime = System.currentTimeMillis();
+                        Log.w("NTP", "Using system time as fallback");
+                    }
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(currentTime);
 
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
+
                     if (hour > 11 || (hour == 11 && minute > 30)) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                exitformorningshift.setEnabled(true);
-                                startActivityWithoutLeave("Exit");
-                            }
+                        runOnUiThread(() -> {
+                            exitformorningshift.setEnabled(true);
+                            startActivityWithoutLeave("Exit");
                         });
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                exitformorningshift.setEnabled(false);
-                                Toast.makeText(Attendance.this, "Click after 11:30am", Toast.LENGTH_SHORT).show();
-                            }
+                        runOnUiThread(() -> {
+                            exitformorningshift.setEnabled(false);
+                            Toast.makeText(Attendance.this, "Click after 11:30 AM", Toast.LENGTH_SHORT).show();
                         });
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("NTP", "Error in checkExitForMorningValidity", e);
+                    runOnUiThread(() -> Toast.makeText(Attendance.this, "Unable to validate time. Please try again later.", Toast.LENGTH_LONG).show());
                 }
             }
         });
         thread.start();
     }
+
 
     private void checkExit1Validity() {
         Thread thread = new Thread(new Runnable() {
@@ -523,39 +577,57 @@ public class Attendance extends AppCompatActivity {
             public void run() {
                 try {
                     NTPUDPClient client = new NTPUDPClient();
-                    InetAddress inetAddress = InetAddress.getByName("pool.ntp.org");
-                    TimeInfo timeInfo = client.getTime(inetAddress);
-                    long currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                    client.setDefaultTimeout(5000); // Set a 5-second timeout for NTP requests
+
+                    String[] ntpServers = {
+                            "pool.ntp.org",
+                            "time.google.com",
+                            "time.windows.com",
+                            "time.nist.gov"
+                    };
+
+                    long currentTime = -1;
+                    for (String server : ntpServers) {
+                        try {
+                            InetAddress inetAddress = InetAddress.getByName(server);
+                            TimeInfo timeInfo = client.getTime(inetAddress);
+                            currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                            break;
+                        } catch (Exception e) {
+                            Log.e("NTP", "Failed to fetch time from " + server, e);
+                        }
+                    }
+                    if (currentTime == -1) {
+                        currentTime = System.currentTimeMillis();
+                        Log.w("NTP", "Using system time as fallback");
+                    }
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(currentTime);
 
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
+
                     if (hour > 15 || (hour == 15 && minute > 0)) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                exit1.setEnabled(true);
-                                startActivityWithoutLeave("Exit");
-                            }
+                        runOnUiThread(() -> {
+                            exit1.setEnabled(true);
+                            startActivityWithoutLeave("Exit");
                         });
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                exit1.setEnabled(false);
-                                Toast.makeText(Attendance.this, "Click after 3pm.", Toast.LENGTH_SHORT).show();
-                            }
+                        runOnUiThread(() -> {
+                            exit1.setEnabled(false);
+                            Toast.makeText(Attendance.this, "Click after 3 PM.", Toast.LENGTH_SHORT).show();
                         });
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("NTP", "Error in checkExit1Validity", e);
+                    runOnUiThread(() -> Toast.makeText(Attendance.this, "Unable to validate time. Please try again later.", Toast.LENGTH_LONG).show());
                 }
             }
         });
         thread.start();
     }
+
 
     private void checkExit2Validity() {
         Thread thread = new Thread(new Runnable() {
@@ -563,39 +635,57 @@ public class Attendance extends AppCompatActivity {
             public void run() {
                 try {
                     NTPUDPClient client = new NTPUDPClient();
-                    InetAddress inetAddress = InetAddress.getByName("pool.ntp.org");
-                    TimeInfo timeInfo = client.getTime(inetAddress);
-                    long currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                    client.setDefaultTimeout(5000);
+
+                    String[] ntpServers = {
+                            "pool.ntp.org",
+                            "time.google.com",
+                            "time.windows.com",
+                            "time.nist.gov"
+                    };
+
+                    long currentTime = -1;
+                    for (String server : ntpServers) {
+                        try {
+                            InetAddress inetAddress = InetAddress.getByName(server);
+                            TimeInfo timeInfo = client.getTime(inetAddress);
+                            currentTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                            break;
+                        } catch (Exception e) {
+                            Log.e("NTP", "Failed to fetch time from " + server, e);
+                        }
+                    }
+                    if (currentTime == -1) {
+                        currentTime = System.currentTimeMillis();
+                        Log.w("NTP", "Using system time as fallback");
+                    }
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(currentTime);
 
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
+
                     if (hour > 17 || (hour == 17 && minute > 0)) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                exit2.setEnabled(true);
-                                startActivityWithoutLeave("Exit");
-                            }
+                        runOnUiThread(() -> {
+                            exit2.setEnabled(true);
+                            startActivityWithoutLeave("Exit");
                         });
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                exit2.setEnabled(false);
-                                Toast.makeText(Attendance.this, "Click after 5 pm.", Toast.LENGTH_SHORT).show();
-                            }
+                        runOnUiThread(() -> {
+                            exit2.setEnabled(false);
+                            Toast.makeText(Attendance.this, "Click after 5 PM.", Toast.LENGTH_SHORT).show();
                         });
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("NTP", "Error in checkExit2Validity", e);
+                    runOnUiThread(() -> Toast.makeText(Attendance.this, "Unable to validate time. Please try again later.", Toast.LENGTH_LONG).show());
                 }
             }
         });
         thread.start();
     }
+
 
     private void startActivityWithoutLeave(String attendanceType) {
         Intent intent = new Intent(Attendance.this, Upload_attendance.class);

@@ -231,6 +231,7 @@ public class DailyReport extends AppCompatActivity {
         }
     }
 
+
     private void loadUsersAndAttendanceFromFirestore() {
         db.collection("users")
                 .get()

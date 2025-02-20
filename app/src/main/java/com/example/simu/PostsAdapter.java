@@ -173,6 +173,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                                 notifyDataSetChanged();
                             }
                         });
+                FirebaseFirestore.getInstance()
+                        .collection("DeptPosts")
+                        .document(postModel.getPostId())
+                        .update("postLikes", postModel.getPostLikes())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                notifyDataSetChanged();
+                            }
+                        });
             }
         });
 
@@ -222,6 +232,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                         });
                 FirebaseFirestore.getInstance()
                         .collection("Attendance")
+                        .document(postModel.getPostId())
+                        .update("postLikes", postModel.getPostLikes())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                notifyDataSetChanged();
+                            }
+                        });
+                FirebaseFirestore.getInstance()
+                        .collection("DeptPosts")
                         .document(postModel.getPostId())
                         .update("postLikes", postModel.getPostLikes())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {

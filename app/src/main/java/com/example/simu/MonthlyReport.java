@@ -202,30 +202,43 @@ public class MonthlyReport extends AppCompatActivity {
     private void createPdf() {
         PdfDocument document = new PdfDocument();
         Paint paint = new Paint();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
-        PdfDocument.Page page = document.startPage(pageInfo);
-        Canvas canvas = page.getCanvas();
-
-        int y = 25;
+        PdfDocument.Page page;
+        Canvas canvas;
+        int y;
         int margin = 10;
 
+        // Page size constants
+        final int pageWidth = 595;
+        final int pageHeight = 842;
+        final int textLineHeight = 15; // Approximate line height
+        final int bottomMargin = 50;  // Margin from the bottom to trigger a new page
+
+        // Page initialization
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+        page = document.startPage(pageInfo);
+        canvas = page.getCanvas();
+        y = 25;
+
+        // Title
         paint.setTextSize(15f);
         paint.setFakeBoldText(true);
         canvas.drawText("Monthly Attendance Report", margin, y, paint);
-        y += paint.descent() - paint.ascent()+10;
+        y += paint.descent() - paint.ascent() + 10;
 
+        // Reset paint properties
         paint.setTextSize(10f);
         paint.setFakeBoldText(false);
+
         for (UserAttendanceGrouped userAttendanceGrouped : userAttendanceGroupedList) {
             paint.setFakeBoldText(true);
-
             canvas.drawText("Date: " + userAttendanceGrouped.getDate(), margin, y, paint);
-            y += paint.descent() - paint.ascent()+10;
+            y += paint.descent() - paint.ascent() + 10;
 
             for (UserAttendance userAttendance : userAttendanceGrouped.getUserAttendances()) {
                 User user = userAttendance.getUser();
                 Attendance attendance = userAttendance.getAttendance();
 
+                // Add user details
                 canvas.drawText("Name: " + user.getName(), margin, y, paint);
                 y += paint.descent() - paint.ascent();
 
@@ -238,13 +251,25 @@ public class MonthlyReport extends AppCompatActivity {
                 String formattedTime = formatTime(attendance.getPostingTime());
                 canvas.drawText("Time: " + formattedTime, margin, y, paint);
                 y += paint.descent() - paint.ascent();
+
                 canvas.drawText("Type: " + attendance.getAttendanceType(), margin, y, paint);
                 y += 20;
+
+                // Check if content exceeds the page height
+                if (y + textLineHeight + bottomMargin > pageHeight) {
+                    document.finishPage(page);
+                    pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
+                    page = document.startPage(pageInfo);
+                    canvas = page.getCanvas();
+                    y = 25; // Reset y for the new page
+                }
             }
         }
 
+        // Finish the last page
         document.finishPage(page);
 
+        // Save the document
         File pdfDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "MonthlyReports");
         if (!pdfDir.exists()) {
             pdfDir.mkdirs();
@@ -262,6 +287,7 @@ public class MonthlyReport extends AppCompatActivity {
             document.close();
         }
     }
+
 
     private void loadUsersAndAttendanceFromFirestore() {
         db.collection("users")

@@ -27,6 +27,7 @@ import java.util.Objects;
 public class Approve extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+    private TextView textViewToggle;
     private UserAdapter userAdapter;
     private List<User> userList;
     private FirebaseFirestore db;
@@ -38,6 +39,7 @@ public class Approve extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_approve);
 
+        textViewToggle = findViewById(R.id.textViewToggle);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         userList = new ArrayList<>();
@@ -53,6 +55,9 @@ public class Approve extends AppCompatActivity {
             currentUserDesignation = documentSnapshot.getString("designation");
             currentUserDepartment = documentSnapshot.getString("department");
 
+
+            currentUserDesignation = (currentUserDesignation == null) ? "Unknown" : currentUserDesignation;
+            currentUserDepartment = (currentUserDepartment == null) ? "Unknown" : currentUserDepartment;
             loadPendingUsers();
         });
     }
@@ -65,14 +70,21 @@ public class Approve extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            userList.clear();
                             for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 String pendingUserDesignation = document.getString("designation");
                                 String pendingUserDepartment = document.getString("department");
                                 String pendingUserOffice = document.getString("office");
 
+
+                                pendingUserDesignation = (pendingUserDesignation == null) ? "Unknown" : pendingUserDesignation;
+                                pendingUserDepartment = (pendingUserDepartment == null) ? "Unknown" : pendingUserDepartment;
+                                pendingUserOffice = (pendingUserOffice == null) ? "Unknown" : pendingUserOffice;
+
                                 if (!Objects.equals(pendingUserDepartment, currentUserDepartment)) {
                                     continue;
                                 }
+
                                 switch (currentUserDesignation) {
                                     case "Upazila level Officer":
                                         assert pendingUserDesignation != null;
@@ -96,6 +108,14 @@ public class Approve extends AppCompatActivity {
                                         break;
                                 }
                             }
+                            if (userList.isEmpty()) {
+                                textViewToggle.setText("No Pending User");
+                                textViewToggle.setVisibility(View.VISIBLE);
+                            } else {
+                                textViewToggle.setText("Pending Users");
+                                textViewToggle.setVisibility(View.VISIBLE);
+                            }
+                            
                             userAdapter.notifyDataSetChanged();
                         } else {
                             Toast.makeText(Approve.this, "Error fetching users: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
@@ -103,6 +123,7 @@ public class Approve extends AppCompatActivity {
                     }
                 });
     }
+
 
     private boolean isUpazilaLevelUserValid(String designation, String office) {
         return (designation.equals("Union level Officer") || designation.equals("Upazila level Officer") ||
@@ -131,7 +152,18 @@ public class Approve extends AppCompatActivity {
         String workstation = document.getString("workstation");
         String directorate = document.getString("directorate");
         String designationType = document.getString("designation_type");
-        userList.add(new User(userId, name, designation, department, workstation, directorate, designationType));    }
+
+        name = (name == null) ? "Unknown Name" : name;
+        designation = (designation == null) ? "Unknown Designation" : designation;
+        department = (department == null) ? "Unknown Department" : department;
+        workstation = (workstation == null) ? "Unknown Workstation" : workstation;
+        directorate = (directorate == null) ? "Unknown Directorate" : directorate;
+        designationType = (designationType == null) ? "Unknown Designation Type" : designationType;
+
+        userList.add(new User(userId, name, designation, department, workstation, directorate, designationType));
+    }
+
+
 
     private static class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
@@ -237,29 +269,32 @@ public class Approve extends AppCompatActivity {
         }
 
         public String getUserId() {
-            return userId;
+            return userId != null ? userId : "Unknown UserId";
         }
 
         public String getName() {
-            return name;
+            return name != null ? name : "Unknown Name";
         }
 
         public String getDesignation() {
-            return designation;
+            return designation != null ? designation : "Unknown Designation";
         }
+
         public String getDepartment() {
-            return department;
+            return department != null ? department : "Unknown Department";
         }
 
         public String getWorkstation() {
-            return workstation;
+            return workstation != null ? workstation : "Unknown Workstation";
         }
 
         public String getDirectorate() {
-            return directorate;
+            return directorate != null ? directorate : "Unknown Directorate";
         }
+
         public String getDesignationType() {
-            return designationType;
+            return designationType != null ? designationType : "Unknown Designation Type";
         }
+
     }
 }

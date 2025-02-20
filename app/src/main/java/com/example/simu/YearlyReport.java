@@ -200,33 +200,58 @@ public class YearlyReport extends AppCompatActivity {
         );
         datePickerDialog.show();
     }
+
     private void createPdf() {
         PdfDocument document = new PdfDocument();
         Paint paint = new Paint();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
-        PdfDocument.Page page = document.startPage(pageInfo);
-        Canvas canvas = page.getCanvas();
-
-        int y = 25;
+        int pageWidth = 595; // Standard A4 width in points
+        int pageHeight = 842; // Standard A4 height in points
         int margin = 10;
+        int y = 25;
 
         paint.setTextSize(15f);
         paint.setFakeBoldText(true);
+
+        // Function to start a new page
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+        PdfDocument.Page page = document.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+
+        // Draw the title on the first page
         canvas.drawText("Yearly Attendance Report", margin, y, paint);
-        y += paint.descent() - paint.ascent() + 10;
+        y += paint.descent() - paint.ascent() + 20;
 
         paint.setTextSize(10f);
         paint.setFakeBoldText(false);
-        for (UserAttendanceGrouped userAttendanceGrouped : userAttendanceGroupedList) {
-            paint.setFakeBoldText(true);
 
+        for (UserAttendanceGrouped userAttendanceGrouped : userAttendanceGroupedList) {
+            // Check if there is enough space for the next content; if not, start a new page
+            if (y + (paint.descent() - paint.ascent() + 20) > pageHeight - margin) {
+                document.finishPage(page);
+                pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
+                page = document.startPage(pageInfo);
+                canvas = page.getCanvas();
+                y = margin + 25; // Reset y for new page
+            }
+
+            paint.setFakeBoldText(true);
             canvas.drawText("Date: " + userAttendanceGrouped.getDate(), margin, y, paint);
             y += paint.descent() - paint.ascent() + 10;
 
             for (UserAttendance userAttendance : userAttendanceGrouped.getUserAttendances()) {
+                // Check if there is enough space for the next content
+                if (y + (paint.descent() - paint.ascent() * 5 + 20) > pageHeight - margin) {
+                    document.finishPage(page);
+                    pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
+                    page = document.startPage(pageInfo);
+                    canvas = page.getCanvas();
+                    y = margin + 25; // Reset y for new page
+                }
+
                 User user = userAttendance.getUser();
                 Attendance attendance = userAttendance.getAttendance();
 
+                paint.setFakeBoldText(false);
                 canvas.drawText("Name: " + user.getName(), margin, y, paint);
                 y += paint.descent() - paint.ascent();
 
@@ -239,13 +264,16 @@ public class YearlyReport extends AppCompatActivity {
                 String formattedTime = formatTime(attendance.getPostingTime());
                 canvas.drawText("Time: " + formattedTime, margin, y, paint);
                 y += paint.descent() - paint.ascent();
+
                 canvas.drawText("Type: " + attendance.getAttendanceType(), margin, y, paint);
                 y += 20;
             }
         }
 
+        // Finish the last page
         document.finishPage(page);
 
+        // Save the document to a file
         File pdfDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "YearlyReports");
         if (!pdfDir.exists()) {
             pdfDir.mkdirs();
@@ -263,6 +291,7 @@ public class YearlyReport extends AppCompatActivity {
             document.close();
         }
     }
+
 
     private void loadUsersAndAttendanceFromFirestore() {
         db.collection("users")

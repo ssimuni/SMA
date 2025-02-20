@@ -967,6 +967,11 @@ public class Register extends AppCompatActivity {
                     return;
                 }
 
+                if ("Click here".equals(designation)) {
+                    Toast.makeText(getApplicationContext(), "Designation is required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if ("Select Blood Group".equals(fblood)) {
                     Toast.makeText(getApplicationContext(), "Blood Group is not selected", Toast.LENGTH_SHORT).show();
                     return;
