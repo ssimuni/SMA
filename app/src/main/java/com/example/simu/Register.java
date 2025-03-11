@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -48,6 +50,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -1028,6 +1031,7 @@ public class Register extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                            Log.d(TAG, "on success: user profile is created for" + userID);
                                             uploadImageToFirebaseStorage();
+                                            notifyAdmins(name, email);
                                             finish();
                                         }
                                     });
@@ -1040,6 +1044,52 @@ public class Register extends AppCompatActivity {
                         });
             }
         });
+    }
+
+    private void notifyAdmins(String newUserName, String newUserEmail) {
+        FirebaseFirestore.getInstance().collection("users")
+                .whereEqualTo("isAdmin", "Yes")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<String> adminEmails = new ArrayList<>();
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        String adminEmail = document.getString("email");
+                        if (adminEmail != null) {
+                            adminEmails.add(adminEmail);
+                        }
+                    }
+                    Log.d("AdminEmails", "Admin emails: " + adminEmails);
+                    if (!adminEmails.isEmpty()) {
+                        sendEmailToAdmins(adminEmails, newUserName, newUserEmail);
+                    } else {
+                        Log.e("NotifyAdmins", "No admin emails found.");
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("NotifyAdmins", "Error fetching admins: " + e.getMessage()));
+    }
+
+    private void sendEmailToAdmins(List<String> adminEmails, String newUserName, String newUserEmail) {
+        String subject = "New User Registration Alert";
+        String message = "A new user has registered.\n\n" +
+                "Name: " + newUserName + "\n" +
+                "Email: " + newUserEmail + "\n\n" +
+                "Please review their account.";
+
+        for (String adminEmail : adminEmails) {
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setType("message/rfc822");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{adminEmail});
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+            PackageManager packageManager = getPackageManager();
+            List<ResolveInfo> resolveInfoList = packageManager.queryIntentActivities(emailIntent, 0);
+            if (resolveInfoList.size() > 0) {
+                startActivity(Intent.createChooser(emailIntent, "Send email..."));
+            } else {
+                Toast.makeText(Register.this, "No email clients installed.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void uploadImageToFirebaseStorage() {

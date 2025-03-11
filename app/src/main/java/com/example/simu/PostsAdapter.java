@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.annotation.Nonnull;
+import androidx.annotation.NonNull;
 
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder> {
@@ -45,15 +45,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         notifyDataSetChanged();
     }
 
-    @Nonnull
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@Nonnull ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_view, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@Nonnull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         PostModel postModel = postModelList.get(position);
         if (postModel.getPostImage() != null) {
             holder.postImage.setVisibility(View.VISIBLE);

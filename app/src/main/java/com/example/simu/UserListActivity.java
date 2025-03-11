@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -104,6 +105,11 @@ public class UserListActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+
+                            HashMap<String, Integer> divisionCounts = new HashMap<>();
+                            HashMap<String, Integer> districtCounts = new HashMap<>();
+                            HashMap<String, Integer> upazilaCounts = new HashMap<>();
+
                             for (DocumentSnapshot document : task.getResult()) {
                                 String workstation = document.getString("workstation");
                                 String designation = document.getString("designation");
@@ -117,8 +123,12 @@ public class UserListActivity extends AppCompatActivity {
                                 if (!divisions.contains(division)) divisions.add(division);
                                 if (!districts.contains(district)) districts.add(district);
                                 if (!upozilas.contains(upozila)) upozilas.add(upozila);
+
+                                if (division != null) divisionCounts.put(division, divisionCounts.getOrDefault(division, 0) + 1);
+                                if (district != null) districtCounts.put(district, districtCounts.getOrDefault(district, 0) + 1);
+                                if (upozila != null) upazilaCounts.put(upozila, upazilaCounts.getOrDefault(upozila, 0) + 1);
                             }
-                            setupSpinners();
+                            setupSpinners(divisionCounts, districtCounts, upazilaCounts);
                         } else {
                             Toast.makeText(UserListActivity.this, "Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                         }
@@ -126,31 +136,50 @@ public class UserListActivity extends AppCompatActivity {
                 });
     }
 
-    private void setupSpinners() {
+    private void setupSpinners(HashMap<String, Integer> divisionCounts, HashMap<String, Integer> districtCounts, HashMap<String, Integer> upazilaCounts) {
+        // Add "Select" default values
         workstations.add(0, "Select Workstation");
         designations.add(0, "Select Designation");
         divisions.add(0, "Select Division");
         districts.add(0, "Select District");
         upozilas.add(0, "Select Upazila");
 
+        // Append counts to each location
+        for (int i = 1; i < divisions.size(); i++) {
+            String key = divisions.get(i);
+            divisions.set(i, key + " (" + divisionCounts.getOrDefault(key, 0) + ")");
+        }
+        for (int i = 1; i < districts.size(); i++) {
+            String key = districts.get(i);
+            districts.set(i, key + " (" + districtCounts.getOrDefault(key, 0) + ")");
+        }
+        for (int i = 1; i < upozilas.size(); i++) {
+            String key = upozilas.get(i);
+            upozilas.set(i, key + " (" + upazilaCounts.getOrDefault(key, 0) + ")");
+        }
+
+        // Create Adapters
         ArrayAdapter<String> workstationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workstations);
         ArrayAdapter<String> designationAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, designations);
         ArrayAdapter<String> divisionAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, divisions);
         ArrayAdapter<String> districtAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, districts);
         ArrayAdapter<String> upozilaAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, upozilas);
 
+        // Set DropDown View Resource
         workstationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         designationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         divisionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         upozilaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        // Attach Adapters to Spinners
         spinnerWorkstation.setAdapter(workstationAdapter);
         spinnerDesignation.setAdapter(designationAdapter);
         spinnerDivision.setAdapter(divisionAdapter);
         spinnerDistrict.setAdapter(districtAdapter);
         spinnerUpozila.setAdapter(upozilaAdapter);
     }
+
 
     private void setSpinnerListeners() {
         AdapterView.OnItemSelectedListener spinnerListener = new AdapterView.OnItemSelectedListener() {

@@ -18,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import androidx.annotation.NonNull;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyViewHolder> {
 
@@ -40,15 +40,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         notifyDataSetChanged();
     }
 
-    @Nonnull
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@Nonnull ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_view, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@Nonnull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CommentModel commentModel = postModelList.get(position);
         holder.comment.setText(commentModel.getComment());
         holder.positiveScore.setText(String.format("Positive: %.2f", commentModel.getPositiveScore()));

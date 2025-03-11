@@ -9,12 +9,17 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class About extends AppCompatActivity {
     TextView textViewWebsite;
     TextView textViewYouTube;
-    TextView textViewFacebook;
+    TextView textViewFacebook, userCountTextView;
     WebView mvideo;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +29,11 @@ public class About extends AppCompatActivity {
         textViewWebsite = findViewById(R.id.web_link);
         textViewYouTube = findViewById(R.id.youtube_link);
         textViewFacebook = findViewById(R.id.facebook_link);
+        userCountTextView = findViewById(R.id.user_count);
         mvideo = findViewById(R.id.web_view);
 
+        db = FirebaseFirestore.getInstance();
+        fetchTotalUsers();
 
         String sassJsScript = "<script src=\"https://cdn.jsdelivr.net/npm/sass.js/dist/sass.js\"></script>";
 
@@ -81,6 +89,24 @@ public class About extends AppCompatActivity {
                 openLink("https://www.facebook.com");
             }
         });
+    }
+
+    private void fetchTotalUsers() {
+        db.collection("users")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot documentSnapshots = task.getResult();
+                        if (documentSnapshots != null) {
+                            int totalUsers = documentSnapshots.size();
+                            userCountTextView.setText("Total Users: " + totalUsers);
+                        } else {
+                            userCountTextView.setText("Total Users: 0");
+                        }
+                    } else {
+                        Toast.makeText(About.this, "Failed to fetch user count", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void openLink(String url) {

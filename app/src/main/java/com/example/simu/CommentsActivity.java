@@ -23,7 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.List;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
+import androidx.annotation.NonNull;
 
 public class CommentsActivity extends AppCompatActivity {
     ActivityCommentsBinding binding;
@@ -90,7 +90,7 @@ public class CommentsActivity extends AppCompatActivity {
                 .whereEqualTo("postId", postTd)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    public void onEvent(@NonNull QuerySnapshot queryDocumentSnapshots, @NonNull FirebaseFirestoreException e) {
                         if (e != null) {
                             Toast.makeText(CommentsActivity.this, "Failed to load comments: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             return;

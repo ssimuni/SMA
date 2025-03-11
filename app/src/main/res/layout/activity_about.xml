@@ -9,7 +9,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="300dp"
-        android:layout_height="490dp"
+        android:layout_height="530dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         app:cardCornerRadius="30dp"
@@ -18,7 +18,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="490dp"
+            android:layout_height="530dp"
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
             android:padding="24dp">
@@ -45,6 +45,16 @@ Achieving Sustainable Development Goal 16.6 in Bangladesh"
                 android:textSize="15sp"
                 android:textColor="@color/basic"
                 android:layout_marginBottom="20dp"/>
+
+            <TextView
+                android:id="@+id/user_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Users: Loading..."
+                android:textSize="18sp"
+                android:textColor="@color/basic"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"/>
 
             <TextView
                 android:id="@+id/web_link"
